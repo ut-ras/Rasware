@@ -1,0 +1,3 @@
+-> ADC basic code using Stellarisware
+
+https://github.com/fabhack/SW-EK-LM4F120XL/blob/master/examples/peripherals/adc/differential.c
