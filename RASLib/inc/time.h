@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// time.h - initializations
+// time.h - real time based functions
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT

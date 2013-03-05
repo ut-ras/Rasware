@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// time.c - initializations
+// time.c - real time based functions
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -86,29 +86,29 @@ void Dummy(void){} // does nothing
 
 void InitializePeriodicFunctions(void)
 {
-	int i;
+    int i;
     // Initialize the periodic function buffer to point to dummies
     // (period of 0 means not active)
-	for( i = 0; i < PERIODIC_FUNCTION_BUFFER_SIZE; i++){
-		rgPeriodicFunctions[i].function = Dummy;
-		rgPeriodicFunctions[i].period = 0;
-	}
+    for( i = 0; i < PERIODIC_FUNCTION_BUFFER_SIZE; i++){
+        rgPeriodicFunctions[i].function = Dummy;
+        rgPeriodicFunctions[i].period = 0;
+    }
     
     // Enable SysCtrl for Timer5
     SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER5); 
     
     // Configure Timer5A to be periodic
-  	TimerConfigure(TIMER5_BASE, TIMER_CFG_16_BIT_PAIR | TIMER_CFG_A_PERIODIC);
+    TimerConfigure(TIMER5_BASE, TIMER_CFG_16_BIT_PAIR | TIMER_CFG_A_PERIODIC);
 	
     // Enable the Timer5A interrupt
     IntEnable(INT_TIMER5A);
-	TimerIntEnable(TIMER5_BASE, TIMER_TIMA_TIMEOUT );
-	
+    TimerIntEnable(TIMER5_BASE, TIMER_TIMA_TIMEOUT );
+    
     // Load Timer5A with a frequency of PERIODIC_FUNCTION_RATE
     TimerLoadSet(TIMER5_BASE, TIMER_A, SysCtlClockGet() / PERIODIC_FUNCTION_RATE);
     
     // Enable Timer5A
-	TimerEnable(TIMER5_BASE, TIMER_A);
+    TimerEnable(TIMER5_BASE, TIMER_A);
 }
 
 // Declares a function to be run at the specified frequency
@@ -121,7 +121,7 @@ void InitializePeriodicFunctions(void)
 int AddPeriodicFunction(void(*function)(void), unsigned long freq)
 {
     static tBoolean fIsPerFuncInitialized = false;
-	int i = 0;
+    int i = 0;
     
     // Check to see if periodic functions are initialized. If not, initialize.
     if(!fIsPerFuncInitialized){
@@ -135,17 +135,16 @@ int AddPeriodicFunction(void(*function)(void), unsigned long freq)
     if(freq <= 0 || freq > PERIODIC_FUNCTION_RATE) return 1;
     
     // Find the next availible spot in the buffer
-	while(rgPeriodicFunctions[i].period != 0)
+    while(rgPeriodicFunctions[i].period != 0)
     {
-		i++;
-		if(i >= PERIODIC_FUNCTION_BUFFER_SIZE)
-			return 1; // exit with error if buffer is full
+        i++;
+        if(i >= PERIODIC_FUNCTION_BUFFER_SIZE) return 1; // exit with error if buffer is full
 	}
     
     // Put the new task in the buffer
-	rgPeriodicFunctions[i].function = function;
-	rgPeriodicFunctions[i].period = PERIODIC_FUNCTION_RATE / freq;
-	return 0;
+    rgPeriodicFunctions[i].function = function;
+    rgPeriodicFunctions[i].period = PERIODIC_FUNCTION_RATE / freq;
+    return 0;
 }
 
 void PeriodicFunctionHandler(void)
@@ -155,19 +154,19 @@ void PeriodicFunctionHandler(void)
     
     // Increment a counter in terms of periodic thread time
     cPeriodicThreadTime++;
-	
+    
     // Iterate through the periodic functions
     while( i != PERIODIC_FUNCTION_BUFFER_SIZE && rgPeriodicFunctions[i].period != 0)
     {
         // Run the function if the time % it's period is 0
-		if(cPeriodicThreadTime % rgPeriodicFunctions[i].period == 0){
-			rgPeriodicFunctions[i].function();
-		}
-		i++;	
-	}
+        if(cPeriodicThreadTime % rgPeriodicFunctions[i].period == 0){
+            rgPeriodicFunctions[i].function();
+        }
+        i++;	
+    }
     
     // Clear the interrupt
-	TimerIntClear(TIMER5_BASE, TIMER_TIMA_TIMEOUT);
+    TimerIntClear(TIMER5_BASE, TIMER_TIMA_TIMEOUT);
 }
 /***************** END DEFINITION OF PERIODIC FUNCTION GENERATOR *****************/
 
