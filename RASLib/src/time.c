@@ -175,7 +175,6 @@ void PeriodicFunctionHandler(void)
 /***************** BEGIN DEFINITION OF BUSY WAITS *****************/
 
 // Busy-waits a specified number of microseconds
-// Synonymous to Wait
 // \param us is the number of microseconds to wait
 // Note: Uses WTimer5. Do not use elsewhere is this function is called.
 void WaitUS(unsigned long long us)
@@ -223,9 +222,17 @@ void WaitMS(unsigned long long ms)
 }
 
 // Busy-waits a specified amount of seconds
-// \param ms is the number of seconds to wait
+// \param seconds is the number of seconds to wait
 // Note: Uses WTimer5. Do not use elsewhere is this function is called.
 void WaitS(unsigned long seconds)
+{
+    WaitUS(seconds*US_PER_SEC);
+}
+
+// Busy-waits a specified amount of seconds
+// \param seconds is the number of seconds to wait
+// Note: Uses WTimer5. Do not use elsewhere is this function is called.
+void Wait(float seconds)
 {
     WaitUS(seconds*US_PER_SEC);
 }

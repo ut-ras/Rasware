@@ -32,7 +32,7 @@ void InitializeSystemTime(void);
 
 int AddPeriodicFunction(void(*task_in)(void), unsigned long period_in);
 
-void WaitUS(unsigned long long ms);
-#define Wait WaitUS // Wait is synonymous to WaitUS
+void WaitUS(unsigned long long us);
 void WaitMS(unsigned long long ms);
-void WaitS(unsigned long ms);
+void WaitS(unsigned long seconds);
+void Wait(float seconds);
