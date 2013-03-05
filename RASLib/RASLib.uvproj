@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>Target 1</TargetName>
+      <TargetName>RASLib</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
@@ -350,7 +350,7 @@
               <MiscControls></MiscControls>
               <Define>rvmdk PART_LM4F120H5QR TARGET_IS_BLIZZARD_RA1</Define>
               <Undefine></Undefine>
-              <IncludePath>C:\StellarisWare;..\..\..\..\..\StellarisWare;C:\StellarisWare\driverlib;..\..\StellarisWare;.\inc</IncludePath>
+              <IncludePath>..;.\inc;C:\StellarisWare;..\..\..\..\..\StellarisWare;C:\StellarisWare\driverlib;..\..\StellarisWare</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -400,6 +400,11 @@
               <FileName>init.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\init.c</FilePath>
+            </File>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\time.c</FilePath>
             </File>
           </Files>
         </Group>
