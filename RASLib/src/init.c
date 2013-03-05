@@ -33,10 +33,10 @@ void InitializePeriodicFunctions(void){
     // extra stack usage.
     //
     ROM_FPULazyStackingEnable();
-	  // Set the clocking to run from PLL, using external oscillator
+    // Set the clocking to run from PLL, using external oscillator
     ROM_SysCtlClockSet(SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
                        SYSCTL_XTAL_16MHZ);
-	  //Enable global interrupts
-	  ROM_IntMasterEnable();
+    //Enable global interrupts
+    ROM_IntMasterEnable();
 }
 
