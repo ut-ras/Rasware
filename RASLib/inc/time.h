@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// init.c - initializations
+// time.h - initializations
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -21,25 +21,18 @@
 //
 //*****************************************************************************
 
-#include "inc/hw_types.h"
-#include "driverlib/rom.h"
-#include "driverlib/sysctl.h"
-#include "init.h"
-#include "time.h"
+#define US_PER_SEC 1000000
+#define US_PER_MS 1000
+#define PERIODIC_FUNCTION_RATE 1000
 
-void InitializeMCU(void){
-    //
-    // Enable lazy stacking for interrupt handlers.  This allows floating-point
-    // instructions to be used within interrupt handlers, but at the expense of
-    // extra stack usage.
-    //
-    ROM_FPULazyStackingEnable();
-    // Set the clocking to run from PLL, using external oscillator
-    ROM_SysCtlClockSet(SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
-                       SYSCTL_XTAL_16MHZ);
-    //Initialize System Timer
-    InitializeSystemTime();
-    //Enable global interrupts
-    ROM_IntMasterEnable();
-}
 
+unsigned long GetTime(void);
+unsigned long GetTimeUS(void);
+void InitializeSystemTime(void);
+
+int AddPeriodicFunction(void(*task_in)(void), unsigned long period_in);
+
+void WaitUS(unsigned long long ms);
+#define Wait WaitUS // Wait is synonymous to WaitUS
+void WaitMS(unsigned long long ms);
+void WaitS(unsigned long ms);
