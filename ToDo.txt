@@ -1,9 +1,3 @@
-Basic Structure-
-  MCU Initialization
-  Lockout protection
-  System Time
-  Periodic functions
-  
 Drivers -
   Servo (RC) PWM
     PWM: http://codeandlife.com/2012/10/30/stellaris-launchpad-pwm-tutorial/
@@ -12,7 +6,6 @@ Drivers -
   ADC
   Encoders
   Line Sensors
-  Timer waits
 
 Luxuries-
   On-board buttons and LED
@@ -33,3 +26,9 @@ Non-software-
   Board Advanced usage
   Software installation guide
   RASDemo
+
+Written, not tested-
+  MCU Initialization
+  System Time
+  Periodic functions
+  Timer waits
