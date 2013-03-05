@@ -2,3 +2,5 @@
 *.Frank
 *.o
 *.d
+*.dep
+*.crf
