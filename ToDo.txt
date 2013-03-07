@@ -3,7 +3,6 @@ Drivers -
     PWM: http://codeandlife.com/2012/10/30/stellaris-launchpad-pwm-tutorial/
   Motor PWM + Control
   USBUART
-  ADC
   Encoders
   Line Sensors
 
@@ -32,3 +31,4 @@ Written, not tested-
   System Time
   Periodic functions
   Timer waits
+  ADC
