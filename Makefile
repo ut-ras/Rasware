@@ -53,13 +53,14 @@ gdb:${COMPILER} openocd ${COMPILER}/main.axf
 # The rule to flash the device with an image
 #
 flash: ${COMPILER} openocd ${COMPILER}/main.axf
-	@{ sleep 1; echo "halt"; echo "flash write_image erase ${COMPILER}/main.axf"; sleep 2; echo "]close"; sleep 1; } |  telnet -e "]" localhost 4444
+	@echo flashing board
+	@./telnet.py "halt" "flash write_image erase ${COMPILER}/main.axf"
 
 #
 # uart rule; just run screen
 #
 uart: 
-	@{ sleep 1; echo "reset run"; sleep 1; echo "]close"; sleep 1; } |  telnet -e "]" localhost 4444
+	@./telnet.py "reset run"
 	@screen /dev/lm3s 115200
 
 flash+gdb: flash gdb
