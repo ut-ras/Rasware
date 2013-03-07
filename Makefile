@@ -59,6 +59,7 @@ flash: ${COMPILER} openocd ${COMPILER}/main.axf
 # uart rule; just run screen
 #
 uart: 
+	@{ sleep 1; echo "reset run"; sleep 1; echo "]close"; sleep 1; } |  telnet -e "]" localhost 4444
 	@screen /dev/lm3s 115200
 
 flash+gdb: flash gdb
