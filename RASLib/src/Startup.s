@@ -80,6 +80,8 @@ __heap_limit
 ;******************************************************************************
         EXTERN SysTickHandler
         EXTERN PeriodicFunctionHandler
+        EXTERN ADCTriggerHandler
+        EXTERN ADC0SS1Handler
         
         EXPORT  __Vectors
 __Vectors
@@ -114,7 +116,7 @@ __Vectors
         DCD     IntDefaultHandler           ; PWM Generator 2
         DCD     IntDefaultHandler           ; Quadrature Encoder 0
         DCD     IntDefaultHandler           ; ADC Sequence 0
-        DCD     IntDefaultHandler           ; ADC Sequence 1
+        DCD     ADC0SS1Handler              ; ADC Sequence 1
         DCD     IntDefaultHandler           ; ADC Sequence 2
         DCD     IntDefaultHandler           ; ADC Sequence 3
         DCD     IntDefaultHandler           ; Watchdog timer
@@ -192,7 +194,7 @@ __Vectors
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
         DCD     PeriodicFunctionHandler     ; Timer 5 subtimer A
-        DCD     IntDefaultHandler           ; Timer 5 subtimer B
+        DCD     ADCTriggerHandler           ; Timer 5 subtimer B
         DCD     IntDefaultHandler           ; Wide Timer 0 subtimer A
         DCD     IntDefaultHandler           ; Wide Timer 0 subtimer B
         DCD     IntDefaultHandler           ; Wide Timer 1 subtimer A

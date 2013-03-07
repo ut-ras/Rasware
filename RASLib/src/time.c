@@ -24,6 +24,7 @@
 #include "inc/hw_types.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_ints.h"
+#include "inc/lm4f120h5qr.h"
 #include "driverlib/sysctl.h"
 #include "driverlib/systick.h"
 #include "driverlib/timer.h"
@@ -97,8 +98,8 @@ void InitializePeriodicFunctions(void)
     // Enable SysCtrl for Timer5
     SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER5); 
     
-    // Configure Timer5A to be periodic
-    TimerConfigure(TIMER5_BASE, TIMER_CFG_16_BIT_PAIR | TIMER_CFG_A_PERIODIC);
+    // Configure Timer5A to be periodic, maintaining the configuration for Timer5B
+    TimerConfigure(TIMER5_BASE, TIMER5_CFG_R | TIMER_CFG_SPLIT_PAIR | TIMER_CFG_A_PERIODIC);
 	
     // Enable the Timer5A interrupt
     IntEnable(INT_TIMER5A);
