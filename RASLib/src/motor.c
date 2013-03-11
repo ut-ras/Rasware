@@ -37,7 +37,9 @@ unsigned long ulDutyCycle;
 // Summary:	Initializes the appropriate PWMs for motor output
 // Note: Always call this function before any other motor-related functions
 // Inputs: booleans for motor direction inversion (set false, false for no inversion),
-//    port being used for motor interface
+//    port being used for motor interface (set defines below to enable the selection of ports)
+//
+// By default initializes pins PC4-7 for use by PWM 
 //
 // Enable the peripherals used by the motors.
 //
@@ -45,14 +47,44 @@ unsigned long ulDutyCycle;
 
 #ifdef DEFAULTINIT
 void InitializeMotors(tbool bLeftInvert, tbool bRightInvert) {
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0);
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER1);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);  //Enable PWM on portC
+
+//***************************************************
+//	Configure GPIO pins for PWM output
+//***************************************************
+    GPIOPinConfigure(GPIO_PC4_WT0CCP0);   // PC4 - H-bridge selection, TimerA
+    GPIOPinConfigure(GPIO_PC5_WT0CCP1);   // PC5 - PWM signal to motor-controller, TimerB
     
-    TimerConfigure(TIMER0_BASE, TIMER_CFG_SPLIT_PAIR|TIMER_CFG_A_PWM);
-    TimerConfigure(TIMER1_BASE, TIMER_CFG_SPLIT_PAIR|TIMER_CFG_A_PWM);
+    GPIOPinConfigure(GPIO_PC6_WT1CCP0);   // PC6 - H-bridge selection, TimerA
+    GPIOPinConfigure(GPIO_PC7_WT1CCP1);   // PC7 - PWM signal to motor-controller, TimerB
+
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_WTIMER0);   // Enable Timers
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_WTIMER1);
     
-    ulPeriod = 1000;          // 16-bit timer, max 65536
-    ulDutyCycle = 250;        //(.25 * period)
+//****************************************************
+//	Split wide timers into 32-bit timers
+//****************************************************
+    TimerConfigure(WTIMER0_BASE, WTIMER_CFG_SPLIT_PAIR|WTIMER_CFG_A_PWM);
+    TimerConfigure(WTIMER1_BASE, WTIMER_CFG_SPLIT_PAIR|WTIMER_CFG_A_PWM);
+    
+    //ulPeriod = 1000;          // 16-bit timer, max 65536
+    //ulDutyCycle = 250;        //(.25 * period), 75% duty cycle
+
+//*****************************************************
+//	Set load and match for timer resets 
+//  (Will toggle pin when match reached, resets to load)
+//***************************************************** 
+    TimerLoadSet(WTIMER0_BASE, TIMER_A, ulPeriod - 1);   // load reset value with Period
+    TimerMatchSet(WTIMER0_BASE, TIMER_A, ulPeriod / 2);  // Load match value with 1/2 of Period
+
+    TimerLoadSet(WTIMER_BASE1, TIMER_A, ulPeriod - 1);
+    TimerMatchSet(WTIMER_BASE1, TIMER_A, ulPeriod / 2);\
+
+//******************************************************
+//	Enable timers once they are set up
+//******************************************************
+    TimerEnable(WTIMER_BASE0, TIMER_A);
+    TimerEnable(WTIMER_BASE1, TIMER_A);
 }
 #endif
     
