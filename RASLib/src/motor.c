@@ -67,8 +67,8 @@ void InitializeMotors(tbool bLeftInvert, tbool bRightInvert) {
     TimerConfigure(WTIMER0_BASE, WTIMER_CFG_SPLIT_PAIR|WTIMER_CFG_A_PWM);
     TimerConfigure(WTIMER1_BASE, WTIMER_CFG_SPLIT_PAIR|WTIMER_CFG_A_PWM);
     
-    //ulPeriod = 1000;          // 16-bit timer, max 65536
-    //ulDutyCycle = 250;        //(.25 * period), 75% duty cycle
+    ulPeriod = 256 + 8;       // 256 steps plus dead-band
+    ulDutyCycle = 132;        // 50% duty cycle
 
 //*****************************************************
 //	Set load and match for timer resets 
