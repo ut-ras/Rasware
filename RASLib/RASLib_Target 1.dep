@@ -1,9 +1,11 @@
 Dependencies for Project 'RASLib', Target 'Target 1': (DO NOT MODIFY !)
-F (.\src\Startup.s)(0x5088107E)(--cpu Cortex-M4.fp --pd "__EVAL SETA 1" -g --apcs=interwork --pd "__MICROLIB SETA 1" -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -o ".\output\Startup.o" --depend ".\output\Startup.d")
-F (.\src\init.c)(0x512AA292)(-c --cpu Cortex-M4.fp -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -IC:\StellarisWare -I..\..\..\..\..\StellarisWare -IC:\StellarisWare\driverlib -I..\..\StellarisWare -I.\inc -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM4F120H5QR -DTARGET_IS_BLIZZARD_RA1 -o ".\output\init.o" --omf_browse ".\output\init.crf" --depend ".\output\init.d")
-I (C:\StellarisWare\inc/hw_types.h)(0x512944C5)
-I (C:\StellarisWare\driverlib/interrupt.h)(0x512944C3)
-I (C:\StellarisWare\driverlib/rom.h)(0x512944C3)
-I (C:\StellarisWare\driverlib/sysctl.h)(0x512944C3)
-I (.\inc\init.h)(0x512AA15B)
-F (C:\StellarisWare\driverlib\rvmdk-cm4f\driverlib-cm4f.lib)(0x512944C4)()
+F (.\src\Startup.s)(0x51326290)(--cpu Cortex-M4.fp --pd "__EVAL SETA 1" -g --apcs=interwork --pd "__MICROLIB SETA 1" -I "C:\Keil\ARM\CMSIS\Include" -I "C:\Keil\ARM\INC\Luminary" -o ".\output\Startup.o" --depend ".\output\Startup.d")
+F (.\src\init.c)(0x51326290)(-c --cpu Cortex-M4.fp -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -IC:\StellarisWare -I..\..\..\..\..\StellarisWare -IC:\StellarisWare\driverlib -I..\..\StellarisWare -I.\inc -I "C:\Keil\ARM\CMSIS\Include" -I "C:\Keil\ARM\INC\Luminary" -Drvmdk -DPART_LM4F120H5QR -DTARGET_IS_BLIZZARD_RA1 -o ".\output\init.o" --omf_browse ".\output\init.crf" --depend ".\output\init.d")
+F (.\src\motor.c)(0x5135A895)(-c --cpu Cortex-M4.fp -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -IC:\StellarisWare -I..\..\..\..\..\StellarisWare -IC:\StellarisWare\driverlib -I..\..\StellarisWare -I.\inc -I "C:\Keil\ARM\CMSIS\Include" -I "C:\Keil\ARM\INC\Luminary" -Drvmdk -DPART_LM4F120H5QR -DTARGET_IS_BLIZZARD_RA1 -o ".\output\motor.o" --omf_browse ".\output\motor.crf" --depend ".\output\motor.d")
+I (.\inc\init.h)(0x51325480)
+I (.\inc\motor.h)(0x51359A85)
+F (.\src\servo.c)(0x51359A96)(-c --cpu Cortex-M4.fp -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -IC:\StellarisWare -I..\..\..\..\..\StellarisWare -IC:\StellarisWare\driverlib -I..\..\StellarisWare -I.\inc -I "C:\Keil\ARM\CMSIS\Include" -I "C:\Keil\ARM\INC\Luminary" -Drvmdk -DPART_LM4F120H5QR -DTARGET_IS_BLIZZARD_RA1 -o ".\output\servo.o" --omf_browse ".\output\servo.crf" --depend ".\output\servo.d")
+F (C:\StellarisWare\driverlib\rvmdk-cm4f\driverlib-cm4f.lib)(0x00000000)()
+F (.\inc\servo.h)(0x5135A747)()
+F (.\inc\motor.h)(0x5135A895)()
+F (.\inc\init.h)(0x51326290)()
