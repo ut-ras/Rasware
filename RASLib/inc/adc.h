@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// init.h - initializations
+// adc.h - analog to digital converter drivers
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -21,4 +21,9 @@
 //
 //*****************************************************************************
 
-void InitializeMCU(void);
+#define ADC_SAMPLE_RATE 2000
+#define HW_OVERSAMPLING_FACTOR 64
+
+void InitializeADC(void);
+unsigned long GetADC(int index);
+

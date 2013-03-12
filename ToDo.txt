@@ -1,0 +1,34 @@
+Drivers -
+  Servo (RC) PWM
+    PWM: http://codeandlife.com/2012/10/30/stellaris-launchpad-pwm-tutorial/
+  Motor PWM + Control
+  USBUART
+  Encoders
+  Line Sensors
+
+Luxuries-
+  On-board buttons and LED
+  Sonar (Not busy-wait)
+  I2C
+  SPI/SSI
+  UART
+  PID?
+  FFT?
+  Threading?
+  Random Number?
+    http://en.wikipedia.org/wiki/Linear_congruential_generator
+  uDMA?
+
+Non-software-
+  API Definition
+  Board Quickstart
+  Board Advanced usage
+  Software installation guide
+  RASDemo
+
+Written, not tested-
+  MCU Initialization
+  System Time
+  Periodic functions
+  Timer waits
+  ADC

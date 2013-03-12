@@ -78,6 +78,11 @@ __heap_limit
 ; The vector table.
 ;
 ;******************************************************************************
+        EXTERN SysTickHandler
+        EXTERN PeriodicFunctionHandler
+        EXTERN ADCTriggerHandler
+        EXTERN ADC0SS1Handler
+        
         EXPORT  __Vectors
 __Vectors
         DCD     StackMem + Stack            ; Top of Stack
@@ -95,7 +100,7 @@ __Vectors
         DCD     IntDefaultHandler           ; Debug monitor handler
         DCD     0                           ; Reserved
         DCD     IntDefaultHandler           ; PendSV Handler
-        DCD     IntDefaultHandler           ; SysTick Handler
+        DCD     SysTickHandler              ; SysTick Handler
         DCD     IntDefaultHandler           ; GPIO Port A
         DCD     IntDefaultHandler           ; GPIO Port B
         DCD     IntDefaultHandler           ; GPIO Port C
@@ -111,7 +116,7 @@ __Vectors
         DCD     IntDefaultHandler           ; PWM Generator 2
         DCD     IntDefaultHandler           ; Quadrature Encoder 0
         DCD     IntDefaultHandler           ; ADC Sequence 0
-        DCD     IntDefaultHandler           ; ADC Sequence 1
+        DCD     ADC0SS1Handler              ; ADC Sequence 1
         DCD     IntDefaultHandler           ; ADC Sequence 2
         DCD     IntDefaultHandler           ; ADC Sequence 3
         DCD     IntDefaultHandler           ; Watchdog timer
@@ -188,8 +193,8 @@ __Vectors
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
-        DCD     IntDefaultHandler           ; Timer 5 subtimer A
-        DCD     IntDefaultHandler           ; Timer 5 subtimer B
+        DCD     PeriodicFunctionHandler     ; Timer 5 subtimer A
+        DCD     ADCTriggerHandler           ; Timer 5 subtimer B
         DCD     IntDefaultHandler           ; Wide Timer 0 subtimer A
         DCD     IntDefaultHandler           ; Wide Timer 0 subtimer B
         DCD     IntDefaultHandler           ; Wide Timer 1 subtimer A

@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// init.h - initializations
+// uart.h - usbuart commuications
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -21,4 +21,7 @@
 //
 //*****************************************************************************
 
-void InitializeMCU(void);
+
+#include "utils/uartstdio.h"
+
+void InitializeUART(void);

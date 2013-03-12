@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// init.h - initializations
+// time.h - real time based functions
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -21,4 +21,18 @@
 //
 //*****************************************************************************
 
-void InitializeMCU(void);
+#define US_PER_SEC 1000000
+#define US_PER_MS 1000
+#define PERIODIC_FUNCTION_RATE 1000
+
+
+unsigned long GetTime(void);
+unsigned long GetTimeUS(void);
+void InitializeSystemTime(void);
+
+int AddPeriodicFunction(void(*task_in)(void), unsigned long period_in);
+
+void WaitUS(unsigned long long us);
+void WaitMS(unsigned long long ms);
+void WaitS(unsigned long seconds);
+void Wait(float seconds);
