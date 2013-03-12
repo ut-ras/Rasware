@@ -37,7 +37,7 @@ unsigned long ulDutyCycle;
 // Summary:	Initializes the appropriate PWMs for motor output
 // Note: Always call this function before any other motor-related functions
 // Inputs: booleans for motor direction inversion (set false, false for no inversion),
-//    port being used for motor interface (set defines below to enable the selection of ports)
+//    port being used for motor interface (set defines above to enable the selection of ports)
 //
 // By default initializes pins PC4-7 for use by PWM 
 //
@@ -58,7 +58,7 @@ void InitializeMotors(tbool bLeftInvert, tbool bRightInvert) {
     GPIOPinConfigure(GPIO_PC6_WT1CCP0);   // PC6 - H-bridge selection, TimerA
     GPIOPinConfigure(GPIO_PC7_WT1CCP1);   // PC7 - PWM signal to motor-controller, TimerB
 
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_WTIMER0);   // Enable Timers
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_WTIMER0);   // Enable Timers (Wide Timer 0 and 1)
     SysCtlPeripheralEnable(SYSCTL_PERIPH_WTIMER1);
     
 //****************************************************
@@ -85,6 +85,8 @@ void InitializeMotors(tbool bLeftInvert, tbool bRightInvert) {
 //******************************************************
     TimerEnable(WTIMER_BASE0, TIMER_A);
     TimerEnable(WTIMER_BASE1, TIMER_A);
+	TimerEnable(WTIMER_BASE0, TIMER_B);
+	TimerEnable(WTIMER_BASE1, TIMER_B);
 }
 #endif
     
