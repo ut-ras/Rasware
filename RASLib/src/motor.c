@@ -30,7 +30,6 @@
 //                  GLOBALS
 
 unsigned long ulPeriod;
-unsigned long ulDutyCycle;
 //***************************************************************************
 
 //#define VARIABLEINIT       // Uncomment to allow parameter passing to enable different ports for motor use.
@@ -81,7 +80,6 @@ void InitializeMotors(tbool bLeftInvert, tbool bRightInvert) {
     SysCtlPeripheralEnable(SYSCTL_PERIPH_WTIMER1);
     
     ulPeriod = 256 + 8;       // 256 steps plus dead-band
-    ulDutyCycle = 132;        // 50% duty cycle
 
 //************************************************************
 //	Set load and match for timer resets 
