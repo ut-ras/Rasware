@@ -22,7 +22,7 @@
 #include "driverlib/sysctl.h" 
 #include "driverlib/gpio.h"
 #include "driverlib/timer.h"
-#include "driverlib/pinmap.h"
+#include "driverlib/pin_map.h"
 #include "init.h"
 #include "motor.h"
 
@@ -58,14 +58,14 @@ unsigned long ulPeriod;
 //***************************************************************************
 
 #ifdef DEFAULTINIT
-void InitializeMotors(tbool bLeftInvert, tbool bRightInvert) {
+void InitializeMotors(tBoolean bLeftInvert, tBoolean bRightInvert) {
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);  //Enable PWM on portC
 
 //************************************************************
 //	Split wide timers into 32-bit timers
 //************************************************************
-    TimerConfigure(WTIMER0_BASE, WTIMER_CFG_SPLIT_PAIR|WTIMER_CFG_A_PWM|WTIMER_CFG_B_PWM);
-    TimerConfigure(WTIMER1_BASE, WTIMER_CFG_SPLIT_PAIR|WTIMER_CFG_A_PWM|WTIMER_CFG_B_PWM);
+    TimerConfigure(WTIMER0_BASE, TIMER_CFG_SPLIT_PAIR|TIMER_CFG_A_PWM|TIMER_CFG_B_PWM);
+    TimerConfigure(WTIMER1_BASE, TIMER_CFG_SPLIT_PAIR|TIMER_CFG_A_PWM|TIMER_CFG_B_PWM);
 					  	
 //************************************************************
 //	Configure GPIO pins for PWM output
@@ -83,16 +83,17 @@ void InitializeMotors(tbool bLeftInvert, tbool bRightInvert) {
 
 //************************************************************
 //	Set load and match for timer resets 
-//  (Will toggle pin when match reached, resets to load)
+//  (Will toggle pin when match reached, resets at value in load)
+//	Value in match will be changed in motor set function calls
 //************************************************************ 
     TimerLoadSet(WTIMER0_BASE, TIMER_A, ulPeriod - 1);   // load reset value with Period
     TimerMatchSet(WTIMER0_BASE, TIMER_A, ulPeriod / 2);  // Load match value with 1/2 of Period
 
-    TimerLoadSet(WTIMER_BASE0, TIMER_B, ulPeriod - 1);
-    TimerMatchSet(WTIMER_BASE0, TIMER_B, ulPeriod / 2);
+    TimerLoadSet(WTIMER0_BASE, TIMER_B, ulPeriod - 1);
+    TimerMatchSet(WTIMER0_BASE, TIMER_B, ulPeriod / 2);
 
 	TimerLoadSet(WTIMER1_BASE, TIMER_A, ulPeriod - 1);
-	TimerMatchSet(WTIMER1_BASAE, TIMER_A, ulPeriod / 2);
+	TimerMatchSet(WTIMER1_BASE, TIMER_A, ulPeriod / 2);
 
 	TimerLoadSet(WTIMER1_BASE, TIMER_B, ulPeriod - 1);
 	TimerMatchSet(WTIMER1_BASE, TIMER_B, ulPeriod / 2);
@@ -100,10 +101,10 @@ void InitializeMotors(tbool bLeftInvert, tbool bRightInvert) {
 //************************************************************
 //	Enable timers 
 //************************************************************
-    TimerEnable(WTIMER_BASE0, TIMER_A);
-    TimerEnable(WTIMER_BASE1, TIMER_A);
-	TimerEnable(WTIMER_BASE0, TIMER_B);
-	TimerEnable(WTIMER_BASE1, TIMER_B);
+    TimerEnable(WTIMER0_BASE, TIMER_A);
+    TimerEnable(WTIMER1_BASE, TIMER_A);
+	TimerEnable(WTIMER0_BASE, TIMER_B);
+	TimerEnable(WTIMER1_BASE, TIMER_B);
 }
 #endif
 
