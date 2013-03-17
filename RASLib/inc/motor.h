@@ -30,9 +30,9 @@ extern "C"
 typedef signed char power_t;		// motor power data type
 
 typedef enum {
-	MOTOR_0 = PWM_OUT_4,			// MOTOR_0
-	MOTOR_1 = PWM_OUT_5				// MOTOR_1
-	} motor_t;	// motor data type
+	MOTOR_0 = WTIMER0_BASE,			// MOTOR_0
+	MOTOR_1	= WTIMER1_BASE			// MOTOR_1
+} motor_t;	// motor data type
 
 // Summary:	Initializes the appropriate PWMs for motor output
 // Parameters:
