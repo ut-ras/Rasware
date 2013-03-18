@@ -4,6 +4,7 @@
 *.dep
 *.crf
 *.uvopt
+*.plg
 
 *.Frank
 *.KGilbert
