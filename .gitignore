@@ -1,7 +1,11 @@
 *.bak
-*.Frank
 *.o
 *.d
 *.dep
 *.crf
 *.uvopt
+
+*.Frank
+*.KGilbert
+
+/RASLibTest/*
