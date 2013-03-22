@@ -50,7 +50,7 @@ unsigned long ulPeriod;
 //***************************************************************************
 //	IN1		IN2		OUT	 	|			Coast	Brake
 //	0		0		CW		|	CW		 PP		 P0
-//	0		1		CCW		|	CCW		 P1      PP
+//	0		1		CCW		|	CCW		 P1      P(~P)
 //	1		0		Brake	|   S		 11      10
 //	1		1		Coast	|
 //
@@ -159,4 +159,9 @@ void SetMotorPower(motor_t motor, power_t power) {
 void SetMotorPowers(power_t power0, power_t power1) {
 	SetMotorPower(MOTOR_0, power0);
 	SetMotorPower(MOTOR_1, power1);
+}
+
+int main(void) {
+	InitializeMotors(false,false);
+	SetMotorPowers(127,127);
 }
