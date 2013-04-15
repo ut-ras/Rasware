@@ -7,12 +7,11 @@
 // *************************************************************
 // Enum for port selection parameter in motor initializations
 // *************************************************************
-typdef enum 
-{
-	GPIOPORTA
-	GPIOPORTB
-	GPIOPORTC
-	GPIOPORTD
+typedef enum {
+	GPIOPORTA,
+	GPIOPORTB,
+	GPIOPORTC,
+	GPIOPORTD,
 	GPIOPORTE
 } GPIOPort;	   // GPIO port data types for parameter passing
 
