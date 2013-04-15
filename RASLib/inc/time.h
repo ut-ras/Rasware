@@ -30,7 +30,7 @@ unsigned long GetTime(void);
 unsigned long GetTimeUS(void);
 void InitializeSystemTime(void);
 
-int AddPeriodicFunction(void(*task_in)(void), unsigned long period_in);
+int AddPeriodicFunction(void(*task_in)(void), unsigned long freq);
 
 void WaitUS(unsigned long long us);
 void WaitMS(unsigned long long ms);
