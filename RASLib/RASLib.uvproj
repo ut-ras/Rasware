@@ -346,7 +346,7 @@
               <MiscControls></MiscControls>
               <Define>rvmdk PART_LM4F120H5QR TARGET_IS_BLIZZARD_RA1</Define>
               <Undefine></Undefine>
-              <IncludePath>C:\StellarisWare;..\..\..\..\..\StellarisWare;C:\StellarisWare\driverlib;..\..\StellarisWare;.\inc</IncludePath>
+              <IncludePath>..\StellarisWare;inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -414,7 +414,7 @@
             <File>
               <FileName>driverlib-cm4f.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>C:\StellarisWare\driverlib\rvmdk-cm4f\driverlib-cm4f.lib</FilePath>
+              <FilePath>..\StellarisWare\driverlib\rvmdk-cm4f\driverlib-cm4f.lib</FilePath>
             </File>
           </Files>
         </Group>
