@@ -52,7 +52,7 @@ void InitializeADC(void)
     SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
     
-    // Set PE6 and PE7 to be ADC pins
+    // Set PE2 and PE3 to be ADC pins
     GPIOPinTypeADC(GPIO_PORTE_BASE, GPIO_PIN_2 | GPIO_PIN_3);
     
     // Configure Timer5B to be periodic, maintaining the configuration for Timer5A

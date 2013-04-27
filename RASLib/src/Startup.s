@@ -82,6 +82,7 @@ __heap_limit
         EXTERN PeriodicFunctionHandler
         EXTERN ADCTriggerHandler
         EXTERN ADC0SS1Handler
+        EXTERN ServoGeneratorHandler
         
         EXPORT  __Vectors
 __Vectors
@@ -171,7 +172,7 @@ __Vectors
         DCD     0                           ; Reserved
         DCD     IntDefaultHandler           ; I2C2 Master and Slave
         DCD     IntDefaultHandler           ; I2C3 Master and Slave
-        DCD     IntDefaultHandler           ; Timer 4 subtimer A
+        DCD     ServoGeneratorHandler       ; Timer 4 subtimer A
         DCD     IntDefaultHandler           ; Timer 4 subtimer B
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
