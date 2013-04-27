@@ -199,7 +199,7 @@ void WaitUS(unsigned long long us)
     }
     
     // Load WTimer5 with the number of microseconds to busy-wait for
-    TimerLoadSet(WTIMER5_BASE, TIMER_A, us * (SysCtlClockGet() / US_PER_SEC) );	
+    TimerLoadSet64(WTIMER5_BASE, us * (SysCtlClockGet() / US_PER_SEC) );	
     
     // Enable WTimer5	
     TimerEnable(WTIMER5_BASE, TIMER_A);		 
