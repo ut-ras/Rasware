@@ -26,21 +26,24 @@
 #include "driverlib/sysctl.h"
 #include "init.h"
 #include "time.h"
+#include "driverlib/fpu.h"
+#include "driverlib/interrupt.h"
 
-void InitializeMCU(void){
-    //
+void InitializeMCU(void)
+{
     // Enable lazy stacking for interrupt handlers.  This allows floating-point
     // instructions to be used within interrupt handlers, but at the expense of
     // extra stack usage.
-    //
-    ROM_FPUEnable();
-    ROM_FPULazyStackingEnable();
+    FPULazyStackingEnable();
+    
     // Set the clocking to run from PLL, using external oscillator
-    ROM_SysCtlClockSet(SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
+    SysCtlClockSet(SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN |
                        SYSCTL_XTAL_16MHZ);
+    
     //Initialize System Timer
     InitializeSystemTime();
+    
     //Enable global interrupts
-    ROM_IntMasterEnable();
+    IntMasterEnable();    
 }
 

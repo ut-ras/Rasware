@@ -76,8 +76,7 @@ void SysTickHandler(void){
 /***************** BEGIN DEFINITION OF PERIODIC FUNCTION GENERATOR *****************/
 
 #define PERIODIC_FUNCTION_BUFFER_SIZE 16
-typedef struct
-{
+typedef struct{
 	void(*function)(void); 
     unsigned long period;
 } tPeriodicFunction;
