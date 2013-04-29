@@ -29,6 +29,18 @@ Setup for Windows (WIP)
 1. Go to <http://www.chiark.greenend.org.uk/~sgtatham/putty.download.html>.
 2. Under "for Windows on Intel x86" click on [putty.exe](http://the.earth.li/~sgtatham/putty/latest/x86/putty.exe) to save putty to your computer.
 
+### Installing Keil uVision ###
+
+<!--1. Go to <http://www.keil.com/demo/eval/arm.htm>.
+2. To download Keil you will need to enter contact information.
+3. Click `MDK470A.EXE` to download the installer.
+4. Run the executable to install Keil uVision.
+
+Actually this link may just work for a while -->
+
+1. Download the installer from here: <http://www.keil.com/fid/w00kzbwyie9j1wbbrv11bm0or1xbb2p1gd2wd1/files/eval/mdk470a.exe>
+2. When it's done, run the executable to install Keil uVision.
+
 
 ### Installing the Drivers ###
 
@@ -43,7 +55,6 @@ Setup for Windows (WIP)
 9. Once all of the drivers are installed, not the COM port number that appears in the Device manager. It should read `Stellaris Virtual Serial Port (COM29)`.
 
 
-TODO: figure out how to get Keil easily
 TODO: add the sections for running rasdemo and creating team project.
 TODO: add additional information section from Rasware2012
 
