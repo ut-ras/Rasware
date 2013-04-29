@@ -5,9 +5,18 @@
 *.crf
 *.uvopt
 *.plg
-
-*.Frank
-*.KGilbert
-
-/RASLibTest/*
-/Ultrasound Sensor/*
+*.__i
+*.axf
+.DS_Store
+*.exe
+*.htm
+*.iex
+*.Jack
+*.lnp
+*.lst
+*.map
+*.opt
+*.plg
+*.tra
+*.uvgui.*
+*.xls
