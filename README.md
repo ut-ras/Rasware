@@ -4,7 +4,7 @@ Rasware2013
 Description
 -----------
 
-A generic robotics controller for the EK-LM4F120XL Stellaris Launchpad. 
+A generic robotics controller for the EK-LM4F120XL Stellaris Launchpad.
 Authored by the IEEE - Robotics and Automation Society Student Branch at the University of Texas at Austin.
 
 
@@ -52,7 +52,7 @@ Actually this link may just work for a while -->
 6. Go to the Device Manager on your computer.
 7. For each listing with a yellow warning, right-click and select `Update Driver`.
 8. Click `Browse my Computer` and navigate to the unzipped drivers.
-9. Once all of the drivers are installed, not the COM port number that appears in the Device manager. It should read `Stellaris Virtual Serial Port (COM29)`.
+9. Once all of the drivers are installed, not the COM port number that appears in the Device manager. It should read `Stellaris Virtual Serial Port (COM__)`.
 
 
 TODO: add the sections for running rasdemo and creating team project.
