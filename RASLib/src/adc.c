@@ -92,7 +92,7 @@ void InitializeADC(void)
     
     // Enable interrupts
     IntEnable(INT_ADC0SS1);
-    IntEnable(INT_TIMER0B);
+    IntEnable(INT_TIMER5B);
 }
 
 
