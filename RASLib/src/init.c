@@ -21,13 +21,16 @@
 //
 //*****************************************************************************
 
-#include "inc/hw_types.h"
-#include "driverlib/rom.h"
-#include "driverlib/sysctl.h"
+#include <StellarisWare/inc/hw_types.h>
+#include <StellarisWare/driverlib/rom.h>
+#include <StellarisWare/driverlib/sysctl.h>
 #include "init.h"
 #include "time.h"
-#include "driverlib/fpu.h"
-#include "driverlib/interrupt.h"
+#include <StellarisWare/driverlib/fpu.h>
+#include <StellarisWare/driverlib/interrupt.h>
+#include <StellarisWare/utils/cmdline.h>
+
+tCmdLineEntry g_sCmdTable[]; 
 
 void InitializeMCU(void)
 {

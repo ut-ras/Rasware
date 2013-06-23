@@ -21,14 +21,14 @@
 //
 //*****************************************************************************
 
-#include "inc/hw_types.h"
-#include "inc/hw_memmap.h"
-#include "inc/hw_ints.h"
-#include "inc/lm4f120h5qr.h"
-#include "driverlib/sysctl.h"
-#include "driverlib/systick.h"
-#include "driverlib/timer.h"
-#include "driverlib/interrupt.h"
+#include <StellarisWare/inc/hw_types.h>
+#include <StellarisWare/inc/hw_memmap.h>
+#include <StellarisWare/inc/hw_ints.h>
+#include <StellarisWare/inc/lm4f120h5qr.h>
+#include <StellarisWare/driverlib/sysctl.h>
+#include <StellarisWare/driverlib/systick.h>
+#include <StellarisWare/driverlib/timer.h>
+#include <StellarisWare/driverlib/interrupt.h>
 #include "time.h"
 
 /***************** GLOBAL VARIABLES *****************/
