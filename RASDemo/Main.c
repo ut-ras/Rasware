@@ -1,14 +1,13 @@
-#include <StellarisWare/hw_types.h>		// tBoolean
+#include <StellarisWare/inc/hw_types.h>		// tBoolean
 #include "RASDemo.h"
-#include <StellarisWare/uartstdio.h>	// input/output over UART
-#include <RASLib/uart.h> 
-#include <RASLib/init.h> 
+#include <StellarisWare/utils/uartstdio.h>	// input/output over UART
+#include <RASLib/inc/uart.h> 
+#include <RASLib/inc/init.h> 
 
 int main(void)
 {	
 	char ch;	  	 
 
-	LockoutProtection();
 	InitializeMCU();
 	initUART();
 
@@ -29,28 +28,33 @@ int main(void)
 		}
 		else if (ch == '1') {
 			UARTprintf("\nMotor Demo\n");
-			initMotors();
-			motorDemo(); 
+			UARTprintf("\n :P \n"); 
+			//initMotors();
+			//motorDemo(); 
 		}
 		else if (ch == '2') {
 			UARTprintf("\nServo Demo\n");
-			initServo();
-			servoDemo();   
+			UARTprintf("\n :P \n");
+			//initServo();
+			//servoDemo();   
 		}
 		else if (ch == '3') {			   
 			UARTprintf("\nLine Sensor Demo\n");
-			initLineSensor();		  
-			lineSensorDemo();
+			UARTprintf("\n :P \n");
+			//initLineSensor();		  
+			//lineSensorDemo();
 		}
 		else if (ch == '4') {	   
 			UARTprintf("\nIR Sensor Demo\n");
-			initIRSensor();
-			IRSensorDemo();	 
+			UARTprintf("\n :P \n");		
+			//initIRSensor();
+			//IRSensorDemo();	 
 		}
 		else if (ch == '5') {
 			UARTprintf("\nEncoders Demo\n");
-			initEncoders();
-			encoderDemo();
+			UARTprintf("\n :P \n");
+			//initEncoders();
+			//encoderDemo();
 		}
 	}
 }

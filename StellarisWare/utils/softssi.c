@@ -29,11 +29,11 @@
 //
 //*****************************************************************************
 
-#include "inc/hw_types.h"
-#include "driverlib/gpio.h"
-#include "driverlib/rom.h"
-#include "driverlib/rom_map.h"
-#include "utils/softssi.h"
+#include <StellarisWare/inc/hw_types.h>
+#include <StellarisWare/driverlib/gpio.h>
+#include <StellarisWare/driverlib/rom.h>
+#include <StellarisWare/driverlib/rom_map.h>
+#include <StellarisWare/utils/softssi.h>
 
 //*****************************************************************************
 //

@@ -22,10 +22,10 @@
 //
 //*****************************************************************************
 
-#include "inc/hw_types.h"
-#include "driverlib/debug.h"
-#include "driverlib/interrupt.h"
-#include "utils/ringbuf.h"
+#include <StellarisWare/inc/hw_types.h>
+#include <StellarisWare/driverlib/debug.h>
+#include <StellarisWare/driverlib/interrupt.h>
+#include <StellarisWare/utils/ringbuf.h>
 
 //*****************************************************************************
 //

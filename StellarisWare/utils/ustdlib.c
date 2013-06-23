@@ -23,8 +23,8 @@
 //*****************************************************************************
 
 #include <string.h>
-#include "driverlib/debug.h"
-#include "utils/ustdlib.h"
+#include <StellarisWare/driverlib/debug.h>
+#include <StellarisWare/utils/ustdlib.h>
 
 //*****************************************************************************
 //

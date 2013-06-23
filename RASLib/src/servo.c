@@ -22,11 +22,12 @@
 //*****************************************************************************
 
 #include "servo.h"
-#include "inc/hw_memmap.h"
-#include "inc/hw_ints.h"
-#include "inc/lm4f120h5qr.h"
-#include "driverlib/interrupt.h"
-#include "driverlib/timer.h"
+#include <StellarisWare/inc/hw_ints.h>
+#include <StellarisWare/inc/lm4f120h5qr.h>
+#include <StellarisWare/driverlib/interrupt.h>
+#include <StellarisWare/driverlib/timer.h>
+
+tServoFunction rgServoFunctions[SERVO_FUNCTION_BUFFER_SIZE];
 
 void InitializeServoGenerator(void)
 {

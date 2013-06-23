@@ -22,12 +22,12 @@
 //
 //*****************************************************************************
 
-#include "inc/hw_flash.h"
-#include "inc/hw_types.h"
-#include "driverlib/debug.h"
-#include "driverlib/flash.h"
-#include "driverlib/sysctl.h"
-#include "utils/flash_pb.h"
+#include <StellarisWare/inc/hw_flash.h>
+#include <StellarisWare/inc/hw_types.h>
+#include <StellarisWare/driverlib/debug.h>
+#include <StellarisWare/driverlib/flash.h>
+#include <StellarisWare/driverlib/sysctl.h>
+#include <StellarisWare/utils/flash_pb.h>
 
 //*****************************************************************************
 //

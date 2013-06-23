@@ -22,14 +22,14 @@
 //
 //*****************************************************************************
 
-#include "inc/hw_memmap.h"
-#include "inc/hw_types.h"
-#include "driverlib/debug.h"
-#include "driverlib/rom.h"
-#include "driverlib/rom_map.h"
-#include "driverlib/sysctl.h"
-#include "driverlib/timer.h"
-#include "utils/cpu_usage.h"
+#include <StellarisWare/inc/hw_memmap.h>
+#include <StellarisWare/inc/hw_types.h>
+#include <StellarisWare/driverlib/debug.h>
+#include <StellarisWare/driverlib/rom.h>
+#include <StellarisWare/driverlib/rom_map.h>
+#include <StellarisWare/driverlib/sysctl.h>
+#include <StellarisWare/driverlib/timer.h>
+#include <StellarisWare/utils/cpu_usage.h>
 
 //*****************************************************************************
 //

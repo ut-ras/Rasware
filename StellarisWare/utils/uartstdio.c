@@ -23,17 +23,17 @@
 //*****************************************************************************
 
 #include <stdarg.h>
-#include "inc/hw_ints.h"
-#include "inc/hw_memmap.h"
-#include "inc/hw_types.h"
-#include "inc/hw_uart.h"
-#include "driverlib/debug.h"
-#include "driverlib/interrupt.h"
-#include "driverlib/rom.h"
-#include "driverlib/rom_map.h"
-#include "driverlib/sysctl.h"
-#include "driverlib/uart.h"
-#include "utils/uartstdio.h"
+#include <StellarisWare/inc/hw_ints.h>
+#include <StellarisWare/inc/hw_memmap.h>
+#include <StellarisWare/inc/hw_types.h>
+#include <StellarisWare/inc/hw_uart.h>
+#include <StellarisWare/driverlib/debug.h>
+#include <StellarisWare/driverlib/interrupt.h>
+#include <StellarisWare/driverlib/rom.h>
+#include <StellarisWare/driverlib/rom_map.h>
+#include <StellarisWare/driverlib/sysctl.h>
+#include <StellarisWare/driverlib/uart.h>
+#include <StellarisWare/utils/uartstdio.h>
 
 //*****************************************************************************
 //

@@ -1,15 +1,13 @@
-#include <StellarisWare/hw_types.h>		// tBoolean
-#include <StellarisWare/hw_memmap.h>
-#include <utils/uartstdio.h>	// input/output over UART
-#include <driverlib/gpio.h>
-#include <driverlib/sysctl.h>
-
-#include <RASLib/servo.h>
-
+#include <StellarisWare/utils/uartstdio.h>	// input/output over UART
+#include <RASLib/inc/servo.h>
 #include "RASDemo.h"
+#define SERVO_0 	0
+#define SERVO_1		1
+#define SERVO_2		2
+#define	SERVO_3		3
 
 void initServo(void) {
-	InitializeServos();
+	InitializeServoGenerator();
 }
 
 void servoDemo(void) {

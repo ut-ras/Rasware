@@ -6,6 +6,7 @@ void putc(char ch);
 int keyWasPressed(void);
 
 // Functions in MotorDemo
+
 void initMotors(void); 
 void motorDemo(void);
 
