@@ -349,7 +349,7 @@
               <MiscControls></MiscControls>
               <Define>rvmdk PART_LM4F120H5QR TARGET_IS_BLIZZARD_RA1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\StellarisWare;inc;..\</IncludePath>
+              <IncludePath>..\;inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -514,11 +514,6 @@
               <FileName>ServoDemo.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\RASDemo\ServoDemo.c</FilePath>
-            </File>
-            <File>
-              <FileName>startup.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\RASDemo\startup.c</FilePath>
             </File>
             <File>
               <FileName>UARTDemo.c</FileName>
