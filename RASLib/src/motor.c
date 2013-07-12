@@ -16,15 +16,15 @@
 //
 //*****************************************************************************
 
-#include <StellarisWare/inc/hw_types.h>
-#include <StellarisWare/inc/hw_memmap.h>
-#include <StellarisWare/driverlib/rom.h>
-#include <StellarisWare/driverlib/sysctl.h> 
-#include <StellarisWare/driverlib/gpio.h>
-#include <StellarisWare/driverlib/timer.h>
-#include <StellarisWare/driverlib/pin_map.h>
+#include "inc/hw_types.h"
+#include "inc/hw_memmap.h"
+#include "driverlib/rom.h"
+#include "driverlib/sysctl.h" 
+#include "driverlib/gpio.h"
+#include "driverlib/timer.h"
+#include "driverlib/pin_map.h"
 #include "init.h"
-#include "motor.h"	  
+#include "motor.h"
 
 tBoolean hi;
 
@@ -163,8 +163,7 @@ void SetMotorPowers(power_t power0, power_t power1) {
 	SetMotorPower(MOTOR_1, power1);
 }
 
-int mainMotor(void) {
+int main(void) {
 	InitializeMotors(false,false);
 	SetMotorPowers(127,127);
-	return 0xFFFF;
 }

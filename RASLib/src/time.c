@@ -21,18 +21,19 @@
 //
 //*****************************************************************************
 
-#include <StellarisWare/inc/hw_types.h>
-#include <StellarisWare/inc/hw_memmap.h>
-#include <StellarisWare/inc/hw_ints.h>
-#include <StellarisWare/inc/lm4f120h5qr.h>
-#include <StellarisWare/driverlib/sysctl.h>
-#include <StellarisWare/driverlib/systick.h>
-#include <StellarisWare/driverlib/timer.h>
-#include <StellarisWare/driverlib/interrupt.h>
+#include "inc/hw_types.h"
+#include "inc/hw_memmap.h"
+#include "inc/hw_ints.h"
+#include "inc/lm4f120h5qr.h"
+#include "driverlib/sysctl.h"
+#include "driverlib/systick.h"
+#include "driverlib/timer.h"
+#include "driverlib/interrupt.h"
 #include "time.h"
+#include "gpioints.h"
 
 /***************** GLOBAL VARIABLES *****************/
-unsigned long g_ulSystemTimeUS;
+unsigned long g_ulSystemTimeMS;
 unsigned long g_ulSystemTimeSeconds;
 
 
@@ -43,17 +44,17 @@ unsigned long g_ulSystemTimeSeconds;
 unsigned long GetTime(void){ return g_ulSystemTimeSeconds; }
 
 // Output: system time in microseconds
-unsigned long GetTimeUS(void){ return g_ulSystemTimeUS; }
+unsigned long GetTimeMS(void){ return g_ulSystemTimeMS; }
 
 // Initializes a system timer with microsecond resolution    
 void InitializeSystemTime(void){
     // Initialize globals
-    g_ulSystemTimeUS = 0;
+    g_ulSystemTimeMS = 0;
     g_ulSystemTimeSeconds = 0;
     
     // Set up the period for the SysTick timer.  The SysTick timer period will
-    // be equal to the system clock divided by 1000000, resulting in a period of 1 microsecond.
-    SysTickPeriodSet(SysCtlClockGet()/US_PER_SEC);
+    // be equal to the system clock divided by 1000, resulting in a period of 1 millisecond.
+    SysTickPeriodSet(SysCtlClockGet()/MS_PER_SEC);
     
     // Enable the SysTick Interrupt.
     SysTickIntEnable();
@@ -63,9 +64,9 @@ void InitializeSystemTime(void){
 }
 
 void SysTickHandler(void){
-    g_ulSystemTimeUS++;
-    if(g_ulSystemTimeUS >= US_PER_SEC){ // wrap US around every second
-        g_ulSystemTimeUS = 0;
+    g_ulSystemTimeMS++;
+    if(g_ulSystemTimeMS >= MS_PER_SEC){ // wrap US around every second
+        g_ulSystemTimeMS = 0;
         g_ulSystemTimeSeconds++;
     }
 }
@@ -82,7 +83,6 @@ typedef struct{
 } tPeriodicFunction;
 tPeriodicFunction rgPeriodicFunctions[PERIODIC_FUNCTION_BUFFER_SIZE];
 
-void Dummy(void){} // does nothing
 
 void InitializePeriodicFunctions(void)
 {
@@ -204,7 +204,7 @@ void WaitUS(unsigned long long us)
     TimerEnable(WTIMER5_BASE, TIMER_A);		 
     
     // Spin until WTimer5 times out
-    while(TimerIntStatus(WTIMER5_BASE, TIMER_A) & TIMER_TIMA_TIMEOUT);
+    while(!(TimerIntStatus(WTIMER5_BASE, TIMER_A) & TIMER_TIMA_TIMEOUT));
     
     // Disable WTimer5
     TimerDisable(WTIMER5_BASE, TIMER_BOTH);
