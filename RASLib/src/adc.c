@@ -21,19 +21,19 @@
 //
 //*****************************************************************************
 
-#include <StellarisWare/inc/hw_types.h>
-#include <StellarisWare/inc/hw_memmap.h>
-#include <StellarisWare/inc/hw_ints.h>
-#include <StellarisWare/inc/lm4f120h5qr.h>
-#include <StellarisWare/driverlib/sysctl.h>
-#include <StellarisWare/driverlib/timer.h>
-#include <StellarisWare/driverlib/interrupt.h>
-#include <StellarisWare/driverlib/adc.h>
-#include <StellarisWare/driverlib/gpio.h>
+#include "inc/hw_types.h"
+#include "inc/hw_memmap.h"
+#include "inc/hw_ints.h"
+#include "inc/lm4f120h5qr.h"
+#include "driverlib/sysctl.h"
+#include "driverlib/timer.h"
+#include "driverlib/interrupt.h"
+#include "driverlib/adc.h"
+#include "driverlib/gpio.h"
 #include "adc.h"
 
 /***************** GLOBAL VARIABLES *****************/
-unsigned long g_rgADCValues[ADC_SIZE];
+unsigned long g_rgADCValues[2];
 
 
 // Initializes two ADC pins, PE2 = ADC1 and PE3 = ADC0
@@ -43,11 +43,9 @@ unsigned long g_rgADCValues[ADC_SIZE];
 // Uses GPIOPin E2 and E3, ADC0 Sequencer 1, and Timer5B
 void InitializeADC(void)
 {
-	int i; 
     // Give intial values to the globals
-	for(i=0; i<ADC_SIZE; i++) {
-    g_rgADCValues[i] = 0;
-    }
+    g_rgADCValues[0] = 0;
+    g_rgADCValues[1] = 0;
     
     // Enable clocking for Timer5, ADC0, and GPIOE
     SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER5); 
@@ -55,7 +53,7 @@ void InitializeADC(void)
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
     
     // Set PE2 and PE3 to be ADC pins
-    GPIOPinTypeADC(GPIO_PORTE_BASE, ADC0 | ADC1); // change for specific board 
+    GPIOPinTypeADC(GPIO_PORTE_BASE, GPIO_PIN_2 | GPIO_PIN_3);
     
     // Configure Timer5B to be periodic, maintaining the configuration for Timer5A
     TimerConfigure(TIMER5_BASE, TIMER5_CFG_R | TIMER_CFG_SPLIT_PAIR | TIMER_CFG_B_PERIODIC);
@@ -94,7 +92,7 @@ void InitializeADC(void)
     
     // Enable interrupts
     IntEnable(INT_ADC0SS1);
-    IntEnable(INT_TIMER5B);
+    IntEnable(INT_TIMER0B);
 }
 
 
