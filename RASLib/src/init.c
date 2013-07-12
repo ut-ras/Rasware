@@ -21,16 +21,13 @@
 //
 //*****************************************************************************
 
-#include <StellarisWare/inc/hw_types.h>
-#include <StellarisWare/driverlib/rom.h>
-#include <StellarisWare/driverlib/sysctl.h>
+#include "inc/hw_types.h"
+#include "driverlib/rom.h"
+#include "driverlib/sysctl.h"
 #include "init.h"
 #include "time.h"
-#include <StellarisWare/driverlib/fpu.h>
-#include <StellarisWare/driverlib/interrupt.h>
-#include <StellarisWare/utils/cmdline.h>
-
-tCmdLineEntry g_sCmdTable[]; 
+#include "driverlib/fpu.h"
+#include "driverlib/interrupt.h"
 
 void InitializeMCU(void)
 {
@@ -44,7 +41,7 @@ void InitializeMCU(void)
                        SYSCTL_XTAL_16MHZ);
     
     //Initialize System Timer
-    //InitializeSystemTime();
+    InitializeSystemTime();
     
     //Enable global interrupts
     IntMasterEnable();    

@@ -2,7 +2,6 @@ Drivers -
   Servo (RC) PWM
     PWM: http://codeandlife.com/2012/10/30/stellaris-launchpad-pwm-tutorial/
   Motor PWM + Control
-  USBUART
   Encoders
   Line Sensors
 
@@ -27,8 +26,10 @@ Non-software-
   RASDemo
 
 Written, not tested-
-  MCU Initialization
-  System Time
-  Periodic functions
-  Timer waits
-  ADC
+
+ ADC
+ Servo
+
+General TODO:
+Add "ifndef"s and "ifdef __cplusplus"s to headers
+Additional ADCs?

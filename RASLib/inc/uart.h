@@ -22,6 +22,6 @@
 //*****************************************************************************
 
 
-#include <StellarisWare/utils/uartstdio.h>
+#include "utils/uartstdio.h"
 
 void InitializeUART(void);
