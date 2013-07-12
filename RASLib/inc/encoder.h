@@ -25,12 +25,18 @@
 #include "inc/hw_memmap.h"
 #include "inc/hw_ints.h"
 #include "driverlib/gpio.h"
+#include "gpioints.h"
 
-unsigned long AddEncoder(unsigned long ulPort, 
-                         unsigned char ucPinA, 
-                         unsigned char ucPinB,
-                         unsigned long ulInterrupt);
+#define ENCODER_BUFFER_SIZE 4
+
+int AddEncoder(unsigned long ulPort, 
+               unsigned char ucPinA, 
+               unsigned char ucPinB,
+               unsigned long ulInterrupt,
+               tGPIO_Port port);
 // macro to simplify adding an encoder
 // e.g.,
-// InitalizeEncoder(F,2,3) sets a new encoder with PF2 = A and PF3 = B
-#define InitializeEncoder(PORT,PINA,PINB) AddEncoder(GPIO_PORT ## PORT ## _BASE, PINA, PINB, INT_GPIO ## PORT)
+// InitializeEncoder(F,2,3) sets a new encoder with PF2 = A and PF3 = B
+#define InitializeEncoder(_PORT,PINA,PINB) AddEncoder(GPIO_PORT ## _PORT ## _BASE, PINA, PINB, INT_GPIO ## _PORT, PORT ## _PORT)
+
+signed long GetEncoderTicks(unsigned char index);
