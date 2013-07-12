@@ -350,7 +350,7 @@
               <MiscControls></MiscControls>
               <Define>rvmdk PART_LM4F120H5QR TARGET_IS_BLIZZARD_RA1</Define>
               <Undefine></Undefine>
-              <IncludePath>inc;..\StellarisWare;C:\Stellarisware</IncludePath>
+              <IncludePath>..\StellarisWare;inc;C:\Stellarisware</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -431,6 +431,11 @@
               <FileType>1</FileType>
               <FilePath>.\src\encoder.c</FilePath>
             </File>
+            <File>
+              <FileName>gpioints.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\gpioints.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -445,38 +450,6 @@
         </Group>
         <Group>
           <GroupName>Include</GroupName>
-          <Files>
-            <File>
-              <FileName>servo.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\servo.h</FilePath>
-            </File>
-            <File>
-              <FileName>motor.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\motor.h</FilePath>
-            </File>
-            <File>
-              <FileName>init.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\init.h</FilePath>
-            </File>
-            <File>
-              <FileName>adc.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\adc.h</FilePath>
-            </File>
-            <File>
-              <FileName>time.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\time.h</FilePath>
-            </File>
-            <File>
-              <FileName>uart.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\uart.h</FilePath>
-            </File>
-          </Files>
         </Group>
       </Groups>
     </Target>

@@ -30,6 +30,7 @@
 #include "driverlib/timer.h"
 #include "driverlib/interrupt.h"
 #include "time.h"
+#include "gpioints.h"
 
 /***************** GLOBAL VARIABLES *****************/
 unsigned long g_ulSystemTimeMS;
@@ -82,7 +83,6 @@ typedef struct{
 } tPeriodicFunction;
 tPeriodicFunction rgPeriodicFunctions[PERIODIC_FUNCTION_BUFFER_SIZE];
 
-void Dummy(void){} // does nothing
 
 void InitializePeriodicFunctions(void)
 {
