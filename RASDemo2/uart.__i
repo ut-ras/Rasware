@@ -1,1 +1,0 @@
--c --cpu Cortex-M4.fp -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -I..\StellarisWare -I..\RASLib\inc -I C:\Keil\ARM\RV31\Inc -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -o "uart.o" --omf_browse "uart.crf" --depend "uart.d" "..\RASLib\src\uart.c"

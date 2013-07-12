@@ -45,9 +45,9 @@
           </TargetStatus>
           <OutputDirectory>.\output\</OutputDirectory>
           <OutputName>RASLib</OutputName>
-          <CreateExecutable>1</CreateExecutable>
-          <CreateLib>0</CreateLib>
-          <CreateHexFile>1</CreateHexFile>
+          <CreateExecutable>0</CreateExecutable>
+          <CreateLib>1</CreateLib>
+          <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\</ListingPath>
@@ -117,7 +117,7 @@
             <Oh166RecLen>16</Oh166RecLen>
           </OPTHX>
           <Simulator>
-            <UseSimulator>0</UseSimulator>
+            <UseSimulator>1</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -128,7 +128,7 @@
             <LimitSpeedToRealTime>0</LimitSpeedToRealTime>
           </Simulator>
           <Target>
-            <UseTarget>1</UseTarget>
+            <UseTarget>0</UseTarget>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>0</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -136,9 +136,10 @@
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
             <RestoreFunctions>0</RestoreFunctions>
             <RestoreToolbox>1</RestoreToolbox>
+            <RestoreTracepoints>0</RestoreTracepoints>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>4</TargetSelection>
+          <TargetSelection>1</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -152,7 +153,7 @@
             <PeripheralDll></PeripheralDll>
             <PeripheralDllArguments></PeripheralDllArguments>
             <InitializationFile></InitializationFile>
-            <Driver>BIN\lmidk-agdi.dll</Driver>
+            <Driver>BIN\UL2CM3.DLL</Driver>
           </TargetDlls>
         </DebugOption>
         <Utilities>
@@ -161,11 +162,11 @@
             <UseExternalTool>0</UseExternalTool>
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
-            <Capability>1</Capability>
-            <DriverSelection>4097</DriverSelection>
+            <Capability>0</Capability>
+            <DriverSelection>-1</DriverSelection>
           </Flash1>
-          <Flash2>BIN\lmidk-agdi.dll</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash2>BIN\UL2CM3.DLL</Flash2>
+          <Flash3></Flash3>
           <Flash4></Flash4>
         </Utilities>
         <TargetArmAds>
@@ -344,12 +345,12 @@
             <Rwpi>0</Rwpi>
             <wLevel>0</wLevel>
             <uThumb>0</uThumb>
-            <uSurpInc>1</uSurpInc>
+            <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define>rvmdk PART_LM4F120H5QR TARGET_IS_BLIZZARD_RA1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\;inc</IncludePath>
+              <IncludePath>..\StellarisWare;inc;C:\Stellarisware</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -411,9 +412,9 @@
               <FilePath>.\src\servo.c</FilePath>
             </File>
             <File>
-              <FileName>uart.c</FileName>
+              <FileName>adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\uart.c</FilePath>
+              <FilePath>.\src\adc.c</FilePath>
             </File>
             <File>
               <FileName>time.c</FileName>
@@ -421,9 +422,9 @@
               <FilePath>.\src\time.c</FilePath>
             </File>
             <File>
-              <FileName>adc.c</FileName>
+              <FileName>uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\adc.c</FilePath>
+              <FilePath>.\src\uart.c</FilePath>
             </File>
             <File>
               <FileName>encoder.c</FileName>
@@ -431,94 +432,9 @@
               <FilePath>.\src\encoder.c</FilePath>
             </File>
             <File>
-              <FileName>linesensor.c</FileName>
+              <FileName>gpioints.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\linesensor.c</FilePath>
-            </File>
-            <File>
-              <FileName>cmdline.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\StellarisWare\utils\cmdline.c</FilePath>
-            </File>
-            <File>
-              <FileName>cpu_usage.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\StellarisWare\utils\cpu_usage.c</FilePath>
-            </File>
-            <File>
-              <FileName>flash_pb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\StellarisWare\utils\flash_pb.c</FilePath>
-            </File>
-            <File>
-              <FileName>isqrt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\StellarisWare\utils\isqrt.c</FilePath>
-            </File>
-            <File>
-              <FileName>ringbuf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\StellarisWare\utils\ringbuf.c</FilePath>
-            </File>
-            <File>
-              <FileName>sine.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\StellarisWare\utils\sine.c</FilePath>
-            </File>
-            <File>
-              <FileName>softi2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\StellarisWare\utils\softi2c.c</FilePath>
-            </File>
-            <File>
-              <FileName>softssi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\StellarisWare\utils\softssi.c</FilePath>
-            </File>
-            <File>
-              <FileName>uartstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\StellarisWare\utils\uartstdio.c</FilePath>
-            </File>
-            <File>
-              <FileName>ustdlib.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\StellarisWare\utils\ustdlib.c</FilePath>
-            </File>
-            <File>
-              <FileName>EncoderDemo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\RASDemo\EncoderDemo.c</FilePath>
-            </File>
-            <File>
-              <FileName>IRSensorDemo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\RASDemo\IRSensorDemo.c</FilePath>
-            </File>
-            <File>
-              <FileName>LineSensorDemo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\RASDemo\LineSensorDemo.c</FilePath>
-            </File>
-            <File>
-              <FileName>Main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\RASDemo\Main.c</FilePath>
-            </File>
-            <File>
-              <FileName>MotorDemo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\RASDemo\MotorDemo.c</FilePath>
-            </File>
-            <File>
-              <FileName>ServoDemo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\RASDemo\ServoDemo.c</FilePath>
-            </File>
-            <File>
-              <FileName>UARTDemo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\RASDemo\UARTDemo.c</FilePath>
+              <FilePath>.\src\gpioints.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -528,59 +444,12 @@
             <File>
               <FileName>driverlib-cm4f.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>..\StellarisWare\driverlib\rvmdk-cm4f\driverlib-cm4f.lib</FilePath>
-            </File>
-            <File>
-              <FileName>RASDemo.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\RASDemo\RASDemo.h</FilePath>
+              <FilePath>C:\StellarisWare\driverlib\rvmdk-cm4f\driverlib-cm4f.lib</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Include</GroupName>
-          <Files>
-            <File>
-              <FileName>servo.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\servo.h</FilePath>
-            </File>
-            <File>
-              <FileName>motor.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\motor.h</FilePath>
-            </File>
-            <File>
-              <FileName>init.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\init.h</FilePath>
-            </File>
-            <File>
-              <FileName>uart.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\uart.h</FilePath>
-            </File>
-            <File>
-              <FileName>time.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\time.h</FilePath>
-            </File>
-            <File>
-              <FileName>adc.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\adc.h</FilePath>
-            </File>
-            <File>
-              <FileName>linesensor.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\linesensor.h</FilePath>
-            </File>
-            <File>
-              <FileName>encoder.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\encoder.h</FilePath>
-            </File>
-          </Files>
         </Group>
       </Groups>
     </Target>

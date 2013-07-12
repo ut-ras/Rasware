@@ -22,12 +22,10 @@
 //*****************************************************************************
 
 #include "servo.h"
-#include <StellarisWare/inc/hw_ints.h>
-#include <StellarisWare/inc/lm4f120h5qr.h>
-#include <StellarisWare/driverlib/interrupt.h>
-#include <StellarisWare/driverlib/timer.h>
-
-tServoFunction rgServoFunctions[SERVO_FUNCTION_BUFFER_SIZE];
+#include "inc/hw_ints.h"
+#include "inc/lm4f120h5qr.h"
+#include "driverlib/interrupt.h"
+#include "driverlib/timer.h"
 
 void InitializeServoGenerator(void)
 {
@@ -58,6 +56,7 @@ void InitializeServoGenerator(void)
 // Servo output is 50hz with 2.5% to 12.5% duty cycle, centered at 7.5%
 // \param index is the servo to set
 // \param input is the value to set at, 0 being 2.5% duty cycle and 255 being 12.5%
+tServoFunction rgServoFunctions[SERVO_FUNCTION_BUFFER_SIZE];
 void SetServoPosition(unsigned long index, unsigned char input){
     rgServoFunctions[index].value = ((((unsigned long) input) * (SERVO_GENERATOR_RESOLUTION / 10)) >> 8 )+ (SERVO_GENERATOR_RESOLUTION / 40);
 }

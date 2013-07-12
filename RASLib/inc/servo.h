@@ -21,10 +21,10 @@
 //
 //*****************************************************************************
 
-#include <StellarisWare/inc/hw_types.h>
-#include <StellarisWare/driverlib/gpio.h>
-#include <StellarisWare/driverlib/sysctl.h>
-#include <StellarisWare/inc/hw_memmap.h>
+#include "inc/hw_types.h"
+#include "inc/hw_memmap.h"
+#include "driverlib/gpio.h"
+#include "driverlib/sysctl.h"
 
 #ifndef __SERVO_H__
 #define __SERVO_H__
@@ -32,7 +32,7 @@
 #define SERVO_GENERATOR_RESOLUTION 4000
 #define SERVO_GENERATOR_RATE 50
 #define SERVO_FUNCTION_BUFFER_SIZE 16
- typedef struct{ 
+typedef struct{ 
     unsigned long port; 
     unsigned long pin; 
     unsigned long value;
@@ -40,11 +40,19 @@
 extern tServoFunction rgServoFunctions[SERVO_FUNCTION_BUFFER_SIZE];
 
 unsigned long AddServoFunction( unsigned long port, unsigned long pin );
-
-void InitializeServoGenerator(void); 
-
 void SetServoPosition(unsigned long index, unsigned char input);
-
-void ServoGeneratorHandler(void);
+// macro to create a servo signal generator
+// e.g.,
+// AddServo(Arm,F,1)
+// creates InitializeServoArm() and SetServoArm(unsigned char)
+#define AddServo(NAME,PORT,PIN) \
+unsigned long NAME ## ServoSelect; \
+void InitializeServo ## NAME (void){   \
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIO ## PORT); \
+    NAME ## ServoSelect = AddServoFunction(GPIO_PORT ## PORT ## _BASE, GPIO_PIN_ ## PIN); \
+} \
+void SetServo ## NAME (unsigned char input){ \
+    SetServoPosition( NAME ## ServoSelect, input); \
+}
 
 #endif //  __SERVO_H__

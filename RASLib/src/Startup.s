@@ -83,6 +83,12 @@ __heap_limit
         EXTERN ADCTriggerHandler
         EXTERN ADC0SS1Handler
         EXTERN ServoGeneratorHandler
+        EXTERN PortAHandler
+        EXTERN PortBHandler
+        EXTERN PortCHandler
+        EXTERN PortDHandler
+        EXTERN PortEHandler
+        EXTERN PortFHandler
         
         EXPORT  __Vectors
 __Vectors
@@ -102,11 +108,11 @@ __Vectors
         DCD     0                           ; Reserved
         DCD     IntDefaultHandler           ; PendSV Handler
         DCD     SysTickHandler              ; SysTick Handler
-        DCD     IntDefaultHandler           ; GPIO Port A
-        DCD     IntDefaultHandler           ; GPIO Port B
-        DCD     IntDefaultHandler           ; GPIO Port C
-        DCD     IntDefaultHandler           ; GPIO Port D
-        DCD     IntDefaultHandler           ; GPIO Port E
+        DCD     PortAHandler                ; GPIO Port A
+        DCD     PortBHandler                ; GPIO Port B
+        DCD     PortCHandler                ; GPIO Port C
+        DCD     PortDHandler                ; GPIO Port D
+        DCD     PortEHandler                ; GPIO Port E
         DCD     IntDefaultHandler           ; UART0 Rx and Tx
         DCD     IntDefaultHandler           ; UART1 Rx and Tx
         DCD     IntDefaultHandler           ; SSI0 Rx and Tx
@@ -132,7 +138,7 @@ __Vectors
         DCD     IntDefaultHandler           ; Analog Comparator 2
         DCD     IntDefaultHandler           ; System Control (PLL, OSC, BO)
         DCD     IntDefaultHandler           ; FLASH Control
-        DCD     IntDefaultHandler           ; GPIO Port F
+        DCD     PortFHandler                ; GPIO Port F
         DCD     IntDefaultHandler           ; GPIO Port G
         DCD     IntDefaultHandler           ; GPIO Port H
         DCD     IntDefaultHandler           ; UART2 Rx and Tx

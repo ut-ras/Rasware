@@ -23,8 +23,11 @@
 
 #define US_PER_SEC 1000000
 #define US_PER_MS 1000
+#define MS_PER_SEC 1000
 #define PERIODIC_FUNCTION_RATE 1000
 
+extern unsigned long g_ulSystemTimeMS;
+extern unsigned long g_ulSystemTimeSeconds;
 
 unsigned long GetTime(void);
 unsigned long GetTimeUS(void);
