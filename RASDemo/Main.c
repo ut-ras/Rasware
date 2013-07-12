@@ -1,6 +1,6 @@
-#include <StellarisWare/inc/hw_types.h>		// tBoolean
+#include <inc/hw_types.h>		// tBoolean
 #include "RASDemo.h"
-#include <StellarisWare/utils/uartstdio.h>	// input/output over UART
+#include <utils/uartstdio.h>	// input/output over UART
 #include <RASLib/inc/uart.h> 
 #include <RASLib/inc/init.h> 
 
