@@ -163,7 +163,8 @@ void SetMotorPowers(power_t power0, power_t power1) {
 	SetMotorPower(MOTOR_1, power1);
 }
 
+/* Removed due to symbol collision
 int main(void) {
 	InitializeMotors(false,false);
 	SetMotorPowers(127,127);
-}
+}*/

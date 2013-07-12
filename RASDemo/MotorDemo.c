@@ -1,8 +1,8 @@
-#include <StellarisWare/inc/hw_types.h>		// tBoolean
-#include <StellarisWare/inc/hw_memmap.h>
-#include <StellarisWare/utils/uartstdio.h>	// input/output over UART
-#include <StellarisWare/driverlib/gpio.h>
-#include <StellarisWare/driverlib/sysctl.h>
+#include <inc/hw_types.h>		// tBoolean
+#include <inc/hw_memmap.h>
+#include <utils/uartstdio.h>	// input/output over UART
+#include <driverlib/gpio.h>
+#include <driverlib/sysctl.h>
 
 #include <RASLib/inc/motor.h>
 

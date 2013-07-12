@@ -1,4 +1,4 @@
-#include <StellarisWare/utils/uartstdio.h>	// input/output over UART
+#include <utils/uartstdio.h>	// input/output over UART
 #include <RASLib/inc/servo.h>
 #include "RASDemo.h"
 #define SERVO_0 	0
@@ -7,7 +7,7 @@
 #define	SERVO_3		3
 
 void initServo(void) {
-	InitializeServoGenerator();
+	//InitializeServoGenerator();
 }
 
 void servoDemo(void) {
