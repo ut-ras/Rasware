@@ -10,10 +10,11 @@
 #include "RASDemo.h"
 
 void initIRSensor(void) {
-	SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC);
+	/*SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC);
 	ADCSequenceConfigure(ADC_BASE,0, ADC_TRIGGER_PROCESSOR, 0);
 	ADCSequenceStepConfigure(ADC_BASE, 0, 0, ADC_CTL_IE | ADC_CTL_END | ADC_CTL_CH0);
-	ADCSequenceEnable(ADC_BASE, 0);
+	ADCSequenceEnable(ADC_BASE, 0);*/
+	UARTprintf("init IRSensor not working.\n");
 }
 
 long getADCValue(void) {
@@ -25,6 +26,7 @@ long getADCValue(void) {
 }
 
 void IRSensorDemo(void) {
+	/* 2012 IRSensor Demo
 	UARTprintf("Press:\nany key-read IR sensor\n");
 	UARTprintf("any key after read begins-quit\n");
 	
@@ -32,5 +34,7 @@ void IRSensorDemo(void) {
 		unsigned long ADCValue = getADCValue();
 	 	UARTprintf("IR value: %d\r",ADCValue);
 	}	
-	UARTprintf("\n");
+	UARTprintf("\n");*/
+	
+	UARTprintf("IRSensor Demo not working.\n");
 }
