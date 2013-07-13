@@ -1,8 +1,4 @@
 Drivers -
-  Servo (RC) PWM
-    PWM: http://codeandlife.com/2012/10/30/stellaris-launchpad-pwm-tutorial/
-  Motor PWM + Control
-  Encoders
   Line Sensors
 
 Luxuries-
@@ -25,14 +21,11 @@ Non-software-
   Software installation guide
   RASDemo
 
-Written, not tested-
-
- ADC
- Servo
 
 General TODO:
 Add "ifndef"s and "ifdef __cplusplus"s to headers
 Additional ADCs?
+Encoder and Motor invert
 
 Finished stuff:
 Basic system stuff tested and working
