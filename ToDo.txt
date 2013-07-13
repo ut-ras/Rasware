@@ -33,3 +33,12 @@ Written, not tested-
 General TODO:
 Add "ifndef"s and "ifdef __cplusplus"s to headers
 Additional ADCs?
+
+Finished stuff:
+Basic system stuff tested and working
+UART working
+Time functions tested and working
+Encoders tested and working
+Servos tested and working
+Motors written, shows up on Oscope, unable to drive motors yet
+ADC written, not working
