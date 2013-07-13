@@ -19,16 +19,26 @@ int EncoderMain(void){
     }
 }
 
-AddMotor(Left,A,4,C,6,COAST)
+// Rachel's board's pinout
+AddMotor(One,A,4,C,6,COAST)
+AddMotor(Two,A,3,A,2,COAST)
+AddMotor(Three,E,5,E,4,COAST)
+AddMotor(Four,C,7,A,5,COAST)
 int MotorMain(void){
     InitializeMCU();
     InitializeUART();
-    InitializeMotorLeft();
+    InitializeMotorOne();
+    InitializeMotorTwo();
+    InitializeMotorThree();
+    InitializeMotorFour();
     UARTprintf("\nMotor Test Starting...\n");
     for(;;){
         static float i = -1.0;
         UARTprintf("Motor Output: %g %d   \r",i,(long)(i*10000));
-        SetMotorLeft(i);
+        SetMotorOne(i);
+        SetMotorTwo(i);
+        SetMotorThree(i);
+        SetMotorFour(i);
         i += (1)/((float)MOTOR_GENERATOR_RESOLUTION);
         if(i>1) i=-1;
         WaitMS(1);
