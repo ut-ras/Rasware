@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>RASLibTest</TargetName>
+      <TargetName>RASDemo</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
@@ -44,7 +44,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\</OutputDirectory>
-          <OutputName>RASLibTest</OutputName>
+          <OutputName>RASDemo</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
@@ -388,17 +388,42 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Sources</GroupName>
+          <GroupName>Source</GroupName>
           <Files>
             <File>
-              <FileName>RASLib.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>..\RASLib\output\RASLib.lib</FilePath>
+              <FileName>EncoderDemo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\EncoderDemo.c</FilePath>
             </File>
             <File>
-              <FileName>test.c</FileName>
+              <FileName>IRSensorDemo.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\test.c</FilePath>
+              <FilePath>.\IRSensorDemo.c</FilePath>
+            </File>
+            <File>
+              <FileName>LineSensorDemo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LineSensorDemo.c</FilePath>
+            </File>
+            <File>
+              <FileName>Main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Main.c</FilePath>
+            </File>
+            <File>
+              <FileName>MotorDemo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\MotorDemo.c</FilePath>
+            </File>
+            <File>
+              <FileName>ServoDemo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\ServoDemo.c</FilePath>
+            </File>
+            <File>
+              <FileName>UARTDemo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\UARTDemo.c</FilePath>
             </File>
             <File>
               <FileName>uartstdio.c</FileName>
@@ -409,6 +434,16 @@
               <FileName>Startup.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\RASLib\src\Startup.s</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Libs</GroupName>
+          <Files>
+            <File>
+              <FileName>RASLib.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>..\RASLib\output\RASLib.lib</FilePath>
             </File>
           </Files>
         </Group>
