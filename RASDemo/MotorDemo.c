@@ -8,46 +8,50 @@
 
 #include "RASDemo.h"
 
+AddMotor(Left,A,4,A,5,COAST)
+AddMotor(Right,A,6,A,7,COAST)
+
 void initMotors(void) {
-	//InitializeMotors(false, false);
-	UARTprintf("init Motors not working.\n");
+	InitializeMotorLeft();
+	InitializeMotorRight();
 }
 
 void motorDemo(void) {
-	/* 2012 Motor Demo
+	// 2012 Motor Demo
 	UARTprintf("Press:\n  w-forward\n  s-backward\n  a-left\n  ");
 	UARTprintf("d-right\n  space-stop\n  enter-quit\n");
 	
 	{
-		// values should range between -128 and 127?
-		signed char left = 0, right = 0, maxSpeed = 127;
+		// max speed is 1.0 but 0.75 lets us check for working pwm
+		float left = 0, right = 0, speed = 0.75;
 		char newline = 13;
 		char ch = getc();
 		while(ch != newline) {
 			ch = getc();
 			putc(ch);
 			if (ch == 'w') {
-				left = maxSpeed;
-				right = -maxSpeed;
+				left = speed;
+				right = -speed;
 			} else if (ch == 's') {
-				left = -maxSpeed;
-				right = maxSpeed;
+				left = -speed;
+				right = speed;
 			} else if (ch == 'a') {
-				left = -maxSpeed;
-				right = -maxSpeed;
+				left = -speed;
+				right = -speed;
 			} else if (ch == 'd') {
-				left = maxSpeed;
-				right = maxSpeed;
+				left = speed;
+				right = speed;
 			} else if (ch == ' ') {
 				left = 0;
 				right = 0;
 			}
-			SetMotorPowers(left, right);
+			SetMotorLeft(left);
+			SetMotorRight(right);
+			UARTprintf("Set Motor to 0x%x%x 0x%x%x\n", left, right);
 		}
 	}
 	
-	SetMotorPowers(0,0);
-	UARTprintf("\n");*/
-	
-	UARTprintf("Motor Demo not working.\n");
+	SetMotorLeft(0);
+	SetMotorRight(0);
+	UARTprintf("\n");
 }
