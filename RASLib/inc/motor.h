@@ -1,65 +1,65 @@
-// ***************************
-// MOTOR FUNCTIONS AND DEFINES
-// ***************************
-#ifndef MOTOR_H
-#define MOTOR_H
-
-// *************************************************************
-// Enum for port selection parameter in motor initializations
-// *************************************************************
-typedef enum {
-	GPIOPORTA,
-	GPIOPORTB,
-	GPIOPORTC,
-	GPIOPORTD,
-	GPIOPORTE
-} GPIOPort;	   // GPIO port data types for parameter passing
-
 //*****************************************************************************
 //
-// If building with a C++ compiler, make all of the definitions in this header
-// have a C binding.
+// motor.h - software motor driver
+// 
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. THE AUTHORS OF THIS FILE
+// SHALL NOT, UNDER ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL,
+// OR CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
+// 
+// This is part of RASLib Rev0 of the RASWare2013 package.
+//
+// Written by: 
+// The student branch of the 
+// IEEE - Robotics and Automation Society 
+// at the University of Texas at Austin
+//
+// Website: ras.ece.utexas.edu
+// Contact: rasware@ras.ece.utexas.edu
 //
 //*****************************************************************************
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
-typedef signed char power_t;		// motor power data type
+#include "inc/hw_types.h"
+#include "inc/hw_memmap.h"
+#include "driverlib/gpio.h"
+#include "driverlib/sysctl.h"
 
-typedef enum {
-	MOTOR_0 = WTIMER0_BASE,			// MOTOR_0
-	MOTOR_1	= WTIMER1_BASE			// MOTOR_1
-} motor_t;	// motor data type
+#ifndef __MOTOR_H__
+#define __MOTOR_H__
 
-// Summary:	Initializes the appropriate PWMs for motor output
-// Parameters:
-//		invert0:	true if you want to invert MOTOR_0; false otherwise
-//		invert1:	true if you want to invert MOTOR_1; false otherwise
-// Note:	Always call this function before any other motor-related functions
-extern void InitializeMotors(tBoolean invert0, tBoolean invert1);
+#define MOTOR_GENERATOR_RESOLUTION 5000
+#define MOTOR_GENERATOR_RATE 20
+#define MOTOR_FUNCTION_BUFFER_SIZE 4
 
-// Summary: Sets the specified motor's power
-// Parameters:
-//		motor:		MOTOR_0 or MOTOR_1
-//		power:		sets motor to the specified power.
-//					0 is neutral, 127 is full forward, -128 is full backward
-extern void SetMotorPower(motor_t motor, power_t power);
+typedef enum{BRAKE, COAST} tMotorMode;
+typedef struct{ 
+    unsigned long port0; 
+    unsigned long pin0;
+    unsigned long port1; 
+    unsigned long pin1;
+    signed long value;
+    tMotorMode mode;
+    tBoolean active;
+} tMotorFunction;
+extern tMotorFunction rgMotorFunctions[MOTOR_FUNCTION_BUFFER_SIZE];
 
-// Summary: Sets both motor powers simultaneously
-// Parameters:
-//		power0:		desired power output for MOTOR_0
-//		power1:		desired power output for MOTOR_1
-extern void SetMotorPowers(power_t power0, power_t power1);
-
-//*****************************************************************************
-//
-// Mark the end of the C bindings section for C++ compilers.
-//
-//*****************************************************************************
-#ifdef __cplusplus
+unsigned long AddMotorFunction( unsigned long port0, unsigned long pin0 , unsigned long port1, unsigned long pin1, tMotorMode );
+void SetMotorPosition(unsigned long index, float input);
+// macro to create a servo signal generator
+// e.g.,
+// AddServo(Left,F,2,F,3,COAST)
+// creates InitializeMotorLeft() and SetMotorLeft(unsigned char)
+#define AddMotor(NAME,PORT0,PIN0,PORT1,PIN1,MODE) \
+unsigned long NAME ## MotorSelect; \
+void InitializeMotor ## NAME (void){   \
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIO ## PORT0); \
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIO ## PORT1); \
+    NAME ## MotorSelect = AddMotorFunction(GPIO_PORT ## PORT0 ## _BASE, GPIO_PIN_ ## PIN0, GPIO_PORT ## PORT1 ## _BASE, GPIO_PIN_ ## PIN1, MODE); \
+} \
+void SetMotor ## NAME (float input){ \
+    SetMotorPosition( NAME ## MotorSelect, input); \
 }
-#endif
 
-#endif // MOTOR_H
+#endif //  __MOTOR_H__

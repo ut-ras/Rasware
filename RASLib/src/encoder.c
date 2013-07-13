@@ -57,6 +57,9 @@ typedef struct{
     unsigned char ucPinA;
     unsigned char ucPinB;
     
+    // Invert
+    signed char invert;
+    
     // Recorded number of encoder "ticks" thus far
     signed long slTicks;
 }tEncoder;
@@ -92,7 +95,7 @@ void EncoderHandler(void){
     }
 }
 
-int AddEncoder(unsigned long ulPort, unsigned char ucPinA, unsigned char ucPinB, unsigned long ulInterrupt, tGPIO_Port port){
+int AddEncoder(unsigned long ulPeripheral, unsigned long ulPort, unsigned char ucPinA, unsigned char ucPinB, unsigned long ulInterrupt, tGPIO_Port port){
     static unsigned long encoder_count = 0;
     
     // Returns -1 (error) if buffer is full
@@ -106,15 +109,15 @@ int AddEncoder(unsigned long ulPort, unsigned char ucPinA, unsigned char ucPinB,
     Encoders[encoder_count].slTicks = 0;
     
     // Enable SysCtrl for the specified port
-    SysCtlPeripheralEnable(ulPort);
+    SysCtlPeripheralEnable(ulPeripheral);
     
     // Sets the specified pins as input pins
     GPIOPinTypeGPIOInput(ulPort, (1<<ucPinA) | (1<<ucPinB));
     
-    // Attach EncoderHandler to the 
+    // Attach EncoderHandler to the specified port
     AttachToInterruptHandler(port,EncoderHandler);
     
-    // Enable hardware interrupts to the specified pins.
+    // Enable hardware interrupts to the specified pins
     GPIOPinIntEnable(ulPort, (1<<ucPinA) | (1<<ucPinB));
     IntEnable(ulInterrupt);
     

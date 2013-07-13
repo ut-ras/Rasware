@@ -1,169 +1,124 @@
 //*****************************************************************************
 //
-// motor.c - motor initializations and command functions
+// motor.c - software motor driver
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
-// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
-// DAMAGES, FOR ANY REASON WHATSOEVER.
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. THE AUTHORS OF THIS FILE
+// SHALL NOT, UNDER ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL,
+// OR CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
 // This is part of RASLib Rev0 of the RASWare2013 package.
 //
+// Written by: 
+// The student branch of the 
+// IEEE - Robotics and Automation Society 
+// at the University of Texas at Austin
+//
 // Website: ras.ece.utexas.edu
-// Contact: president@ras.ece.utexas.edu
+// Contact: rasware@ras.ece.utexas.edu
 //
 //*****************************************************************************
 
-#include "inc/hw_types.h"
-#include "inc/hw_memmap.h"
-#include "driverlib/rom.h"
-#include "driverlib/sysctl.h" 
-#include "driverlib/gpio.h"
-#include "driverlib/timer.h"
-#include "driverlib/pin_map.h"
-#include "init.h"
 #include "motor.h"
+#include "inc/hw_ints.h"
+#include "inc/lm4f120h5qr.h"
+#include "driverlib/interrupt.h"
+#include "driverlib/timer.h"
 
-tBoolean hi;
-
-//***************************************************************************
-//                  GLOBALS
-
-unsigned long ulPeriod;
-//***************************************************************************
-
-//#define VARIABLEINIT       // Uncomment to allow parameter passing to enable different ports for motor use.
-#define DEFAULTINIT          // Uncomment to initialize PC4-6 by default
-
-//***************************************************************************
-// Summary:	Initializes the appropriate PWMs for motor output
-// Note: Always call this function before any other motor-related functions
-// Inputs: booleans for motor direction inversion (set false, false for no inversion),
-//    port being used for motor interface (set defines above to enable the selection of ports)
-//
-// By default initializes pins PC4-7 for use by PWM 
-//
-// Enable the peripherals used by the motors.
-//
-//***************************************************************************
-
-//***************************************************************************
-//	IN1		IN2		OUT	 	|			Coast	Brake
-//	0		0		CW		|	CW		 PP		 P0
-//	0		1		CCW		|	CCW		 P1      P(~P)
-//	1		0		Brake	|   S		 11      10
-//	1		1		Coast	|
-//
-//	By default, initializes motors to run in "Coast" mode
-//***************************************************************************
-
-#ifdef DEFAULTINIT
-void InitializeMotors(tBoolean bLeftInvert, tBoolean bRightInvert) {
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);  //Enable PWM on portC
-
-//************************************************************
-//	Split wide timers into 32-bit timers
-//************************************************************
-    TimerConfigure(WTIMER0_BASE, TIMER_CFG_SPLIT_PAIR|TIMER_CFG_A_PWM|TIMER_CFG_B_PWM);
-    TimerConfigure(WTIMER1_BASE, TIMER_CFG_SPLIT_PAIR|TIMER_CFG_A_PWM|TIMER_CFG_B_PWM);
-					  	
-//************************************************************
-//	Configure GPIO pins for PWM output
-//************************************************************
-    GPIOPinConfigure(GPIO_PC4_WT0CCP0);   // PC4 - TimerA - IN1
-    GPIOPinConfigure(GPIO_PC5_WT0CCP1);   // PC5 - PWM signal to motor-controller, TimerB  - IN2
+void InitializeMotorGenerator(void)
+{
+    int i;
+    // Initialze the motor generator buffer to 0 (0 = inactive)
+    for( i = 0; i < MOTOR_FUNCTION_BUFFER_SIZE; i++){
+        rgMotorFunctions[i].active = false;
+    }
     
-    GPIOPinConfigure(GPIO_PC6_WT1CCP0);   // PC6 - TimerA - IN1
-    GPIOPinConfigure(GPIO_PC7_WT1CCP1);   // PC7 - PWM signal to motor-controller, TimerB - IN2
-
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_WTIMER0);   // Enable Timers (Wide Timer 0 and 1)
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_WTIMER1);
+    // Enable SysCtrl for Timer4
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER4); 
     
-    ulPeriod = 256 + 8;       // 256 steps plus dead-band
-
-//************************************************************
-//	Set load and match for timer resets 
-//  (Will toggle pin when match reached, resets at value in load)
-//	Value in match will be changed in motor set function calls
-//************************************************************ 
-    TimerLoadSet(WTIMER0_BASE, TIMER_A, ulPeriod - 1);   // load reset value with Period
-    TimerMatchSet(WTIMER0_BASE, TIMER_A, ulPeriod / 2);  // Load match value with 1/2 of Period
-
-    TimerLoadSet(WTIMER0_BASE, TIMER_B, ulPeriod - 1);
-    TimerMatchSet(WTIMER0_BASE, TIMER_B, ulPeriod / 2);
-
-	TimerLoadSet(WTIMER1_BASE, TIMER_A, ulPeriod - 1);
-	TimerMatchSet(WTIMER1_BASE, TIMER_A, ulPeriod / 2);
-
-	TimerLoadSet(WTIMER1_BASE, TIMER_B, ulPeriod - 1);
-	TimerMatchSet(WTIMER1_BASE, TIMER_B, ulPeriod / 2);
-
-//************************************************************
-//	Enable timers 
-//************************************************************
-    TimerEnable(WTIMER0_BASE, TIMER_A);
-    TimerEnable(WTIMER1_BASE, TIMER_A);
-	TimerEnable(WTIMER0_BASE, TIMER_B);
-	TimerEnable(WTIMER1_BASE, TIMER_B);
-}
-#endif
-
-//************************************************************
-//	If VARIABLEINIT defined in definition sect [above],
-//	Then allows parameter passing for port selection
-//************************************************************    
-#ifdef VARIABLEINIT	 
-    void InitializeMotors(tbool bLeftInvert, tbool bRightInvert, motorPortSet portSetIn) {       
-    switch ( portSetIn ) {
-    case SetD:
-        //caseD 
-        break;
-    case SetEF:
-		//caseEF
-        break;
-    case SetBC:
-		//caseBC
-        break;
-    case SetCDF:
-	    //caseCDF
-        break;        
-    } 
-}
-#endif
-//************************************************************ 
-
-//************************************************************
-// Summary: Sets specified motor's power 
-//	Inputs: motor selection, power output
-//	Outputs: void
-//	Parameters:
-//		- MOTOR_0 or MOTOR_1
-//		- 0 for neutral, 127 full forward, -128 full reverse
-//************************************************************
-void SetMotorPower(motor_t motor, power_t power) {
-	unsigned short	usPulseWidth = power + 128 + 4;	
-	if(power == 0) {			// Neutral, coast by defualt. IN1/IN2 drive high 
-		TimerMatchSet(motor, TIMER_A, ulPeriod + 1);  		// Resets before match value, remains high (LoadSet = ulPeriod - 1)
-		TimerMatchSet(motor, TIMER_B, ulPeriod + 1);
-	}
-	if(power < 0) {			 	// CCW rotation (reverse), IN1 = PWM, IN2 = high (coast by default)
-		TimerMatchSet(motor, TIMER_A, usPulseWidth);
-		TimerMatchSet(motor, TIMER_B, ulPeriod + 1);		
-	}
-	if(power > 0) {		 		// CW rotation, IN1	= IN2 = PWM (coast by default)
-	    TimerMatchSet(motor, TIMER_A, usPulseWidth);
-		TimerMatchSet(motor, TIMER_B, usPulseWidth);
-	}	
+    // Configure Timer4A to be periodic, maintaining the configuration for Timer4B
+    TimerConfigure(TIMER4_BASE, TIMER4_CFG_R | TIMER_CFG_SPLIT_PAIR | TIMER_CFG_B_PERIODIC);
+	
+    // Enable the Timer4A interrupt
+    IntEnable(INT_TIMER4B);
+    TimerIntEnable(TIMER4_BASE, TIMER_TIMB_TIMEOUT );
+    
+    // Load Timer4A with a frequency of MOTOR_GENERATOR_RESOLUTION * MOTOR_GENERATOR_RATE
+    TimerLoadSet(TIMER4_BASE, TIMER_B, SysCtlClockGet() / MOTOR_GENERATOR_RESOLUTION / MOTOR_GENERATOR_RATE);
+    
+    // Enable Timer4A
+    TimerEnable(TIMER4_BASE, TIMER_B);
 }
 
-void SetMotorPowers(power_t power0, power_t power1) {
-	SetMotorPower(MOTOR_0, power0);
-	SetMotorPower(MOTOR_1, power1);
+// Sets the Motor generator's output to the specified value
+// \param index is the motor to set
+// \param input is the value to set at, 0 being stopped, 1 being full forward, and -1 being full back;
+tMotorFunction rgMotorFunctions[MOTOR_FUNCTION_BUFFER_SIZE];
+void SetMotorPosition(unsigned long index, float input){
+    if(input > 1 || input < -1) return; // restrict input
+    
+    
 }
 
-int main(void) {
-	InitializeMotors(false,false);
-	SetMotorPowers(127,127);
+// Declares a new motor function pin
+// Motor pins are run by bit-banging in software
+// \param port is the port base (ex. GPIO_PORTA_BASE)
+// \param pin is the pin in that port (ex. GPIO_PIN_0)
+// \return the index of the motor in the buffer
+// 
+// Note: Uses Timer4B. Do not use elsewhere is this function is called
+unsigned long AddMotorFunction( unsigned long port0, unsigned long pin0 , unsigned long port1, unsigned long pin1 , tMotorMode mode){
+    static unsigned long count = 0;
+    static tBoolean fIsMotorFuncInitialized = false;
+    
+    // Check to see if the motor generator is initialized. If not, initialize.
+    if(!fIsMotorFuncInitialized){
+        InitializeMotorGenerator();
+        
+        //  Flag as initialized
+        fIsMotorFuncInitialized = true;
+    }
+    
+    // Find the next availible spot in the buffer
+    GPIOPinTypeGPIOOutput(port0, pin0); 
+    GPIOPinTypeGPIOOutput(port1, pin1);
+    
+    // Put the new task in the buffer
+    rgMotorFunctions[count].port0 = port0;
+    rgMotorFunctions[count].pin0 = pin0;
+    rgMotorFunctions[count].port1 = port1;
+    rgMotorFunctions[count].pin1 = pin1;
+    rgMotorFunctions[count].mode = mode;
+    rgMotorFunctions[count].active = true;
+    SetMotorPosition(count, 0);
+    GPIOPinWrite(port0, pin0, pin0);
+    GPIOPinWrite(port1, pin1, pin1);
+    return count++;
+}
+
+void MotorGeneratorHandler(void)
+{
+    static unsigned long cMotorGenTime = 0;
+    int i = 0;
+    // Increment a counter in terms of motor generator time
+    cMotorGenTime = ((cMotorGenTime+1)%MOTOR_GENERATOR_RESOLUTION);
+    
+    // Iterate through the motor functions
+    while( i != MOTOR_FUNCTION_BUFFER_SIZE && rgMotorFunctions[i].active )
+    {
+        if(cMotorGenTime == 0){ 
+            // If the motor time is 0, assert all the motor pins high
+            GPIOPinWrite(rgMotorFunctions[i].port0, rgMotorFunctions[i].pin0, rgMotorFunctions[i].pin0 );
+        }
+        else if(cMotorGenTime == rgMotorFunctions[i].value){
+            // If the motor time is a pin's setpoint, assert that pin low
+            GPIOPinWrite(rgMotorFunctions[i].port0, rgMotorFunctions[i].pin0, 0 );
+        }
+        i++;	
+    }
+    
+    // Clear the interrupt
+    TimerIntClear(TIMER4_BASE, TIMER_TIMB_TIMEOUT);
 }
