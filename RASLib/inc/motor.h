@@ -39,7 +39,8 @@ typedef struct{
     unsigned long pin0;
     unsigned long port1; 
     unsigned long pin1;
-    signed long value;
+    signed long value0;
+    signed long value1;
     tMotorMode mode;
     tBoolean active;
 } tMotorFunction;
@@ -47,9 +48,9 @@ extern tMotorFunction rgMotorFunctions[MOTOR_FUNCTION_BUFFER_SIZE];
 
 unsigned long AddMotorFunction( unsigned long port0, unsigned long pin0 , unsigned long port1, unsigned long pin1, tMotorMode );
 void SetMotorPosition(unsigned long index, float input);
-// macro to create a servo signal generator
+// macro to create a motor signal generator
 // e.g.,
-// AddServo(Left,F,2,F,3,COAST)
+// AddMotor(Left,F,2,F,3,COAST)
 // creates InitializeMotorLeft() and SetMotorLeft(unsigned char)
 #define AddMotor(NAME,PORT0,PIN0,PORT1,PIN1,MODE) \
 unsigned long NAME ## MotorSelect; \

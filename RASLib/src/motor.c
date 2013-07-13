@@ -58,8 +58,35 @@ void InitializeMotorGenerator(void)
 tMotorFunction rgMotorFunctions[MOTOR_FUNCTION_BUFFER_SIZE];
 void SetMotorPosition(unsigned long index, float input){
     if(input > 1 || input < -1) return; // restrict input
-    
-    
+    switch(rgMotorFunctions[index].mode)
+    {
+        case BRAKE: if(input < 0){ // CCW P(~P)
+                        rgMotorFunctions[index].value0 = MOTOR_GENERATOR_RESOLUTION * (-input);
+                        rgMotorFunctions[index].value1 = MOTOR_GENERATOR_RESOLUTION * input;
+                    }
+                    else if(input > 0){ // CW P0
+                        rgMotorFunctions[index].value0 = MOTOR_GENERATOR_RESOLUTION * input;
+                        rgMotorFunctions[index].value1 = 0;
+                    }
+                    else{ //S 10
+                        rgMotorFunctions[index].value0 = MOTOR_GENERATOR_RESOLUTION;
+                        rgMotorFunctions[index].value1 = 0;
+                    }
+                    break;    
+        case COAST: if(input < 0){ // CCW P1
+                        rgMotorFunctions[index].value0 = MOTOR_GENERATOR_RESOLUTION * (-input);
+                        rgMotorFunctions[index].value1 = MOTOR_GENERATOR_RESOLUTION;
+                    }
+                    else if(input > 0){ // CW PP
+                        rgMotorFunctions[index].value0 = MOTOR_GENERATOR_RESOLUTION * input;
+                        rgMotorFunctions[index].value1 = MOTOR_GENERATOR_RESOLUTION * input;
+                    }
+                    else{ //S 11
+                        rgMotorFunctions[index].value0 = MOTOR_GENERATOR_RESOLUTION;
+                        rgMotorFunctions[index].value1 = MOTOR_GENERATOR_RESOLUTION;
+                    }
+                    break;
+    }
 }
 
 // Declares a new motor function pin
@@ -109,12 +136,19 @@ void MotorGeneratorHandler(void)
     while( i != MOTOR_FUNCTION_BUFFER_SIZE && rgMotorFunctions[i].active )
     {
         if(cMotorGenTime == 0){ 
-            // If the motor time is 0, assert all the motor pins high
-            GPIOPinWrite(rgMotorFunctions[i].port0, rgMotorFunctions[i].pin0, rgMotorFunctions[i].pin0 );
+            // If the motor time is 0, assert all the motor pins high/low
+            GPIOPinWrite(rgMotorFunctions[i].port0, rgMotorFunctions[i].pin0, rgMotorFunctions[i].value0 > 0 ? rgMotorFunctions[i].pin0 : 0);
+            GPIOPinWrite(rgMotorFunctions[i].port1, rgMotorFunctions[i].pin1, rgMotorFunctions[i].value1 > 0 ? rgMotorFunctions[i].pin1 : 0);
         }
-        else if(cMotorGenTime == rgMotorFunctions[i].value){
-            // If the motor time is a pin's setpoint, assert that pin low
-            GPIOPinWrite(rgMotorFunctions[i].port0, rgMotorFunctions[i].pin0, 0 );
+        else{ 
+            if(cMotorGenTime == rgMotorFunctions[i].value0){
+                // If the motor time is a pin's setpoint, assert that pin low/high
+                GPIOPinWrite(rgMotorFunctions[i].port0, rgMotorFunctions[i].pin0, rgMotorFunctions[i].value0 > 0 ? 0 : rgMotorFunctions[i].pin0);
+            }
+            if(cMotorGenTime == rgMotorFunctions[i].value1){
+                // If the motor time is a pin's setpoint, assert that pin low/high
+                GPIOPinWrite(rgMotorFunctions[i].port1, rgMotorFunctions[i].pin1, rgMotorFunctions[i].value1 > 0 ? 0 : rgMotorFunctions[i].pin1);
+            }
         }
         i++;	
     }
