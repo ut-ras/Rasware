@@ -25,11 +25,13 @@
 #include "inc/hw_memmap.h"
 #include "inc/hw_ints.h"
 #include "driverlib/gpio.h"
+#include "driverlib/sysctl.h"
 #include "gpioints.h"
 
 #define ENCODER_BUFFER_SIZE 4
 
-int AddEncoder(unsigned long ulPort, 
+int AddEncoder(unsigned long ulPeripheral,
+               unsigned long ulPort, 
                unsigned char ucPinA, 
                unsigned char ucPinB,
                unsigned long ulInterrupt,
@@ -37,6 +39,6 @@ int AddEncoder(unsigned long ulPort,
 // macro to simplify adding an encoder
 // e.g.,
 // InitializeEncoder(F,2,3) sets a new encoder with PF2 = A and PF3 = B
-#define InitializeEncoder(_PORT,PINA,PINB) AddEncoder(GPIO_PORT ## _PORT ## _BASE, PINA, PINB, INT_GPIO ## _PORT, PORT ## _PORT)
+#define InitializeEncoder(_PORT,PINA,PINB) AddEncoder(SYSCTL_PERIPH_GPIO ## _PORT, GPIO_PORT ## _PORT ## _BASE, PINA, PINB, INT_GPIO ## _PORT, PORT ## _PORT)
 
 signed long GetEncoderTicks(unsigned char index);

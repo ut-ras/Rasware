@@ -436,6 +436,11 @@
               <FileType>1</FileType>
               <FilePath>.\src\gpioints.c</FilePath>
             </File>
+            <File>
+              <FileName>uartstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>C:\StellarisWare\utils\uartstdio.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -447,9 +452,6 @@
               <FilePath>C:\StellarisWare\driverlib\rvmdk-cm4f\driverlib-cm4f.lib</FilePath>
             </File>
           </Files>
-        </Group>
-        <Group>
-          <GroupName>Include</GroupName>
         </Group>
       </Groups>
     </Target>

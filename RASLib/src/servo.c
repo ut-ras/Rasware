@@ -35,7 +35,7 @@ void InitializeServoGenerator(void)
         rgServoFunctions[i].value = 0;
     }
     
-    // Enable SysCtrl for Timer5
+    // Enable SysCtrl for Timer4
     SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER4); 
     
     // Configure Timer4A to be periodic, maintaining the configuration for Timer4B
