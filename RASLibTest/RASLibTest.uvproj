@@ -136,6 +136,7 @@
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
             <RestoreFunctions>0</RestoreFunctions>
             <RestoreToolbox>1</RestoreToolbox>
+            <RestoreTracepoints>1</RestoreTracepoints>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
           <TargetSelection>1</TargetSelection>
@@ -401,14 +402,14 @@
               <FilePath>.\test.c</FilePath>
             </File>
             <File>
-              <FileName>uartstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>C:\StellarisWare\utils\uartstdio.c</FilePath>
-            </File>
-            <File>
               <FileName>Startup.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\RASLib\src\Startup.s</FilePath>
+            </File>
+            <File>
+              <FileName>uartstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>C:\StellarisWare\utils\uartstdio.c</FilePath>
             </File>
           </Files>
         </Group>
