@@ -1,16 +1,17 @@
 #include <utils/uartstdio.h>	// input/output over UART
 #include <RASLib/inc/servo.h>
 #include "RASDemo.h"
-#define SERVO_0 	0
-#define SERVO_1		1
-#define SERVO_2		2
-#define	SERVO_3		3
+#include "time.h"
+#include "servo.h"
 
+AddServo(One,A,2)
 void initServo(void) {
 	//InitializeServoGenerator();
+		InitializeServoOne();
 }
 
 void servoDemo(void) {
+	/* 2012 Servo Demo code
 	UARTprintf("Press:\n  a-'up' 10\n  w-'up' 1\n  s-'down' 1\n");
 	UARTprintf("  d-'down' 10\n  enter-quit\n");
 	
@@ -39,5 +40,14 @@ void servoDemo(void) {
 		}
 				 
 		UARTprintf("\n");
+	}*/
+		//From Frank's test
+    UARTprintf("Servo Test Starting...\n");
+    for(;;){
+        static int i = 0;
+        SetServoOne(i);
+        UARTprintf("Servo Output: %d   \r",i);
+        i = (i+1)%256;
+        WaitMS(100);
 	}
 }

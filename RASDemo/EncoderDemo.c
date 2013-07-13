@@ -10,14 +10,14 @@
 
 void initEncoders(void) {
 	//InitializeEncoders(false, false);
+	UARTprintf("Encoder init not working.\n");
 	//Replace with InitialieEncoder calls
 }
 
 void encoderDemo(void) {
+	/* 2012 Encoder Demo Code
 	UARTprintf("Press:\nany key-read encoder values\n");
-	UARTprintf("any key after read begins-quit\n");
-	UARTprintf("\nNot functional.\n");
-	/*{
+	UARTprintf("any key after read begins-quit\n");{
 		signed long encoder0, encoder1, counter = 0;
 		PresetEncoderCounts(0, 0);
 
@@ -28,7 +28,8 @@ void encoderDemo(void) {
 			UARTprintf("enc0:%d  enc1:%d      \r",encoder0,encoder1);
 			counter++;
 		}
-	}*/
-
-	UARTprintf("\n");
+	}
+	UARTprintf("\n");*/
+	
+	UARTprintf("Encoder Demo not working.\n");
 }

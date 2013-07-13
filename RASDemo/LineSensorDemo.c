@@ -11,14 +11,14 @@
 
 void initLineSensor(void) {
 	//InitializeLineSensor();
+	UARTprintf("init Line not working.\n");
 }
 
 void lineSensorDemo(void) {
+	/* 2012 Line Sensor Demo
 	UARTprintf("Press:\nany key-read line sensor\n");
 	UARTprintf("any key after read begins-quit\n");
-	
-	UARTprintf("\nNot working.\n");
-	/*while(!keyWasPressed()) {
+	while(!keyWasPressed()) {
 		unsigned char lineSensorByte = ReadLineSensor();
 	 	int lineSensorArray[8];
 		int i;
@@ -31,6 +31,8 @@ void lineSensorDemo(void) {
 		for(i = 0; i < 8; i++) 
 			UARTprintf("%u",lineSensorArray[i]);
 		UARTprintf("\r");  
-	}*/
-	UARTprintf("\n");
+	}
+	UARTprintf("\n");*/
+	
+	UARTprintf("Line Sensor Demo not working.\n");
 }
