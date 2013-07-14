@@ -36,6 +36,8 @@
 static volatile time_t systemTimeUS = 0;
 static long USTicks = 0;
 
+#define US_IN_S (1000*1000)
+
 // Relevant task info
 struct task {
 		time_t target;
@@ -45,7 +47,7 @@ struct task {
 };
 
 // Cyclic buffer of waiting tasks
-#define TASK_BUFF_SIZE 64
+#define TASK_BUFF_SIZE 32
 #define TASK_MASK(n) ((TASK_BUFF_SIZE-1) & (n))
 
 unsigned int taskStart = 0;
@@ -65,7 +67,7 @@ void InitializeSystemTime(void) {
 	
 		// Find the system clock divided by 1000000, which results in 
 		// 1 US for the timer
-		USTicks = SysCtlClockGet() / 1000000;
+		USTicks = SysCtlClockGet() / US_IN_S;
 	
 		// Enable the timer 
 		SysCtlPeripheralEnable(SYSCTL_PERIPH_WTIMER5);
@@ -78,7 +80,7 @@ void InitializeSystemTime(void) {
                                  TIMER_CFG_B_ONE_SHOT);		
 	
 		// Setup timer A to run for a full second
-		TimerLoadSet(WTIMER5_BASE, TIMER_A, 1000000 * USTicks);
+		TimerLoadSet(WTIMER5_BASE, TIMER_A, US_IN_S * USTicks);
 		TimerIntEnable(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
 	
 		// Only enable the timer B interrupt when it is needed
@@ -91,15 +93,19 @@ void InitializeSystemTime(void) {
 }
 
 // Outputs system time in microseconds
-time_t GetTime(void) {
+time_t GetTimeUS(void) {
 		return systemTimeUS + 
 					 (TimerValueGet(WTIMER5_BASE, TIMER_A) / USTicks);
+}
+
+time_t GetTimeS(void) {
+		return GetTimeUS() / US_IN_S;
 }
 
 // Handler that simply updates the time by one second
 void WTimer5AHandler(void) {
 		TimerIntClear(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
-		systemTimeUS += 1000000;
+		systemTimeUS += US_IN_S;
 }
 
 // Called internally to register a task
@@ -138,7 +144,7 @@ static void SetNextTaskInt(void) {
 		}
 
 		// Calculate the next task's eta
-		usUntil = taskBuffer[taskStart].target - GetTime();
+		usUntil = taskBuffer[taskStart].target - GetTimeUS();
 			
 		// Check for 32bit overflow in which case we can just 
 		// interrupt as late as possible. The handler will do nothing.
@@ -176,7 +182,7 @@ void WTimer5BHandler(void){
 }
 
 // Schedules a callback function to be called in given microseconds
-void CallIn(void (*callback)(void*), void *data, time_t us) {
+void CallInUS(void (*callback)(void*), void *data, time_t us) {
 		struct task task;
 	
 		task.target = systemTimeUS + us;
@@ -190,8 +196,12 @@ void CallIn(void (*callback)(void*), void *data, time_t us) {
 		SetNextTaskInt();
 }
 
+void CallInS(void (*callback)(void*), void *data, time_t s) {
+		CallInUS(callback, data, s*US_IN_S);
+}
+
 // Schedules a callback function to be called repeatedly
-void CallEvery(void (*callback)(void*), void *data, time_t us) {
+void CallEveryUS(void (*callback)(void*), void *data, time_t us) {
 		struct task task;
 	
 		task.target = systemTimeUS + us;
@@ -204,14 +214,22 @@ void CallEvery(void (*callback)(void*), void *data, time_t us) {
 		SetNextTaskInt();
 }
 
+void CallEveryS(void (*callback)(void*), void *data, time_t s) {
+		CallEveryUS(callback, data, s*US_IN_S);
+}
+
 // Busy waits for given milliseconds
 static void WaitHandler(void *flag) {
 		*(int*)flag = 1;
 }
 
-void Wait(time_t ms) {
+void WaitUS(time_t us) {
 		int waitFlag = 0;
-		CallIn(WaitHandler, &waitFlag, ms);
+		CallInUS(WaitHandler, &waitFlag, us);
 		while(!waitFlag);
+}
+
+void WaitS(time_t s) {
+		WaitUS(s*US_IN_S);
 }
 		

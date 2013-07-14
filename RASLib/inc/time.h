@@ -22,21 +22,25 @@
 //*****************************************************************************
 
 
-// Definition of time type intended to store milliseconds. 
-// Will last for 584 million years.
+// Definition of time type intended to store microseconds. 
+// Will last for 584 thousand years.
 typedef unsigned long long time_t;
 
 // Initializes a system timer with millisecond resolution
 void InitializeSystemTime(void);
 
-// Outputs system time in milliseconds
-time_t GetTime(void);
+// Outputs system time
+time_t GetTimeUS(void);
+time_t GetTimeS(void);
 
-// Schedules a callback function to be called in given milliseconds
-void CallIn(void (*callback)(void*), void *data, time_t ms);
+// Schedules a callback function to be called in given time
+void CallInUS(void (*callback)(void*), void *data, time_t us);
+void CallInS(void (*callback)(void*), void *data, time_t s);
 
 // Schedules a callback function to be called repeatedly
-void CallEvery(void (*callback)(void*), void *data, time_t ms);
+void CallEveryUS(void (*callback)(void*), void *data, time_t us);
+void CallEveryS(void (*callback)(void*), void *data, time_t s);
 
-// Busy waits for given milliseconds
-void Wait(time_t ms);
+// Busy waits for given time
+void WaitUS(time_t ms);
+void WaitS(time_t s);
