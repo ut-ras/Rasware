@@ -4,45 +4,48 @@ Rasware2013
 Description
 -----------
 
-A generic robotics controller for the EK-LM4F120XL Stellaris Launchpad.
-Authored by the IEEE - Robotics and Automation Society Student Branch at the University of Texas at Austin.
+This is a generic robotics library and demo project for the EK-LM4F120XL Stellaris Launchpad, built on top of Stellarisware. It is intended to be used for our 2013 Robotathon as well as general purpose robotics projects within our organization.
+Authored by the IEEE - Robotics and Automation Society Student Branch at the University of Texas at Austin. For documentation, see Rasware2013's Github [wiki](https://github.com/ut-ras/Rasware2013/wiki).
 
-
-Setup for Windows (WIP)
+Robotathon Setup Instructions
 -----------------
 
-### Getting started with Git ###
+### Get started with Git ###
 
 1. Create a free GitHub account on [github.com](https://github.com/signup/free)
 2. Follow GitHub's great instructions for installing [Git](https://help.github.com/articles/set-up-git) on your computer.
+3. If you want to learn more about Git, you can read GitPro online for free (and legally, too!) at http://git-scm.com/book
 
-### Forking Rasware ###
+### Fork Rasware (only one Robotathon team member should do this step) ###
 
 1. Once logged into GitHub, go to [ut-ras](https://github.com/ut-ras)'s [Rasware2013](https://github.com/ut-ras/Rasware2013).
-2. [Fork](https://help.github.com/articales/fork-a-repo) the project's code through the button on the top right. This will copy the project to your own account.
-3. Open Git. Depending on what version is installed, the commands will be slightly different.
-4. Clone the project to create a copy on your computer. In GitHub for Windows, simply click on `clone` next to the Rasware2013 project.
-5. Right click on Rasware2013 then click on `open in explorer` to open the folder containing the project.
+2. [Fork](https://help.github.com/articles/fork-a-repo) the project's code through the button on the top right. This will copy the project to your own account.
+3. On the team's forked repository Github page, go to Settings->Collaborators and add each team member as a collaborator
 
-### Installing Putty ###
+### Download the code
 
-1. Go to <http://www.chiark.greenend.org.uk/~sgtatham/putty.download.html>.
-2. Under "for Windows on Intel x86" click on [putty.exe](http://the.earth.li/~sgtatham/putty/latest/x86/putty.exe) to save putty to your computer.
+1. Each team member can now "clone" the team's forked repository to use on their local machines. In GitHub for Windows, simply click on `clone` next to the Rasware2013 project in the Github app. For linux, see the GitHub walkthough for using the command line to clone: https://help.github.com/articles/fork-a-repo.
+2. In the Github app for Windows, right click on Rasware2013 then click on `open in explorer` to open the folder containing the project. 
 
-### Installing Keil uVision ###
+Now that you and your team members have the code, let's look at how to compile it and run it on the Launchpad. 
 
-<!--1. Go to <http://www.keil.com/demo/eval/arm.htm>.
-2. To download Keil you will need to enter contact information.
-3. Click `MDK470A.EXE` to download the installer.
-4. Run the executable to install Keil uVision.
+Setup for Windows (WIP)
+-----------------
+### Install Stellarisware
 
-Actually this link may just work for a while -->
+1. [TODO: decide on correct link and finish this section]
 
-1. Download the installer from here: <http://www.keil.com/fid/w00kzbwyie9j1wbbrv11bm0or1xbb2p1gd2wd1/files/eval/mdk470a.exe>
+### Install Keil uVision ###
+
+1. Download the installer from here: [TODO: add correct download link]
 2. When it's done, run the executable to install Keil uVision.
 
+### Install PuTTY ###
 
-### Installing the Drivers ###
+1. Go to <http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html>.
+2. Under "for Windows on Intel x86" click on [putty.exe](http://the.earth.li/~sgtatham/putty/latest/x86/putty.exe) to save putty to your computer.
+
+### Install drivers for the Launchpad ###
 
 1. Go to <http://www.ti.com/tool/stellaris_icdi_drivers>.
 2. Click `Download` to download the drivers to your computer.
@@ -54,11 +57,19 @@ Actually this link may just work for a while -->
 8. Click `Browse my Computer` and navigate to the unzipped drivers.
 9. Once all of the drivers are installed, not the COM port number that appears in the Device manager. It should read `Stellaris Virtual Serial Port (COM__)`.
 
+### Compile and run RASDemo ###
 
-TODO: add the sections for running rasdemo and creating team project.
-TODO: add additional information section from Rasware2012
+1. Open Rasware2013/RASDemo/RASDemo.uvproj with Keil uVision. This is an example project we made to demostrate how to get a lot of useful peripherals working with the Launchpad, like motors and line sensors. 
+2. With the Launchpad plugged into your computer, in Keil do Project->Build Target and then Flash->Download. This compiles and loads the project onto the Launchpad.
+3. Open PuTTY and connect to the board 
+    1. Click the "serial" radio button
+    2. Under "serial line" type "COM#" where # was the COM port number shown in the Device Manager 
+    3. Under "speed" type "115200"
+    4. Under "Saved Settings" type "Rasware2013" and then click "Save". 
+    5. Now the settings are saved in PuTTY. In the future, just open PuTTY and double click "Rasware2013" under "Saved Settings".
+[TODO: finish this section once RASDemo is done]
 
 Setup for Linux (WIP)
 ---------------
 
-TODO: Basically get Jimmy to write this
+TODO: Basically get Jimmy or Cruz to write this
