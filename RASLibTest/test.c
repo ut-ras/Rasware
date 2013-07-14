@@ -105,5 +105,5 @@ int PerFuncMain(void){
 
 
 int main(void){
-    return MotorMain();
+    return ADCMain();
 }

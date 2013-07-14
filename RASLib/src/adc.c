@@ -59,6 +59,7 @@ void InitializeADC(void)
     TimerConfigure(TIMER5_BASE, TIMER5_CFG_R | TIMER_CFG_SPLIT_PAIR | TIMER_CFG_B_PERIODIC);
 	
     // Enable the Timer5B interrupt
+    IntEnable(INT_TIMER5B);
     TimerIntEnable(TIMER5_BASE, TIMER_TIMB_TIMEOUT );
     
     // Enable sample sequence 1 with a processor signal trigger.  Sequence 1 will 
@@ -87,12 +88,11 @@ void InitializeADC(void)
     // Enable ADC0:Sequence 1 interrupt
     ADCIntEnable(ADC0_BASE, 1);
     
-    // Enable Timer5B
-    TimerEnable(TIMER5_BASE, TIMER_B);
-    
     // Enable interrupts
     IntEnable(INT_ADC0SS1);
-    IntEnable(INT_TIMER0B);
+    
+    // Enable Timer5B
+    TimerEnable(TIMER5_BASE, TIMER_B);
 }
 
 
@@ -103,11 +103,11 @@ unsigned long GetADC(int index) { return g_rgADCValues[index]; }
 
 // Interrupt handler for ADC0:Sequencer 1
 void ADC0SS1Handler(void){
-	// Put the new ADC readings into a global container
-    ADCSequenceDataGet(ADC_BASE, 1, g_rgADCValues);
+    // Put the new ADC readings into a global container
+    ADCSequenceDataGet(ADC0_BASE, 1, g_rgADCValues);
     
     // Clear the interrupt
-    ADCIntClear(ADC_BASE, 1);
+    ADCIntClear(ADC0_BASE, 1);
 }
 
 // Interrupt handler for Timer5B
@@ -116,5 +116,5 @@ void ADCTriggerHandler(void){
     ADCProcessorTrigger(ADC0_BASE, 1);
     
     // Clear the interrupt
-    TimerIntClear(TIMER5_BASE, TIMER_TIMA_TIMEOUT);
+    TimerIntClear(TIMER5_BASE, TIMER_TIMB_TIMEOUT);
 }

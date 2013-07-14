@@ -28,7 +28,7 @@
 #include "driverlib/sysctl.h"
 #include "gpioints.h"
 
-#define ENCODER_BUFFER_SIZE 4
+#define ENCODER_BUFFER_SIZE 4 // Max number of definable encoders 
 
 int AddEncoder(unsigned long ulPeripheral,
                unsigned long ulPort, 
