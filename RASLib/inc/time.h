@@ -21,21 +21,22 @@
 //
 //*****************************************************************************
 
-#define US_PER_SEC 1000000
-#define US_PER_MS 1000
-#define MS_PER_SEC 1000
-#define PERIODIC_FUNCTION_RATE 1000
 
-extern unsigned long g_ulSystemTimeMS;
-extern unsigned long g_ulSystemTimeSeconds;
+// Definition of time type intended to store milliseconds. 
+// Will last for 584 million years.
+typedef unsigned long long time_t;
 
-unsigned long GetTime(void);
-unsigned long GetTimeUS(void);
+// Initializes a system timer with millisecond resolution
 void InitializeSystemTime(void);
 
-int AddPeriodicFunction(void(*task_in)(void), unsigned long freq);
+// Outputs system time in milliseconds
+time_t GetTime(void);
 
-void WaitUS(unsigned long long us);
-void WaitMS(unsigned long long ms);
-void WaitS(unsigned long seconds);
-void Wait(float seconds);
+// Schedules a callback function to be called in given milliseconds
+void CallIn(void (*callback)(void*), void *data, time_t ms);
+
+// Schedules a callback function to be called repeatedly
+void CallEvery(void (*callback)(void*), void *data, time_t ms);
+
+// Busy waits for given milliseconds
+void Wait(time_t ms);

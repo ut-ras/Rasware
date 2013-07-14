@@ -78,7 +78,6 @@ __heap_limit
 ; The vector table.
 ;
 ;******************************************************************************
-        EXTERN SysTickHandler
         EXTERN PeriodicFunctionHandler
         EXTERN ADCTriggerHandler
         EXTERN ADC0SS1Handler
@@ -90,6 +89,8 @@ __heap_limit
         EXTERN PortDHandler
         EXTERN PortEHandler
         EXTERN PortFHandler
+		EXTERN WTimer5AHandler
+		EXTERN WTimer5BHandler
         
         EXPORT  __Vectors
 __Vectors
@@ -108,7 +109,7 @@ __Vectors
         DCD     IntDefaultHandler           ; Debug monitor handler
         DCD     0                           ; Reserved
         DCD     IntDefaultHandler           ; PendSV Handler
-        DCD     SysTickHandler              ; SysTick Handler
+        DCD     IntDefaultHandler           ; SysTick Handler
         DCD     PortAHandler                ; GPIO Port A
         DCD     PortBHandler                ; GPIO Port B
         DCD     PortCHandler                ; GPIO Port C
@@ -201,7 +202,7 @@ __Vectors
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
-        DCD     PeriodicFunctionHandler     ; Timer 5 subtimer A
+        DCD     IntDefaultHandler		    ; Timer 5 subtimer A
         DCD     ADCTriggerHandler           ; Timer 5 subtimer B
         DCD     IntDefaultHandler           ; Wide Timer 0 subtimer A
         DCD     IntDefaultHandler           ; Wide Timer 0 subtimer B
@@ -213,8 +214,8 @@ __Vectors
         DCD     IntDefaultHandler           ; Wide Timer 3 subtimer B
         DCD     IntDefaultHandler           ; Wide Timer 4 subtimer A
         DCD     IntDefaultHandler           ; Wide Timer 4 subtimer B
-        DCD     IntDefaultHandler           ; Wide Timer 5 subtimer A
-        DCD     IntDefaultHandler           ; Wide Timer 5 subtimer B
+        DCD     WTimer5AHandler				; Wide Timer 5 subtimer A
+        DCD     WTimer5BHandler             ; Wide Timer 5 subtimer B
         DCD     IntDefaultHandler           ; FPU
         DCD     IntDefaultHandler           ; PECI 0
         DCD     IntDefaultHandler           ; LPC 0

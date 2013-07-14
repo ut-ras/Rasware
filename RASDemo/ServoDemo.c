@@ -48,6 +48,6 @@ void servoDemo(void) {
         SetServoOne(i);
         UARTprintf("Servo Output: %d   \r",i);
         i = (i+1)%256;
-        WaitMS(100);
+        Wait(100);
 	}
 }
