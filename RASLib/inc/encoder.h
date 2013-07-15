@@ -26,19 +26,25 @@
 #include "inc/hw_ints.h"
 #include "driverlib/gpio.h"
 #include "driverlib/sysctl.h"
+#include "driverlib/interrupt.h"
 #include "gpioints.h"
 
 #define ENCODER_BUFFER_SIZE 4 // Max number of definable encoders 
 
-int AddEncoder(unsigned long ulPeripheral,
-               unsigned long ulPort, 
-               unsigned char ucPinA, 
-               unsigned char ucPinB,
-               unsigned long ulInterrupt,
-               tGPIO_Port port);
 // macro to simplify adding an encoder
 // e.g.,
 // InitializeEncoder(F,2,3) sets a new encoder with PF2 = A and PF3 = B
 #define InitializeEncoder(_PORT,PINA,PINB) AddEncoder(SYSCTL_PERIPH_GPIO ## _PORT, GPIO_PORT ## _PORT ## _BASE, PINA, PINB, INT_GPIO ## _PORT, PORT ## _PORT)
 
+// Retrieves encoder ticks thus far by index
+// Note: Encoders are indexed by the order in which they were added
 signed long GetEncoderTicks(unsigned char index);
+
+// Note: it is not recommended to call this function directly. Instead, use the
+// InitializeEncoder macro above
+int AddEncoder(unsigned long ulPeripheral,
+               unsigned long ulPort,
+               unsigned char ucPinA,
+               unsigned char ucPinB,
+               unsigned long ulInterrupt,
+               tGPIO_Port port);

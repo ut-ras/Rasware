@@ -22,8 +22,6 @@
 //*****************************************************************************
 
 #include "encoder.h"
-#include "driverlib/sysctl.h"
-#include "driverlib/interrupt.h"
 
 
 /***************** BEGIN DEFINITION OF QUADRATURE DECODER (MEALY MACHINE) *****************/
@@ -126,7 +124,7 @@ int AddEncoder(unsigned long ulPeripheral, unsigned long ulPort, unsigned char u
 }
 
 // Retrieves encoder ticks thus far by index
-// Encoders are indexed by the order in which they were added
+// Note: Encoders are indexed by the order in which they were added
 signed long GetEncoderTicks(unsigned char index){
     return Encoders[index].slTicks;
 }
