@@ -32,79 +32,24 @@ tInterruptHandler rfptHandlers[NUM_GPIO_PORTS][GPIO_INT_HANDLER_BUFFER_SIZE];
 // Does nothing
 void Dummy(void){}
 
+#define AddPortHandler(NAME, PORT) \
+void NAME ## Handler(void) { \
+    int i; \
+    for (i = 0; i < GPIO_INT_HANDLER_BUFFER_SIZE; i++){ \
+        if (rfptHandlers[PORT][i] != Dummy){ \
+            rfptHandlers[PORT][i](); \
+        } \
+    } \
+    GPIOPinIntClear(GPIO_ ## PORT ## _BASE, GPIOPinIntStatus(GPIO_ ## PORT ## _BASE, false)); \
+}
+
 // Generic interrupt handlers for Ports A through F
-void PortAHandler(void){
-    int i;
-    for(i = 0; i < GPIO_INT_HANDLER_BUFFER_SIZE; i++){
-        if(rfptHandlers[PORTA][i] == Dummy){
-            continue;
-        }
-        else{
-            rfptHandlers[PORTA][i]();
-        }
-    }
-	GPIOPinIntClear(GPIO_PORTA_BASE, GPIOPinIntStatus(GPIO_PORTA_BASE, false));
-}
-void PortBHandler(void){
-    int i;
-    for(i = 0; i < GPIO_INT_HANDLER_BUFFER_SIZE; i++){
-        if(rfptHandlers[PORTB][i] == Dummy){
-            continue;
-        }
-        else{
-            rfptHandlers[PORTB][i]();
-        }
-    }
-	GPIOPinIntClear(GPIO_PORTB_BASE, GPIOPinIntStatus(GPIO_PORTB_BASE, false));
-}
-void PortCHandler(void){
-    int i;
-    for(i = 0; i < GPIO_INT_HANDLER_BUFFER_SIZE; i++){
-        if(rfptHandlers[PORTC][i] == Dummy){
-            continue;
-        }
-        else{
-            rfptHandlers[PORTC][i]();
-        }
-    }
-	GPIOPinIntClear(GPIO_PORTC_BASE, GPIOPinIntStatus(GPIO_PORTC_BASE, false));
-}
-void PortDHandler(void){
-    int i;
-    for(i = 0; i < GPIO_INT_HANDLER_BUFFER_SIZE; i++){
-        if(rfptHandlers[PORTD][i] == Dummy){
-            continue;
-        }
-        else{
-            rfptHandlers[PORTD][i]();
-        }
-    }
-	GPIOPinIntClear(GPIO_PORTD_BASE, GPIOPinIntStatus(GPIO_PORTD_BASE, false));
-}
-void PortEHandler(void){
-    int i;
-    for(i = 0; i < GPIO_INT_HANDLER_BUFFER_SIZE; i++){
-        if(rfptHandlers[PORTE][i] == Dummy){
-            continue;
-        }
-        else{
-            rfptHandlers[PORTE][i]();
-        }
-    }
-	GPIOPinIntClear(GPIO_PORTE_BASE, GPIOPinIntStatus(GPIO_PORTE_BASE, false));
-}
-void PortFHandler(void){
-    int i;
-    for(i = 0; i < GPIO_INT_HANDLER_BUFFER_SIZE; i++){
-        if(rfptHandlers[PORTF][i] == Dummy){
-            continue;
-        }
-        else{
-            rfptHandlers[PORTF][i]();
-        }
-    }
-	GPIOPinIntClear(GPIO_PORTF_BASE, GPIOPinIntStatus(GPIO_PORTF_BASE, false));
-}
+AddPortHandler(PortA, PORTA);
+AddPortHandler(PortB, PORTB);
+AddPortHandler(PortC, PORTC);
+AddPortHandler(PortD, PORTD);
+AddPortHandler(PortE, PORTE);
+AddPortHandler(PortF, PORTF);
 
 // Adds a function to be executed during the specified port's interrupt handler execution
 void AttachToInterruptHandler(tGPIO_Port port, tInterruptHandler handler){
@@ -119,7 +64,6 @@ void AttachToInterruptHandler(tGPIO_Port port, tInterruptHandler handler){
         }
     }
 }
-
 
 // Loads a dummy function into all entries of the interrupt handlers buffer
 void InitializeGPIOInterruptHandlers(void){
