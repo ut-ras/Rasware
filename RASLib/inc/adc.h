@@ -27,5 +27,5 @@
 //Simple ADC setup with PE2 = ADC1 and PE3 = ADC0
 extern unsigned long g_rgADCValues[2];
 void InitializeADC(void);
-unsigned long GetADC(int index);
+unsigned long GetADC(unsigned char index);
 
