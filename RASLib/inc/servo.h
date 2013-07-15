@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// servo.h - software servo driver
+// servo.h - software servo (rc pwm) driver
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -32,15 +32,9 @@
 #define SERVO_GENERATOR_RESOLUTION 4000
 #define SERVO_GENERATOR_RATE 50
 #define SERVO_FUNCTION_BUFFER_SIZE 16
-typedef struct{ 
-    unsigned long port; 
-    unsigned long pin; 
-    unsigned long value;
-} tServoFunction;
-extern tServoFunction rgServoFunctions[SERVO_FUNCTION_BUFFER_SIZE];
 
 unsigned long AddServoFunction( unsigned long port, unsigned long pin );
-void SetServoPosition(unsigned long index, unsigned char input);
+void SetServoPosition(unsigned long index, float input);
 // macro to create a servo signal generator
 // e.g.,
 // AddServo(Arm,F,1)
