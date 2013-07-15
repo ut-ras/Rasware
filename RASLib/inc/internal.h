@@ -1,3 +1,5 @@
+// Note: this code is for internal use only. Projects that use RASLib should never include it.
+
 #include "gpioints.h"
 
 // Does nothing; used as placeholder in time.c and gpioints.c
