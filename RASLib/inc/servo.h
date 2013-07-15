@@ -25,6 +25,7 @@
 #include "inc/hw_memmap.h"
 #include "driverlib/gpio.h"
 #include "driverlib/sysctl.h"
+#include "internal.h"
 
 #ifndef __SERVO_H__
 #define __SERVO_H__
@@ -46,13 +47,5 @@ void InitializeServo ## NAME (void){   \
 void SetServo ## NAME (unsigned char input){ \
     SetServoPosition( NAME ## ServoSelect, input); \
 }
-
-// Note: it is not recommended to call this function directly. Instead, use the
-// AddServo macro above to generate a unique InitializeServo function
-unsigned long AddServoFunction(unsigned long port, unsigned long pin);
-
-// Note: it is not recommended to call this function directly. Instead, use the
-// AddServo macro above to generate a unique SetServo function
-void SetServoPosition(unsigned long index, float input);
 
 #endif //  __SERVO_H__
