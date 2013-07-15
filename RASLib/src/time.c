@@ -31,11 +31,11 @@
 #include "driverlib/interrupt.h"
 #include "time.h"
 #include "gpioints.h"
+#include "internal.h"
 
 /***************** GLOBAL VARIABLES *****************/
 unsigned long g_ulSystemTimeMS;
 unsigned long g_ulSystemTimeSeconds;
-
 
 
 /***************** BEGIN DEFINITION OF SYSTEM TIME *****************/

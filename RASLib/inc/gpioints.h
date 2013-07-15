@@ -26,8 +26,6 @@
 typedef enum{PORTA,PORTB,PORTC,PORTD,PORTE,PORTF,NUM_GPIO_PORTS} tGPIO_Port;
 typedef void(*tInterruptHandler)(void);
 
-void Dummy(void);
-
 void AttachToInterruptHandler(tGPIO_Port port, tInterruptHandler handler);
 void InitializeGPIOInterruptHandlers(void);
 

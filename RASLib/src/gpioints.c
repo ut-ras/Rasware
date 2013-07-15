@@ -22,15 +22,13 @@
 //
 //*****************************************************************************
 
-#include "gpioints.h"
 #include "inc/hw_types.h"
 #include "inc/hw_memmap.h"
 #include "driverlib/gpio.h"
+#include "gpioints.h"
+#include "internal.h"
 
 tInterruptHandler rfptHandlers[NUM_GPIO_PORTS][GPIO_INT_HANDLER_BUFFER_SIZE];
-
-// Does nothing
-void Dummy(void){}
 
 #define AddPortHandler(NAME, PORT) \
 void NAME ## Handler(void) { \

@@ -33,8 +33,6 @@
 #define SERVO_GENERATOR_RATE 50
 #define SERVO_FUNCTION_BUFFER_SIZE 16
 
-unsigned long AddServoFunction( unsigned long port, unsigned long pin );
-void SetServoPosition(unsigned long index, float input);
 // macro to create a servo signal generator
 // e.g.,
 // AddServo(Arm,F,1)
@@ -48,5 +46,13 @@ void InitializeServo ## NAME (void){   \
 void SetServo ## NAME (unsigned char input){ \
     SetServoPosition( NAME ## ServoSelect, input); \
 }
+
+// Note: it is not recommended to call this function directly. Instead, use the
+// AddServo macro above to generate a unique InitializeServo function
+unsigned long AddServoFunction(unsigned long port, unsigned long pin);
+
+// Note: it is not recommended to call this function directly. Instead, use the
+// AddServo macro above to generate a unique SetServo function
+void SetServoPosition(unsigned long index, float input);
 
 #endif //  __SERVO_H__
