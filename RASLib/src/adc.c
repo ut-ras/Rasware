@@ -99,7 +99,9 @@ void InitializeADC(void)
 // Returns the latest value read from the specified ADC pin
 // \param index is the ADC pin to read ( 0 = PE3, 1 = PE2)
 // \return latest value read from the specified ADC pin
-unsigned long GetADC(int index) { return g_rgADCValues[index]; }
+unsigned long GetADC(unsigned char index) { 
+    return g_rgADCValues[index]; 
+}
 
 // Interrupt handler for ADC0:Sequencer 1
 void ADC0SS1Handler(void){
