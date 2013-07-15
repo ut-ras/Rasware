@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// motor.c - software motor driver
+// motor.c - software pwm drivers for the TLE5205-2 
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -26,6 +26,18 @@
 #include "inc/lm4f120h5qr.h"
 #include "driverlib/interrupt.h"
 #include "driverlib/timer.h"
+
+typedef struct{ 
+    unsigned long port0; 
+    unsigned long pin0;
+    unsigned long port1; 
+    unsigned long pin1;
+    signed long value0;
+    signed long value1;
+    tMotorMode mode;
+    tBoolean active;
+} tMotor;
+static tMotor rgMotorFunctions[MOTOR_FUNCTION_BUFFER_SIZE];
 
 void InitializeMotorGenerator(void)
 {
@@ -55,7 +67,6 @@ void InitializeMotorGenerator(void)
 // Sets the Motor generator's output to the specified value
 // \param index is the motor to set
 // \param input is the value to set at, 0 being stopped, 1 being full forward, and -1 being full back;
-tMotorFunction rgMotorFunctions[MOTOR_FUNCTION_BUFFER_SIZE];
 void SetMotorPosition(unsigned long index, float input){
     if(input > 1 || input < -1) return; // restrict input
     switch(rgMotorFunctions[index].mode)
