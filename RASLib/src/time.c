@@ -102,6 +102,10 @@ time_t GetTimeS(void) {
     return GetTimeUS() / US_IN_S;
 }
 
+float GetTime(void) {
+    return GetTimeUS() / (float)(USTicks);
+}
+
 // Handler that simply updates the time by one second
 void WTimer5AHandler(void) {
     TimerIntClear(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
@@ -200,6 +204,10 @@ void CallInS(void (*callback)(void*), void *data, time_t s) {
     CallInUS(callback, data, s*US_IN_S);
 }
 
+void CallIn(void (*callback)(void*), void *data, float s) {
+    CallInUS(callback, data, (time_t)(s*US_IN_S));
+}
+
 // Schedules a callback function to be called repeatedly
 void CallEveryUS(void (*callback)(void*), void *data, time_t us) {
     struct task task;
@@ -218,6 +226,10 @@ void CallEveryS(void (*callback)(void*), void *data, time_t s) {
     CallEveryUS(callback, data, s*US_IN_S);
 }
 
+void CallEvery(void (*callback)(void*), void *data, float s) {
+    CallEveryUS(callback, data, (time_t)(s*US_IN_S));
+}
+
 // Busy waits for given milliseconds
 static void WaitHandler(void *flag) {
     *(int*)flag = 1;
@@ -232,4 +244,7 @@ void WaitUS(time_t us) {
 void WaitS(time_t s) {
     WaitUS(s*US_IN_S);
 }
-    
+  
+void Wait(float s) {
+    WaitUS((time_t)(s*US_IN_S));
+}
