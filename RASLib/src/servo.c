@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// servo.c - software servo driver
+// servo.c - software servo (rc pwm) driver
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -26,6 +26,13 @@
 #include "inc/lm4f120h5qr.h"
 #include "driverlib/interrupt.h"
 #include "driverlib/timer.h"
+
+typedef struct{ 
+    unsigned long port; 
+    unsigned long pin; 
+    unsigned long value;
+} tServo;
+static tServo rgServoFunctions[SERVO_FUNCTION_BUFFER_SIZE];
 
 void InitializeServoGenerator(void)
 {
@@ -55,10 +62,9 @@ void InitializeServoGenerator(void)
 // Sets the Servo generator's output to the specified value
 // Servo output is 50hz with 2.5% to 12.5% duty cycle, centered at 7.5%
 // \param index is the servo to set
-// \param input is the value to set at, 0 being 2.5% duty cycle and 255 being 12.5%
-tServoFunction rgServoFunctions[SERVO_FUNCTION_BUFFER_SIZE];
-void SetServoPosition(unsigned long index, unsigned char input){
-    rgServoFunctions[index].value = ((((unsigned long) input) * (SERVO_GENERATOR_RESOLUTION / 10)) >> 8 )+ (SERVO_GENERATOR_RESOLUTION / 40);
+// \param input is the value to set at, 0 being 2.5% duty cycle and 1 being 12.5%
+void SetServoPosition(unsigned long index, float input){
+    rgServoFunctions[index].value = (((input) * (SERVO_GENERATOR_RESOLUTION / 10)))+ (SERVO_GENERATOR_RESOLUTION / 40);
 }
 
 // Declares a new servo function pin

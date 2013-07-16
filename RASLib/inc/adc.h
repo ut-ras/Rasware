@@ -24,8 +24,6 @@
 #define ADC_SAMPLE_RATE 2000
 #define HW_OVERSAMPLING_FACTOR 64
 
-//Simple ADC setup with PE2 = ADC1 and PE3 = ADC0
-extern unsigned long g_rgADCValues[2];
-void InitializeADC(void);
-unsigned long GetADC(int index);
-
+typedef enum{ADC0,ADC1,ADC2,ADC3,ADC4,ADC5,ADC6,ADC7,ADC8,ADC9,ADC10,ADC11,ADC_BUFFER_SIZE} tADC;
+extern unsigned long g_rgADCValues[ADC_BUFFER_SIZE];
+unsigned long GetADC(tADC adc);
