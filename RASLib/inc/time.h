@@ -21,6 +21,8 @@
 //
 //*****************************************************************************
 
+#ifndef __TIME_H__
+#define __TIME_H__
 
 // Definition of time type intended to store microseconds. 
 // Will last for 584 thousand years.
@@ -44,3 +46,5 @@ void CallEveryS(void (*callback)(void*), void *data, time_t s);
 // Busy waits for given time
 void WaitUS(time_t ms);
 void WaitS(time_t s);
+
+#endif // __TIME_H__
