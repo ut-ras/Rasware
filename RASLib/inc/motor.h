@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// motor.h - software motor driver
+// motor.h - software pwm drivers for the TLE5205-2
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -34,20 +34,7 @@
 #define MOTOR_FUNCTION_BUFFER_SIZE 4
 
 typedef enum{BRAKE, COAST} tMotorMode;
-typedef struct{ 
-    unsigned long port0; 
-    unsigned long pin0;
-    unsigned long port1; 
-    unsigned long pin1;
-    signed long value0;
-    signed long value1;
-    tMotorMode mode;
-    tBoolean active;
-} tMotorFunction;
-extern tMotorFunction rgMotorFunctions[MOTOR_FUNCTION_BUFFER_SIZE];
 
-unsigned long AddMotorFunction( unsigned long port0, unsigned long pin0 , unsigned long port1, unsigned long pin1, tMotorMode );
-void SetMotorPosition(unsigned long index, float input);
 // macro to create a motor signal generator
 // e.g.,
 // AddMotor(Left,F,2,F,3,COAST)
@@ -62,5 +49,17 @@ void InitializeMotor ## NAME (void){   \
 void SetMotor ## NAME (float input){ \
     SetMotorPosition( NAME ## MotorSelect, input); \
 }
+
+// Note: it is not recommended to call this function directly. Instead, use the
+// AddMotor macro above to generate a unique InitializeMotor function
+unsigned long AddMotorFunction(unsigned long port0,
+                               unsigned long pin0,
+                               unsigned long port1,
+                               unsigned long pin1,
+                               tMotorMode mode);
+
+// Note: it is not recommended to call this function directly. Instead, use the
+// AddMotor macro above to generate a unique SetMotor function
+void SetMotorPosition(unsigned long index, float input);
 
 #endif //  __MOTOR_H__

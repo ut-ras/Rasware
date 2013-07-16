@@ -51,22 +51,29 @@ int ServoMain(void){
     InitializeServoTwo();
     UARTprintf("Servo Test Starting...\n");
     for(;;){
-        static int i = 0;
+        static float i = 0;
         SetServoOne(i);
-        SetServoTwo((i*2)%256);
+        SetServoTwo(i);
         UARTprintf("Servo Output: %d   \r",i);
-        i = (i+1)%256;
-        WaitMS(100);
+        i += (1)/((float)SERVO_GENERATOR_RESOLUTION);
+        if(i>1) i=0;
+        WaitMS(1);
     }
 }
 
 int ADCMain(void){
     InitializeMCU();
     InitializeUART();
-    InitializeADC();
     UARTprintf("\nADC Test Starting...\n");
     for(;;){
-        UARTprintf("ADC0: %d ADC1: %d     \r", GetADC(0), GetADC(1));
+        //UARTprintf("ADC0(PE3): %d \t ADC1(PE2): %d \t ADC2(PE1): %d \t ADC3(PE0): %d \t ADC4(PD4): %d \t ADC5(PD3): %d \t ADC6(PD1): %d \t ADC7(PD0): %d \t ADC8(PE5): %d \t ADC9(PE4): %d \t ADC10(PB4): %d \t ADC11(PB5): %d             \r", 
+        UARTprintf("%d \t%d \t%d \t%d \t%d \t%d \t%d \t%d \t%d \t%d \t%d \t%d           \r", 
+        GetADC(ADC0), GetADC(ADC1), 
+        GetADC(ADC2), GetADC(ADC3), 
+        GetADC(ADC4), GetADC(ADC5),        
+        GetADC(ADC6), GetADC(ADC7),
+        GetADC(ADC8), GetADC(ADC9),
+        GetADC(ADC10), GetADC(ADC11));
     }
 }
 
@@ -105,5 +112,5 @@ int PerFuncMain(void){
 
 
 int main(void){
-    return MotorMain();
+    return ADCMain();
 }

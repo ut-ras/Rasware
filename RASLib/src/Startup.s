@@ -80,7 +80,12 @@ __heap_limit
 ;******************************************************************************
         EXTERN PeriodicFunctionHandler
         EXTERN ADCTriggerHandler
+        EXTERN ADC0SS0Handler
         EXTERN ADC0SS1Handler
+        EXTERN ADC0SS2Handler
+        EXTERN ADC1SS0Handler
+        EXTERN ADC1SS1Handler
+        EXTERN ADC1SS2Handler
         EXTERN ServoGeneratorHandler
         EXTERN MotorGeneratorHandler
         EXTERN PortAHandler
@@ -124,9 +129,9 @@ __Vectors
         DCD     IntDefaultHandler           ; PWM Generator 1
         DCD     IntDefaultHandler           ; PWM Generator 2
         DCD     IntDefaultHandler           ; Quadrature Encoder 0
-        DCD     IntDefaultHandler           ; ADC Sequence 0
+        DCD     ADC0SS0Handler              ; ADC Sequence 0
         DCD     ADC0SS1Handler              ; ADC Sequence 1
-        DCD     IntDefaultHandler           ; ADC Sequence 2
+        DCD     ADC0SS2Handler              ; ADC Sequence 2
         DCD     IntDefaultHandler           ; ADC Sequence 3
         DCD     IntDefaultHandler           ; Watchdog timer
         DCD     IntDefaultHandler           ; Timer 0 subtimer A
@@ -158,9 +163,9 @@ __Vectors
         DCD     IntDefaultHandler           ; PWM Generator 3
         DCD     IntDefaultHandler           ; uDMA Software Transfer
         DCD     IntDefaultHandler           ; uDMA Error
-        DCD     IntDefaultHandler           ; ADC1 Sequence 0
-        DCD     IntDefaultHandler           ; ADC1 Sequence 1
-        DCD     IntDefaultHandler           ; ADC1 Sequence 2
+        DCD     ADC1SS0Handler              ; ADC1 Sequence 0
+        DCD     ADC1SS1Handler              ; ADC1 Sequence 1
+        DCD     ADC1SS2Handler              ; ADC1 Sequence 2
         DCD     IntDefaultHandler           ; ADC1 Sequence 3
         DCD     IntDefaultHandler           ; I2S0
         DCD     IntDefaultHandler           ; External Bus Interface 0

@@ -33,5 +33,6 @@ UART working
 Time functions tested and working
 Encoders tested and working
 Servos tested and working
+ADC tested and working
 Motors written, shows up on Oscope, unable to drive motors yet
-ADC written, not working
+

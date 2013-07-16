@@ -22,12 +22,14 @@
 //
 //*****************************************************************************
 
+#ifndef __GPIOINTS_H__
+#define __GPIOINTS_H__
+
 #define GPIO_INT_HANDLER_BUFFER_SIZE 4
 typedef enum{PORTA,PORTB,PORTC,PORTD,PORTE,PORTF,NUM_GPIO_PORTS} tGPIO_Port;
 typedef void(*tInterruptHandler)(void);
 
-void Dummy(void);
-
 void AttachToInterruptHandler(tGPIO_Port port, tInterruptHandler handler);
 void InitializeGPIOInterruptHandlers(void);
 
+#endif // __GPIOINTS_H__
