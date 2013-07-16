@@ -34,17 +34,21 @@ void InitializeSystemTime(void);
 // Outputs system time
 time_t GetTimeUS(void);
 time_t GetTimeS(void);
+float GetTime(void);
 
 // Schedules a callback function to be called in given time
 void CallInUS(void (*callback)(void*), void *data, time_t us);
 void CallInS(void (*callback)(void*), void *data, time_t s);
+void CallIn(void (*callback)(void*), void *data, float s);
 
 // Schedules a callback function to be called repeatedly
 void CallEveryUS(void (*callback)(void*), void *data, time_t us);
 void CallEveryS(void (*callback)(void*), void *data, time_t s);
+void CallEvery(void (*callback)(void*), void *data, float s);
 
 // Busy waits for given time
 void WaitUS(time_t ms);
 void WaitS(time_t s);
+void Wait(float s);
 
 #endif // __TIME_H__
