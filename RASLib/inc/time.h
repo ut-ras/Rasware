@@ -21,21 +21,34 @@
 //
 //*****************************************************************************
 
-#define US_PER_SEC 1000000
-#define US_PER_MS 1000
-#define MS_PER_SEC 1000
-#define PERIODIC_FUNCTION_RATE 1000
+#ifndef __TIME_H__
+#define __TIME_H__
 
-extern unsigned long g_ulSystemTimeMS;
-extern unsigned long g_ulSystemTimeSeconds;
+// Definition of time type intended to store microseconds. 
+// Will last for 584 thousand years.
+typedef unsigned long long tTime;
 
-unsigned long GetTime(void);
-unsigned long GetTimeUS(void);
+// Initializes a system timer with millisecond resolution
 void InitializeSystemTime(void);
 
-int AddPeriodicFunction(void(*task_in)(void), unsigned long freq);
+// Outputs system time
+tTime GetTimeUS(void);
+tTime GetTimeS(void);
+float GetTime(void);
 
-void WaitUS(unsigned long long us);
-void WaitMS(unsigned long long ms);
-void WaitS(unsigned long seconds);
-void Wait(float seconds);
+// Schedules a callback function to be called in given time
+void CallInUS(void (*callback)(void*), void *data, tTime us);
+void CallInS(void (*callback)(void*), void *data, tTime s);
+void CallIn(void (*callback)(void*), void *data, float s);
+
+// Schedules a callback function to be called repeatedly
+void CallEveryUS(void (*callback)(void*), void *data, tTime us);
+void CallEveryS(void (*callback)(void*), void *data, tTime s);
+void CallEvery(void (*callback)(void*), void *data, float s);
+
+// Busy waits for given time
+void WaitUS(tTime ms);
+void WaitS(tTime s);
+void Wait(float s);
+
+#endif // __TIME_H__

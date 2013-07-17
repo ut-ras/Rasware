@@ -136,7 +136,6 @@
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
             <RestoreFunctions>0</RestoreFunctions>
             <RestoreToolbox>1</RestoreToolbox>
-            <RestoreTracepoints>1</RestoreTracepoints>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
           <TargetSelection>1</TargetSelection>
@@ -350,7 +349,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..;..\;..\RASLib\inc;C:\Stellarisware</IncludePath>
+              <IncludePath>..;..\;..\RASLib\inc;C:\Stellarisware;..\Stellarisware</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -409,7 +408,7 @@
             <File>
               <FileName>uartstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>C:\StellarisWare\utils\uartstdio.c</FilePath>
+              <FilePath>..\StellarisWare\utils\uartstdio.c</FilePath>
             </File>
           </Files>
         </Group>

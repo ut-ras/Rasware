@@ -31,210 +31,221 @@
 #include "driverlib/interrupt.h"
 #include "time.h"
 #include "gpioints.h"
-#include "internal.h"
 
-/***************** GLOBAL VARIABLES *****************/
-unsigned long g_ulSystemTimeMS;
-unsigned long g_ulSystemTimeSeconds;
+// Global System Clock
+static volatile tTime systemTimeUS = 0;
+static long USTicks = 0;
+
+#define US_IN_S (1000*1000)
+
+// Relevant task info
+typedef struct {
+    tTime target;
+    tTime repeatTime;
+    void *data;
+    void (*callback)(void*);
+} tTask;
+
+// Cyclic buffer of waiting tasks
+// Must be a power of 2 for masking to work
+#define TASK_BUFF_SIZE 32
+#define TASK_MASK(n) ((TASK_BUFF_SIZE-1) & (n))
+
+unsigned int taskStart = 0;
+unsigned int taskEnd = 0;
+
+tTask taskBuffer[TASK_BUFF_SIZE];
 
 
-/***************** BEGIN DEFINITION OF SYSTEM TIME *****************/
-
-// Output: system time in seconds
-unsigned long GetTime(void){ return g_ulSystemTimeSeconds; }
-
-// Output: system time in microseconds
-unsigned long GetTimeMS(void){ return g_ulSystemTimeMS; }
-
-// Initializes a system timer with microsecond resolution    
-void InitializeSystemTime(void){
-    // Initialize globals
-    g_ulSystemTimeMS = 0;
-    g_ulSystemTimeSeconds = 0;
+// Initializes a system timer with microsecond resolution
+void InitializeSystemTime(void) {
+    // Reset global clock
+    systemTimeUS = 0;
+  
+    // Reset buffer just in case its been used
+    taskStart = 0;
+    taskEnd = 0;
+  
+    // Find the system clock divided by 1000000, which results in 
+    // 1 US for the timer
+    USTicks = SysCtlClockGet() / US_IN_S;
+  
+    // Enable the timer 
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_WTIMER5);
+  
+    // We use the first half of the timer to keep track of the 
+    // microseconds that have passed
+    // The second half we use as a one shot to trigger pending tasks
+    TimerConfigure(WTIMER5_BASE, TIMER_CFG_SPLIT_PAIR | 
+                                 TIMER_CFG_A_PERIODIC_UP | 
+                                 TIMER_CFG_B_ONE_SHOT);    
+  
+    // Setup timer A to run for a full second
+    TimerLoadSet(WTIMER5_BASE, TIMER_A, US_IN_S * USTicks);
+    TimerIntEnable(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
+  
+    // Only enable the timer B interrupt when it is needed
+    TimerIntDisable(WTIMER5_BASE, TIMER_TIMB_TIMEOUT);
     
-    // Set up the period for the SysTick timer.  The SysTick timer period will
-    // be equal to the system clock divided by 1000, resulting in a period of 1 millisecond.
-    SysTickPeriodSet(SysCtlClockGet()/MS_PER_SEC);
-    
-    // Enable the SysTick Interrupt.
-    SysTickIntEnable();
-    
-    // Enable SysTick.
-    SysTickEnable();
+    // Enable the timers and interrupts
+    IntEnable(INT_WTIMER5A);
+    IntEnable(INT_WTIMER5B);
+    TimerEnable(WTIMER5_BASE, TIMER_BOTH);
 }
 
-void SysTickHandler(void){
-    g_ulSystemTimeMS++;
-    if(g_ulSystemTimeMS >= MS_PER_SEC){ // wrap US around every second
-        g_ulSystemTimeMS = 0;
-        g_ulSystemTimeSeconds++;
-    }
-}
-/***************** END DEFINITION OF SYSTEM TIME *****************/
-
-
-
-/***************** BEGIN DEFINITION OF PERIODIC FUNCTION GENERATOR *****************/
-
-#define PERIODIC_FUNCTION_BUFFER_SIZE 16
-typedef struct{
-	void(*function)(void); 
-    unsigned long period;
-} tPeriodicFunction;
-tPeriodicFunction rgPeriodicFunctions[PERIODIC_FUNCTION_BUFFER_SIZE];
-
-
-void InitializePeriodicFunctions(void)
-{
-    int i;
-    // Initialize the periodic function buffer to point to dummies
-    // (period of 0 means not active)
-    for( i = 0; i < PERIODIC_FUNCTION_BUFFER_SIZE; i++){
-        rgPeriodicFunctions[i].function = Dummy;
-        rgPeriodicFunctions[i].period = 0;
-    }
-    
-    // Enable SysCtrl for Timer5
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER5); 
-    
-    // Configure Timer5A to be periodic, maintaining the configuration for Timer5B
-    TimerConfigure(TIMER5_BASE, TIMER5_CFG_R | TIMER_CFG_SPLIT_PAIR | TIMER_CFG_A_PERIODIC);
-	
-    // Enable the Timer5A interrupt
-    IntEnable(INT_TIMER5A);
-    TimerIntEnable(TIMER5_BASE, TIMER_TIMA_TIMEOUT );
-    
-    // Load Timer5A with a frequency of PERIODIC_FUNCTION_RATE
-    TimerLoadSet(TIMER5_BASE, TIMER_A, SysCtlClockGet() / PERIODIC_FUNCTION_RATE);
-    
-    // Enable Timer5A
-    TimerEnable(TIMER5_BASE, TIMER_A);
+// Outputs system time in microseconds
+tTime GetTimeUS(void) {
+    return systemTimeUS + 
+           (TimerValueGet(WTIMER5_BASE, TIMER_A) / USTicks);
 }
 
-// Declares a function to be run at the specified frequency
-// \param function_in is a pointer to the function to run
-// \param freq is the freqency in hertz in which to run the function
-//        Note: PERIODIC_FUNCTION_RATE >= freq >= 1
-// \return 0 for success, error code otherwise
-// 
-// Note: Uses Timer5A. Do not use elsewhere is this function is called
-int AddPeriodicFunction(void(*function)(void), unsigned long freq)
-{
-    static tBoolean fIsPerFuncInitialized = false;
-    int i = 0;
-    
-    // Check to see if periodic functions are initialized. If not, initialize.
-    if(!fIsPerFuncInitialized){
-        InitializePeriodicFunctions();
-        
-        //  Flag as initialized
-        fIsPerFuncInitialized = true;
-    }
-    
-    // Check to see if the freqency input is valid
-    if(freq <= 0 || freq > PERIODIC_FUNCTION_RATE) return 1;
-    
-    // Find the next availible spot in the buffer
-    while(rgPeriodicFunctions[i].period != 0)
-    {
-        i++;
-        if(i >= PERIODIC_FUNCTION_BUFFER_SIZE) return 1; // exit with error if buffer is full
-	}
-    
-    // Put the new task in the buffer
-    rgPeriodicFunctions[i].function = function;
-    rgPeriodicFunctions[i].period = PERIODIC_FUNCTION_RATE / freq;
-    return 0;
+tTime GetTimeS(void) {
+    return GetTimeUS() / US_IN_S;
 }
 
-void PeriodicFunctionHandler(void)
-{
-    static unsigned long cPeriodicThreadTime = 0;
-    int i = 0;
-    
-    // Increment a counter in terms of periodic thread time
-    cPeriodicThreadTime++;
-    
-    // Iterate through the periodic functions
-    while( i != PERIODIC_FUNCTION_BUFFER_SIZE && rgPeriodicFunctions[i].period != 0)
-    {
-        // Run the function if the time % it's period is 0
-        if(cPeriodicThreadTime % rgPeriodicFunctions[i].period == 0){
-            rgPeriodicFunctions[i].function();
+float GetTime(void) {
+    return GetTimeUS() / (float)(USTicks);
+}
+
+// Handler that simply updates the time by one second
+void WTimer5AHandler(void) {
+    TimerIntClear(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
+    systemTimeUS += US_IN_S;
+}
+
+// Called internally to register a task
+static void RegisterTask(tTask *task) {
+    unsigned int i, prev;
+  
+    // Disable any incoming tasks temporarily
+    TimerIntDisable(WTIMER5_BASE, TIMER_TIMB_TIMEOUT);
+  
+    // Start at the back and work forward moving any later tasks back  
+    for (i = taskEnd; i != taskStart; i = prev) {
+        prev = TASK_MASK(i-1);
+      
+        if (taskBuffer[prev].target > task->target) {
+            taskBuffer[i] = taskBuffer[prev];
+        } else {
+            break;
         }
-        i++;	
     }
     
-    // Clear the interrupt
-    TimerIntClear(TIMER5_BASE, TIMER_TIMA_TIMEOUT);
-}
-/***************** END DEFINITION OF PERIODIC FUNCTION GENERATOR *****************/
-
-
-
-/***************** BEGIN DEFINITION OF BUSY WAITS *****************/
-
-// Busy-waits a specified number of microseconds
-// \param us is the number of microseconds to wait
-// Note: Uses WTimer5. Do not use elsewhere is this function is called.
-void WaitUS(unsigned long long us)
-{							
-    static tBoolean fIsWaitInitialized = false;
+    // Put our task into the task buffer
+    taskBuffer[i] = *task;
     
-    // Check to see if busy waits are initialized. If not, initialize.
-    if(!fIsWaitInitialized)
-    {
-        // Enable SysCtrl for WTimer5
-        SysCtlPeripheralEnable(SYSCTL_PERIPH_WTIMER5);
+    // Increase the buffer size
+    taskEnd = TASK_MASK(taskEnd+1);
+}
+
+// Setup timer B to trigger an interrupt for the next task
+static void SetNextTaskInt(void) {
+    tTime usUntil;
+  
+    // Check to make sure there even is a task
+    if (taskEnd == taskStart) {
+        TimerIntDisable(WTIMER5_BASE, TIMER_TIMB_TIMEOUT);
+        return;
+    }
+
+    // Calculate the next task's eta
+    usUntil = taskBuffer[taskStart].target - GetTimeUS();
+      
+    // Check for 32bit overflow in which case we can just 
+    // interrupt as late as possible. The handler will do nothing.
+    TimerLoadSet(WTIMER5_BASE, TIMER_B, 
+                 (usUntil > 0xffffffff) ? 0xffffffff : usUntil);
+      
+    // Enable the actual interrupt
+    TimerIntEnable(WTIMER5_BASE, TIMER_TIMB_TIMEOUT);
+}
+
+// Handler used to manage waiting tasks
+void WTimer5BHandler(void) {
+    TimerIntClear(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
+  
+    // If there is a task waiting, call it and 
+    // remove it from the buffer
+    while (taskStart != taskEnd && 
+           systemTimeUS >= taskBuffer[taskStart].target) {
+        tTask *task = &taskBuffer[taskStart];
+      
+        task->callback(task->data);
         
-        // Configure WTimer5 as a 64-bit one shot timer
-        TimerConfigure(WTIMER5_BASE, TIMER_CFG_ONE_SHOT);
+        // Reregister the function if it wants to repeat
+        if (task->repeatTime) {
+            task->target += task->repeatTime;
+            RegisterTask(task);
+        }
         
-        // Enable the WTimer5 interrupt
-        TimerIntEnable(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
-        
-        // Flag as initialized
-        fIsWaitInitialized = true;	
+        // Pop the buffer
+        taskStart = TASK_MASK(taskStart+1);
     }
     
-    // Load WTimer5 with the number of microseconds to busy-wait for
-    TimerLoadSet64(WTIMER5_BASE, us * (SysCtlClockGet() / US_PER_SEC) );	
-    
-    // Enable WTimer5	
-    TimerEnable(WTIMER5_BASE, TIMER_A);		 
-    
-    // Spin until WTimer5 times out
-    while(!(TimerIntStatus(WTIMER5_BASE, TIMER_A) & TIMER_TIMA_TIMEOUT));
-    
-    // Disable WTimer5
-    TimerDisable(WTIMER5_BASE, TIMER_BOTH);
-    
-    // Clear the timeout interrupt
-	TimerIntClear(WTIMER5_BASE, TimerIntStatus(WTIMER5_BASE, TIMER_A));    
+    // Setup the next task
+    SetNextTaskInt();
 }
 
-// Busy-waits a specified amount of milliseconds
-// \param ms is the number of milliseconds to wait
-// Note: Uses WTimer5. Do not use elsewhere is this function is called.
-void WaitMS(unsigned long long ms)
-{
-    WaitUS(ms*US_PER_MS);
+// Schedules a callback function to be called in given microseconds
+void CallInUS(void (*callback)(void*), void *data, tTime us) {
+    tTask task;
+  
+    task.target = systemTimeUS + us;
+    // Zero repeatTime indicates it should run once
+    task.repeatTime = 0;
+    task.callback = callback;
+    task.data = data;
+      
+    // Register it to be called
+    RegisterTask(&task);
+    SetNextTaskInt();
 }
 
-// Busy-waits a specified amount of seconds
-// \param seconds is the number of seconds to wait
-// Note: Uses WTimer5. Do not use elsewhere is this function is called.
-void WaitS(unsigned long seconds)
-{
-    WaitUS(seconds*US_PER_SEC);
+void CallInS(void (*callback)(void*), void *data, tTime s) {
+    CallInUS(callback, data, s*US_IN_S);
 }
 
-// Busy-waits a specified amount of seconds
-// \param seconds is the number of seconds to wait
-// Note: Uses WTimer5. Do not use elsewhere is this function is called.
-void Wait(float seconds)
-{
-    WaitUS(seconds*US_PER_SEC);
+void CallIn(void (*callback)(void*), void *data, float s) {
+    CallInUS(callback, data, (tTime)(s*US_IN_S));
 }
-/***************** END DEFINITION OF BUSY WAITS *****************/
 
+// Schedules a callback function to be called repeatedly
+void CallEveryUS(void (*callback)(void*), void *data, tTime us) {
+    tTask task;
+  
+    task.target = systemTimeUS + us;
+    task.repeatTime = us;
+    task.callback = callback;
+    task.data = data;
+      
+    // Register it to be called
+    RegisterTask(&task);
+    SetNextTaskInt();
+}
+
+void CallEveryS(void (*callback)(void*), void *data, tTime s) {
+    CallEveryUS(callback, data, s*US_IN_S);
+}
+
+void CallEvery(void (*callback)(void*), void *data, float s) {
+    CallEveryUS(callback, data, (tTime)(s*US_IN_S));
+}
+
+// Busy waits for given milliseconds
+static void WaitHandler(void *flag) {
+    *(int*)flag = 1;
+}
+
+void WaitUS(tTime us) {
+    int waitFlag = 0;
+    CallInUS(WaitHandler, &waitFlag, us);
+    while(!waitFlag);
+}
+
+void WaitS(tTime s) {
+    WaitUS(s*US_IN_S);
+}
+  
+void Wait(float s) {
+    WaitUS((tTime)(s*US_IN_S));
+}

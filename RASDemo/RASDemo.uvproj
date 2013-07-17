@@ -349,7 +349,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..;..\;..\RASLib\inc;C:\Stellarisware</IncludePath>
+              <IncludePath>..;..\;..\RASLib\inc;C:\Stellarisware;..\Stellarisware</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -426,14 +426,14 @@
               <FilePath>.\UARTDemo.c</FilePath>
             </File>
             <File>
-              <FileName>uartstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>C:\StellarisWare\utils\uartstdio.c</FilePath>
-            </File>
-            <File>
               <FileName>Startup.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\RASLib\src\Startup.s</FilePath>
+            </File>
+            <File>
+              <FileName>uartstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\StellarisWare\utils\uartstdio.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -4,6 +4,8 @@
 #include <RASLib/inc/uart.h> 
 #include <RASLib/inc/init.h> 
 
+#include <RASLib/inc/time.h>
+
 int main(void)
 {	
 	char ch;	  	 
@@ -11,12 +13,12 @@ int main(void)
 	InitializeMCU();
 	initUART();
 
-	while(1) {	
+	while(1) {
 		UARTprintf("\nRAS Demo for Robotathon 2013\n");
 		UARTprintf("  0=UART Demo\n  1=Motor Demo\n");
 		UARTprintf("  2=Servo Demo\n  3=Line Sensor\n");
 		UARTprintf("  4=IR Sensor Demo\n  5=Encoders Demo\n");
-
+		
 		UARTprintf(">> ");
 		ch = getc();
 		putc(ch);
