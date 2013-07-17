@@ -45,7 +45,7 @@ void InitializeMCU(void)
     InitializeSystemTime();
     
     //Initialize GPIO Interrupt Handlers
-    InitializeGPIOInterruptHandlers();
+    InitializeGPIO();
     
     //Enable global interrupts
     IntMasterEnable();    
