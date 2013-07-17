@@ -33,27 +33,28 @@
 #include "gpioints.h"
 
 // Global System Clock
-static volatile time_t systemTimeUS = 0;
+static volatile tTime systemTimeUS = 0;
 static long USTicks = 0;
 
 #define US_IN_S (1000*1000)
 
 // Relevant task info
-struct task {
-    time_t target;
-    time_t repeatTime;
+typedef struct {
+    tTime target;
+    tTime repeatTime;
     void *data;
     void (*callback)(void*);
-};
+} tTask;
 
 // Cyclic buffer of waiting tasks
+// Must be a power of 2 for masking to work
 #define TASK_BUFF_SIZE 32
 #define TASK_MASK(n) ((TASK_BUFF_SIZE-1) & (n))
 
 unsigned int taskStart = 0;
 unsigned int taskEnd = 0;
 
-struct task taskBuffer[TASK_BUFF_SIZE];
+tTask taskBuffer[TASK_BUFF_SIZE];
 
 
 // Initializes a system timer with microsecond resolution
@@ -93,12 +94,12 @@ void InitializeSystemTime(void) {
 }
 
 // Outputs system time in microseconds
-time_t GetTimeUS(void) {
+tTime GetTimeUS(void) {
     return systemTimeUS + 
            (TimerValueGet(WTIMER5_BASE, TIMER_A) / USTicks);
 }
 
-time_t GetTimeS(void) {
+tTime GetTimeS(void) {
     return GetTimeUS() / US_IN_S;
 }
 
@@ -113,7 +114,7 @@ void WTimer5AHandler(void) {
 }
 
 // Called internally to register a task
-static void RegisterTask(struct task *task) {
+static void RegisterTask(tTask *task) {
     unsigned int i, prev;
   
     // Disable any incoming tasks temporarily
@@ -139,7 +140,7 @@ static void RegisterTask(struct task *task) {
 
 // Setup timer B to trigger an interrupt for the next task
 static void SetNextTaskInt(void) {
-    time_t usUntil;
+    tTime usUntil;
   
     // Check to make sure there even is a task
     if (taskEnd == taskStart) {
@@ -160,14 +161,14 @@ static void SetNextTaskInt(void) {
 }
 
 // Handler used to manage waiting tasks
-void WTimer5BHandler(void){
+void WTimer5BHandler(void) {
     TimerIntClear(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
   
     // If there is a task waiting, call it and 
     // remove it from the buffer
     while (taskStart != taskEnd && 
            systemTimeUS >= taskBuffer[taskStart].target) {
-        struct task *task = &taskBuffer[taskStart];
+        tTask *task = &taskBuffer[taskStart];
       
         task->callback(task->data);
         
@@ -186,8 +187,8 @@ void WTimer5BHandler(void){
 }
 
 // Schedules a callback function to be called in given microseconds
-void CallInUS(void (*callback)(void*), void *data, time_t us) {
-    struct task task;
+void CallInUS(void (*callback)(void*), void *data, tTime us) {
+    tTask task;
   
     task.target = systemTimeUS + us;
     // Zero repeatTime indicates it should run once
@@ -200,17 +201,17 @@ void CallInUS(void (*callback)(void*), void *data, time_t us) {
     SetNextTaskInt();
 }
 
-void CallInS(void (*callback)(void*), void *data, time_t s) {
+void CallInS(void (*callback)(void*), void *data, tTime s) {
     CallInUS(callback, data, s*US_IN_S);
 }
 
 void CallIn(void (*callback)(void*), void *data, float s) {
-    CallInUS(callback, data, (time_t)(s*US_IN_S));
+    CallInUS(callback, data, (tTime)(s*US_IN_S));
 }
 
 // Schedules a callback function to be called repeatedly
-void CallEveryUS(void (*callback)(void*), void *data, time_t us) {
-    struct task task;
+void CallEveryUS(void (*callback)(void*), void *data, tTime us) {
+    tTask task;
   
     task.target = systemTimeUS + us;
     task.repeatTime = us;
@@ -222,12 +223,12 @@ void CallEveryUS(void (*callback)(void*), void *data, time_t us) {
     SetNextTaskInt();
 }
 
-void CallEveryS(void (*callback)(void*), void *data, time_t s) {
+void CallEveryS(void (*callback)(void*), void *data, tTime s) {
     CallEveryUS(callback, data, s*US_IN_S);
 }
 
 void CallEvery(void (*callback)(void*), void *data, float s) {
-    CallEveryUS(callback, data, (time_t)(s*US_IN_S));
+    CallEveryUS(callback, data, (tTime)(s*US_IN_S));
 }
 
 // Busy waits for given milliseconds
@@ -235,16 +236,16 @@ static void WaitHandler(void *flag) {
     *(int*)flag = 1;
 }
 
-void WaitUS(time_t us) {
+void WaitUS(tTime us) {
     int waitFlag = 0;
     CallInUS(WaitHandler, &waitFlag, us);
     while(!waitFlag);
 }
 
-void WaitS(time_t s) {
+void WaitS(tTime s) {
     WaitUS(s*US_IN_S);
 }
   
 void Wait(float s) {
-    WaitUS((time_t)(s*US_IN_S));
+    WaitUS((tTime)(s*US_IN_S));
 }
