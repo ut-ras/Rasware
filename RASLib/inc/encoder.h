@@ -21,22 +21,27 @@
 //
 //*****************************************************************************
 
+#ifndef __ENCODER_H__
+#define __ENCODER_H__
+
+#include "gpio.h"
+#include "internal.h"
+
 #include "inc/hw_types.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_ints.h"
 #include "driverlib/gpio.h"
 #include "driverlib/sysctl.h"
 #include "driverlib/interrupt.h"
-#include "gpio.h"
-#include "internal.h"
 
-#define ENCODER_BUFFER_SIZE 4 // Max number of definable encoders 
+// Definition of struct Encoder in encoder.c
+typedef struct Encoder tEncoder;
 
-// macro to simplify adding an encoder
-// e.g.,
-// InitializeEncoder(F,2,3) sets a new encoder with PF2 = A and PF3 = B
-#define InitializeEncoder(_PORT,PINA,PINB) AddEncoder(SYSCTL_PERIPH_GPIO ## _PORT, GPIO_PORT ## _PORT ## _BASE, PINA, PINB, INT_GPIO ## _PORT, PORT ## _PORT)
+// Function to initialize an encoder on a pair of pins
+// The returned pointer can be used by the GetEncoder function
+tEncoder *InitializeEncoder(tPin a, tPin b);
 
-// Retrieves encoder ticks thus far by index
-// Note: Encoders are indexed by the order in which they were added
-signed long GetEncoderTicks(unsigned char index);
+// This function returns the accumulated encoder value
+signed long GetEncoder(tEncoder *enc);
+
+#endif // __ENCODER_H__
