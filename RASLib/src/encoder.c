@@ -99,3 +99,8 @@ tEncoder *InitializeEncoder(tPin a, tPin b) {
 signed long GetEncoder(tEncoder *enc) {
     return enc->ticks;
 }
+
+// This function clears any ticks on the encoder
+void ResetEncoder(tEncoder *enc) {
+    enc->ticks = 0;
+}
