@@ -44,4 +44,7 @@ tEncoder *InitializeEncoder(tPin a, tPin b);
 // This function returns the accumulated encoder value
 signed long GetEncoder(tEncoder *enc);
 
+// This function clears any ticks on the encoder
+void ResetEncoder(tEncoder *enc);
+
 #endif // __ENCODER_H__
