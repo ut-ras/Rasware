@@ -23,6 +23,8 @@
 
 #include "encoder.h"
 
+#if 0 // For debugging
+
 
 /***************** BEGIN DEFINITION OF QUADRATURE DECODER (MEALY MACHINE) *****************/
 struct EncoderState{
@@ -129,3 +131,4 @@ signed long GetEncoderTicks(unsigned char index){
     return Encoders[index].slTicks;
 }
 
+#endif // For debugging

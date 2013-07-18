@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// gpioints.h - GPIO interrupt handlers
+// gpio.h - GPIO interrupt handlers
 // This file exists to sanction multiple functions per GPIO interrupt handler
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
@@ -25,12 +25,11 @@
 #ifndef __GPIOINTS_H__
 #define __GPIOINTS_H__
 
+#include "internal.h"
+
 #include "driverlib/gpio.h"
 #include "inc/hw_types.h"
 #include "inc/hw_memmap.h"
-
-// definition of callback function pointer
-typedef void (*tCallback)(void*);
 
 // Definition of tPin.
 // Pins are named `PIN_XY' where X is the port letter

@@ -30,7 +30,7 @@
 #include "driverlib/timer.h"
 #include "driverlib/interrupt.h"
 #include "time.h"
-#include "gpioints.h"
+#include "gpio.h"
 
 // Global System Clock
 static volatile tTime systemTimeUS = 0;

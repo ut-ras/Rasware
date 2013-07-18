@@ -27,7 +27,7 @@
 #include "driverlib/gpio.h"
 #include "driverlib/sysctl.h"
 #include "driverlib/interrupt.h"
-#include "gpioints.h"
+#include "gpio.h"
 #include "internal.h"
 
 #define ENCODER_BUFFER_SIZE 4 // Max number of definable encoders 
