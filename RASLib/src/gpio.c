@@ -69,7 +69,6 @@ PORT_HANDLER(C);
 PORT_HANDLER(D);
 PORT_HANDLER(E);
 PORT_HANDLER(F);
-PORT_HANDLER(A);
 
 // Initialize GPIO
 void InitializeGPIO(void) {

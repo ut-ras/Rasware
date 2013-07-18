@@ -431,14 +431,14 @@
               <FilePath>.\src\encoder.c</FilePath>
             </File>
             <File>
-              <FileName>gpioints.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\gpioints.c</FilePath>
-            </File>
-            <File>
               <FileName>internal.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\internal.c</FilePath>
+            </File>
+            <File>
+              <FileName>gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\gpio.c</FilePath>
             </File>
           </Files>
         </Group>
