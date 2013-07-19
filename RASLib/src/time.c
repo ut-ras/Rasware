@@ -95,8 +95,8 @@ void InitializeSystemTime(void) {
 
 // Outputs system time in microseconds
 tTime GetTimeUS(void) {
-    return systemTimeUS + 
-           (TimerValueGet(WTIMER5_BASE, TIMER_A) / USTicks);
+    return (TimerValueGet(WTIMER5_BASE, TIMER_A) / USTicks)
+           + systemTimeUS;
 }
 
 tTime GetTimeS(void) {
@@ -104,7 +104,8 @@ tTime GetTimeS(void) {
 }
 
 float GetTime(void) {
-    return GetTimeUS() / (float)(USTicks);
+    return ((TimerValueGet(WTIMER5_BASE, TIMER_A) / (float)USTicks)
+            + systemTimeUS) / US_IN_S;
 }
 
 // Handler that simply updates the time by one second
