@@ -27,98 +27,22 @@
 #include "driverlib/interrupt.h"
 #include "driverlib/timer.h"
 
-typedef struct{ 
-    unsigned long port; 
-    unsigned long pin; 
-    unsigned long value;
-} tServo;
-static tServo rgServoFunctions[SERVO_FUNCTION_BUFFER_SIZE];
-
-void InitializeServoGenerator(void)
-{
-    int i;
-    // Initialze the servo generator buffer to 0 (0 = inactive)
-    for( i = 0; i < SERVO_FUNCTION_BUFFER_SIZE; i++){
-        rgServoFunctions[i].value = 0;
-    }
+// Function to initialize a servo on a pin
+// The returned pointer can be used by the SetPWM function
+tServo *InitializeServo(tPin pin) {
+    // Create the pwm signal
+    tServo *servo = InitializePWM(pin);
     
-    // Enable SysCtrl for Timer4
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER4); 
+    // Set it to the center point
+    SetServo(servo, 0.5);
     
-    // Configure Timer4A to be periodic, maintaining the configuration for Timer4B
-    TimerConfigure(TIMER4_BASE, TIMER4_CFG_R | TIMER_CFG_SPLIT_PAIR | TIMER_CFG_A_PERIODIC);
-	
-    // Enable the Timer4A interrupt
-    IntEnable(INT_TIMER4A);
-    TimerIntEnable(TIMER4_BASE, TIMER_TIMA_TIMEOUT );
-    
-    // Load Timer4A with a frequency of SERVO_GENERATOR_RESOLUTION * SERVO_GENERATOR_RATE
-    TimerLoadSet(TIMER4_BASE, TIMER_A, SysCtlClockGet() / SERVO_GENERATOR_RESOLUTION / SERVO_GENERATOR_RATE);
-    
-    // Enable Timer4A
-    TimerEnable(TIMER4_BASE, TIMER_A);
+    // Pass on the servo
+    return servo;
 }
 
-// Sets the Servo generator's output to the specified value
 // Servo output is 50hz with 2.5% to 12.5% duty cycle, centered at 7.5%
-// \param index is the servo to set
-// \param input is the value to set at, 0 being 2.5% duty cycle and 1 being 12.5%
-void SetServoPosition(unsigned long index, float input){
-    rgServoFunctions[index].value = (((input) * (SERVO_GENERATOR_RESOLUTION / 10)))+ (SERVO_GENERATOR_RESOLUTION / 40);
+// This function sets a servo value, with 0.0 being 2.5% and 1.0 being 12.5%
+void SetServo(tServo *servo, float value) { 
+    // Set pwm to proper value
+    SetPWM(servo, 0.025f + (value * 0.10f));
 }
-
-// Declares a new servo function pin
-// Servo pins are run by bit-banging in software
-// \param port is the port base (ex. GPIO_PORTA_BASE)
-// \param pin is the pin in that port (ex. GPIO_PIN_0)
-// \return the index of the servo in the buffer
-// 
-// Note: Uses Timer4A. Do not use elsewhere is this function is called
-unsigned long AddServoFunction( unsigned long port, unsigned long pin ){
-    static unsigned long count = 0;
-    static tBoolean fIsServoFuncInitialized = false;
-    
-    // Check to see if the servo generator is initialized. If not, initialize.
-    if(!fIsServoFuncInitialized){
-        InitializeServoGenerator();
-        
-        //  Flag as initialized
-        fIsServoFuncInitialized = true;
-    }
-    
-    // Find the next availible spot in the buffer
-    GPIOPinTypeGPIOOutput(port, pin); 
-    
-    // Put the new task in the buffer
-    rgServoFunctions[count].port = port;
-    rgServoFunctions[count].pin = pin;
-    SetServoPosition(count, 128);
-    GPIOPinWrite(port, pin, 0);
-    return count++;
-}
-
-void ServoGeneratorHandler(void)
-{
-    static unsigned long cServoGenTime = 0;
-    int i = 0;
-    // Increment a counter in terms of servo generator time
-    cServoGenTime = ((cServoGenTime+1)%SERVO_GENERATOR_RESOLUTION);
-    
-    // Iterate through the servo functions
-    while( i != SERVO_FUNCTION_BUFFER_SIZE && rgServoFunctions[i].value != 0)
-    {
-        if(cServoGenTime == 0){ 
-            // If the servo time is 0, assert all the servo pins high
-            GPIOPinWrite(rgServoFunctions[i].port,rgServoFunctions[i].pin, rgServoFunctions[i].pin );
-        }
-        else if(cServoGenTime == rgServoFunctions[i].value){
-            // If the servo time is a pin's setpoint, assert that pin low
-            GPIOPinWrite(rgServoFunctions[i].port,rgServoFunctions[i].pin, 0 );
-        }
-        i++;	
-    }
-    
-    // Clear the interrupt
-    TimerIntClear(TIMER4_BASE, TIMER_TIMA_TIMEOUT);
-}
-
