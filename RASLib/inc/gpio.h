@@ -46,8 +46,8 @@ typedef enum {
 
 // These macros can be used to extract the pin and port bit values
 // for use in StellarisWare function calls.
-#define PORT_VAL(p) (0x1 << ((p) & 0x7))
-#define PIN_VAL(p)  (portTable[(p) >> 3])
+#define PIN_VAL(p)  (0x1 << ((p) & 0x7))
+#define PORT_VAL(p) (portTable[(p) >> 3])
 // portTable is defined in gpio.c
 extern unsigned long portTable[PORT_COUNT];
 
