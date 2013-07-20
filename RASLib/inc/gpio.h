@@ -31,9 +31,8 @@
 #include "inc/hw_types.h"
 #include "inc/hw_memmap.h"
 
-// Definition of tPin.
-// Pins are named `PIN_XY' where X is the port letter
-// and Y is the pin number
+// Definition of tPin. Pins are named `PIN_XY' 
+// where X is the port letter and Y is the pin number
 typedef enum {
     PIN_A0, PIN_A1, PIN_A2, PIN_A3, PIN_A4, PIN_A5, PIN_A6, PIN_A7,
     PIN_B0, PIN_B1, PIN_B2, PIN_B3, PIN_B4, PIN_B5, PIN_B6, PIN_B7,
