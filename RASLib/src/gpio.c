@@ -97,6 +97,13 @@ void SetPin(tPin pin, tBoolean val) {
     GPIOPinWrite(PORT_VAL(pin), PIN_VAL(pin), val ? PIN_VAL(pin) : 0);
 }
 
+// Set a pin into high impedance mode
+void SetPinZ(tPin pin) {
+    // Setting pin direction to input places it in high impedance mode
+    GPIOPinTypeGPIOInput(PORT_VAL(pin), PIN_VAL(pin));
+}
+    
+
 // Register a callback to be called when the pin's value changes, 
 // the state of the pin can then be determined through the GetPin function.
 void CallOnPin(tCallback callback, void *data, tPin pin) {

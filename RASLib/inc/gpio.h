@@ -61,6 +61,9 @@ tBoolean GetPin(tPin pin);
 // Set Pin value as a boolean
 void SetPin(tPin pin, tBoolean val);
 
+// Set a pin into high impedance mode
+void SetPinZ(tPin pin);
+
 // Register a callback to be called when the pin's value changes, 
 // the state of the pin can then be determined through the GetPin function.
 void CallOnPin(tCallback callback, void *data, tPin pin);
