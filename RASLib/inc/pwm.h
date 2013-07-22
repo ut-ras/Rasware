@@ -43,13 +43,9 @@ typedef struct PWM tPWM;
 // Frequency must be specified in hertz
 tPWM *InitializePWM(tPin pin, float freq);
 
-// This function sets a pwm duty cycle
-// Duty Cycle must be in percentage
-void SetPWMDuty(tPWM *pwm, float duty);
-
-// This function sets a pwm phase
-// Phase must be in percentage
-void SetPWMPhase(tPWM *pwm, float phase);
+// This function sets a pwm duty cycle and phase
+// Both Duty Cycle and Phase must be in percentage
+void SetPWM(tPWM *pwm, float duty, float phase);
 
 // This function sets a pwm frequency
 // Frequency must be specified in hertz

@@ -137,26 +137,15 @@ void Timer5BHandler(void) {
     }
 }
 
-
-// This function sets a pwm duty cycle
-// Duty Cycle must be in percentage
-void SetPWMDuty(tPWM *pwm, float duty) {
-    // Set off time to be on time (phase) 
-    // plus the number of ticks in period times duty cycle
-    pwm->off = pwm->on + (unsigned long)(pwm->period * duty);
-}
-
-// This function sets a pwm phase
-// Phase must be in percentage
-void SetPWMPhase(tPWM *pwm, float phase) {
-    // Find the current duty ticks
-    unsigned long duty = pwm->off - pwm->on;
+// This function sets a pwm duty cycle and phase
+// Both Duty Cycle and Phase must be in percentage
+void SetPWM(tPWM *pwm, float duty, float phase) {
+    // First set the `on' time to be phase * period ticks
+    pwm->on = (unsigned long)(phase * pwm->period);
     
-    // First set new `on' time to be 
-    // phase times period ticks
-    pwm->on = (unsigned long)(pwm->period * phase);
-    // Then update the off time
-    pwm->off = pwm->on + duty;
+    // Then set the `off' time to be duty * period ticks 
+    // added to the calculated `on' time
+    pwm->off = pwm->on + (unsigned long)(duty * pwm->period);
 }
 
 // This function sets a pwm frequency
@@ -173,6 +162,5 @@ void SetPWMFrequency(tPWM *pwm, float freq) {
     pwm->period = (unsigned long)(PWM_RESOLUTION / freq);
     
     // Set the phase and duty with the new period
-    SetPWMPhase(pwm, phase);
-    SetPWMDuty(pwm, duty);
+    SetPWM(pwm, duty, phase);
 }
