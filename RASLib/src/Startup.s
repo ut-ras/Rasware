@@ -92,10 +92,10 @@ __heap_limit
         EXTERN PortDHandler
         EXTERN PortEHandler
         EXTERN PortFHandler
-		EXTERN Timer5AHandler
-		EXTERN Timer5BHandler
-		EXTERN WTimer5AHandler
-		EXTERN WTimer5BHandler
+        EXTERN Timer5AHandler
+        EXTERN Timer5BHandler
+        EXTERN WTimer5AHandler
+        EXTERN WTimer5BHandler
         
         EXPORT  __Vectors
 __Vectors
@@ -219,7 +219,7 @@ __Vectors
         DCD     IntDefaultHandler           ; Wide Timer 3 subtimer B
         DCD     IntDefaultHandler           ; Wide Timer 4 subtimer A
         DCD     IntDefaultHandler           ; Wide Timer 4 subtimer B
-        DCD     WTimer5AHandler				; Wide Timer 5 subtimer A
+        DCD     WTimer5AHandler             ; Wide Timer 5 subtimer A
         DCD     WTimer5BHandler             ; Wide Timer 5 subtimer B
         DCD     IntDefaultHandler           ; FPU
         DCD     IntDefaultHandler           ; PECI 0
