@@ -34,8 +34,15 @@ struct PWM {
     // Which pin is being driven
     tPin pin;
     
-    // Cycle number to turn off
-    unsigned long duty;
+    // Pin independent tick count
+    unsigned long tick;
+    
+    // Period of the signal
+    unsigned long period;
+    
+    // Tick number to set states
+    unsigned long on;
+    unsigned long off;
 };
 
 // Buffer of pwm structs to use
@@ -44,15 +51,10 @@ tPWM pwmBuffer[PIN_COUNT];
 
 int pwmCount = 0;
 
-// Cycle count
-unsigned long cycle;
-
 
 // Global initialization function called internally
 // To setup shared interrupts
 static InitializeGlobalPWM(void) {
-    long cycleTicks;
-    
     // flag for initialization
     static tBoolean initialized = false;
     
@@ -63,26 +65,18 @@ static InitializeGlobalPWM(void) {
     // Enable the timer 
     SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER5);
   
-    // We use the first half of the timer to set the pins high
-    // The second half we use check for lowering pins
-    TimerConfigure(TIMER5_BASE, TIMER_CFG_SPLIT_PAIR | 
-                                 TIMER_CFG_A_PERIODIC | 
-                                 TIMER_CFG_B_PERIODIC);    
+    // We only need half a timer, so keep the configuration of the second half
+    TimerConfigure(TIMER5_BASE, TIMER5_CFG_R | 
+                                TIMER_CFG_SPLIT_PAIR | 
+                                TIMER_CFG_B_PERIODIC);
   
-    // Setup timer A to run every cycle
-    // and timer B to fire cycle/resolution
-    cycleTicks = SysCtlClockGet() / PWM_RATE;
-    TimerLoadSet(TIMER5_BASE, TIMER_A, cycleTicks);
-    TimerLoadSet(TIMER5_BASE, TIMER_B, cycleTicks / PWM_RESOLUTION);
+    // Set timer B to run every `tick' as defined by resolution
+    TimerLoadSet(TIMER5_BASE, TIMER_B, SysCtlClockGet() / PWM_RESOLUTION);
     
-    // Enable the timers and interrupts
-    TimerIntEnable(TIMER5_BASE, TIMER_TIMA_TIMEOUT);
+    // Enable the timer and interrupt
     TimerIntEnable(TIMER5_BASE, TIMER_TIMB_TIMEOUT);
-    IntEnable(INT_TIMER5A);
     IntEnable(INT_TIMER5B);
-    
-    // Enable bother timers
-    TimerEnable(TIMER5_BASE, TIMER_BOTH);
+    TimerEnable(TIMER5_BASE, TIMER_B);
     
     initialized = true;
 }
@@ -90,7 +84,8 @@ static InitializeGlobalPWM(void) {
 
 // Function to initialize pwm on a pin
 // The returned pointer can be used by the SetPWM function
-tPWM *InitializePWM(tPin pin) {
+// Frequency must be specified in hertz
+tPWM *InitializePWM(tPin pin, float freq) {
     tPWM *pwm;
     
     // Make sure pwm is initialized
@@ -99,9 +94,12 @@ tPWM *InitializePWM(tPin pin) {
     // Grab the next pwm
     pwm = &pwmBuffer[pwmCount];
     
-    // Setup the initial data
+    // Setup the initial data with frequency as given
+    // zero phase and 50% duty cycle
     pwm->pin = pin;
-    pwm->duty = PWM_RESOLUTION / 2;
+    pwm->period = (unsigned long)(PWM_RESOLUTION / freq);
+    pwm->on = 0;
+    pwm->off = pwm->period / 2;
     
     // Prepare to write to pin
     GPIOPinTypeGPIOOutput(PORT_VAL(pin), PIN_VAL(pin));
@@ -113,39 +111,68 @@ tPWM *InitializePWM(tPin pin) {
     return pwm;
 }
 
-// Every full cycle reset the pins to the high position
-void Timer5AHandler(void) {
-    int i;
-    
-    TimerIntClear(TIMER5_BASE, TIMER_TIMA_TIMEOUT);
-    
-    // Set all active pins high
-    for (i=0; i < pwmCount; i++) {
-        tPin pin = pwmBuffer[i].pin;
-        GPIOPinWrite(PORT_VAL(pin), PIN_VAL(pin), PIN_VAL(pin));
-    }
-}
-
-// Check for any matches with the cycle count to set low
+// In the handler we need to go through each pwm signal,
+// adjust the tick counter in each to the new value,
+// and update pins if they match the tick count
 void Timer5BHandler(void) {
     int i;
     
     TimerIntClear(TIMER5_BASE, TIMER_TIMB_TIMEOUT);
     
-    // Update the cycle count
-    cycle = (cycle+1) & (PWM_RESOLUTION-1);
-    
-    // Check for any pins to set low
+    // Iterate over all pwm signals
     for (i=0; i < pwmCount; i++) {
-        if (pwmBuffer[i].duty == cycle) {
-            tPin pin = pwmBuffer[i].pin;
-            GPIOPinWrite(PORT_VAL(pin), PIN_VAL(pin), 0);
+        tPWM *pwm = &pwmBuffer[i];
+        
+        // Update tick counter
+        pwm->tick = (pwm->tick + 1) % pwm->period;
+        
+        // Check if pin needs to be changed.
+        // Check for `off' first, because if duty is set to 0, 
+        // we don't want to turn on the pin
+        if (pwm->tick == pwm->off) {
+            GPIOPinWrite(PORT_VAL(pwm->pin), PIN_VAL(pwm->pin), 0x00);
+        } else if (pwm->tick == pwm->on) {
+            GPIOPinWrite(PORT_VAL(pwm->pin), PIN_VAL(pwm->pin), 0xff);
         }
     }
 }
 
+
 // This function sets a pwm duty cycle
-void SetPWM(tPWM *pwm, float duty) {
-    // Just set the cycle to turn off
-    pwm->duty = duty * PWM_RESOLUTION;
+// Duty Cycle must be in percentage
+void SetPWMDuty(tPWM *pwm, float duty) {
+    // Set off time to be on time (phase) 
+    // plus the number of ticks in period times duty cycle
+    pwm->off = pwm->on + (unsigned long)(pwm->period * duty);
+}
+
+// This function sets a pwm phase
+// Phase must be in percentage
+void SetPWMPhase(tPWM *pwm, float phase) {
+    // Find the current duty ticks
+    unsigned long duty = pwm->off - pwm->on;
+    
+    // First set new `on' time to be 
+    // phase times period ticks
+    pwm->on = (unsigned long)(pwm->period * phase);
+    // Then update the off time
+    pwm->off = pwm->on + duty;
+}
+
+// This function sets a pwm frequency
+// Frequency must be specified in hertz
+void SetPWMFrequency(tPWM *pwm, float freq) {
+    // First find the duty and phase for later
+    // Phase is on time / period
+    float phase = pwm->on / (float)pwm->period;
+    // Duty Cycle is (off - on) / period
+    float duty = (pwm->off - pwm->on) / (float)pwm->period;
+    
+    // Set the period to 1/freq, and multiply by resolution
+    // for number of individual ticks
+    pwm->period = (unsigned long)(PWM_RESOLUTION / freq);
+    
+    // Set the phase and duty with the new period
+    SetPWMPhase(pwm, phase);
+    SetPWMDuty(pwm, duty);
 }
