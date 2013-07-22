@@ -30,8 +30,8 @@
 // Function to initialize a servo on a pin
 // The returned pointer can be used by the SetPWM function
 tServo *InitializeServo(tPin pin) {
-    // Create the pwm signal
-    tServo *servo = InitializePWM(pin);
+    // Create the pwm signal at 50Hz
+    tServo *servo = InitializePWM(pin, 50.0f);
     
     // Set it to the center point
     SetServo(servo, 0.5);
@@ -44,5 +44,5 @@ tServo *InitializeServo(tPin pin) {
 // This function sets a servo value, with 0.0 being 2.5% and 1.0 being 12.5%
 void SetServo(tServo *servo, float value) { 
     // Set pwm to proper value
-    SetPWM(servo, 0.025f + (value * 0.10f));
+    SetPWMDuty(servo, 0.025f + (value * 0.10f));
 }

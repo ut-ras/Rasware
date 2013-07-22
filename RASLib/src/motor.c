@@ -56,8 +56,8 @@ tMotor *InitializeMotor(tPin a, tPin b, tBoolean brake) {
     mtr->brake = brake;
     
     // Initialize pwm on both pins
-    mtr->pwm0 = InitializePWM(a);
-    mtr->pwm1 = InitializePWM(b);
+    mtr->pwm0 = InitializePWM(a, 20.0f);
+    mtr->pwm1 = InitializePWM(b, 20.0f);
     
     // Return the new motor
     return mtr;
@@ -70,27 +70,53 @@ void SetMotor(tMotor *mtr, float input) {
         return;
     
     // Operate the motor controller
+    // Motor controller operation is specific 
+    // to the TLE5205-2
     if (mtr->brake) {
         if (input < 0) {
-            SetPWM(mtr->pwm0, -input);
-            SetPWM(mtr->pwm1, input);
+            // CCW (P, ~P)
+            SetPWMDuty(mtr->pwm0, 1.0f-input);
+            SetPWMPhase(mtr->pwm0, input);
+            
+            SetPWMDuty(mtr->pwm1, input);
+            SetPWMPhase(mtr->pwm1, 0.0f);
         } else if (input > 0) {
-            SetPWM(mtr->pwm0, input);
-            SetPWM(mtr->pwm1, 0.0f);
+            // CW (P, 0)
+            SetPWMDuty(mtr->pwm0, input);
+            SetPWMPhase(mtr->pwm0, 0.0f);
+            
+            SetPWMDuty(mtr->pwm1, 0.0f);
+            SetPWMPhase(mtr->pwm1, 0.0f);
         } else {
-            SetPWM(mtr->pwm0, 1.0f);
-            SetPWM(mtr->pwm1, 0.0f);
+            // S (1, 0)
+            SetPWMDuty(mtr->pwm0, 1.0f);
+            SetPWMPhase(mtr->pwm0, 0.0f);
+            
+            SetPWMDuty(mtr->pwm1, 0.0f);
+            SetPWMPhase(mtr->pwm1, 0.0f);
         }
     } else {
         if (input < 0) {
-            SetPWM(mtr->pwm0, -input);
-            SetPWM(mtr->pwm1, 1.0f);
+            // CCW (P, 1)
+            SetPWMDuty(mtr->pwm0, 1.0f-input);
+            SetPWMPhase(mtr->pwm0, input);
+            
+            SetPWMDuty(mtr->pwm1, 1.0f);
+            SetPWMPhase(mtr->pwm1, 0.0f);
         } else if (input > 0) {
-            SetPWM(mtr->pwm0, input);
-            SetPWM(mtr->pwm1, input);
+            // CW (P, P)
+            SetPWMDuty(mtr->pwm0, input);
+            SetPWMPhase(mtr->pwm0, input);
+            
+            SetPWMDuty(mtr->pwm1, 0.0f);
+            SetPWMPhase(mtr->pwm1, 0.0f);
         } else {
-            SetPWM(mtr->pwm0, 1.0f);
-            SetPWM(mtr->pwm1, 1.0f);
+            // S (1, 1)
+            SetPWMDuty(mtr->pwm0, 1.0f);
+            SetPWMPhase(mtr->pwm0, 1.0f);
+            
+            SetPWMDuty(mtr->pwm1, 0.0f);
+            SetPWMPhase(mtr->pwm1, 0.0f);
         }
     }
 }
