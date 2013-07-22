@@ -86,14 +86,14 @@ __heap_limit
         EXTERN ADC1SS0Handler
         EXTERN ADC1SS1Handler
         EXTERN ADC1SS2Handler
-        EXTERN ServoGeneratorHandler
-        EXTERN MotorGeneratorHandler
         EXTERN PortAHandler
         EXTERN PortBHandler
         EXTERN PortCHandler
         EXTERN PortDHandler
         EXTERN PortEHandler
         EXTERN PortFHandler
+		EXTERN Timer5AHandler
+		EXTERN Timer5BHandler
 		EXTERN WTimer5AHandler
 		EXTERN WTimer5BHandler
         
@@ -185,8 +185,8 @@ __Vectors
         DCD     0                           ; Reserved
         DCD     IntDefaultHandler           ; I2C2 Master and Slave
         DCD     IntDefaultHandler           ; I2C3 Master and Slave
-        DCD     ServoGeneratorHandler       ; Timer 4 subtimer A
-        DCD     MotorGeneratorHandler       ; Timer 4 subtimer B
+        DCD     IntDefaultHandler           ; Timer 4 subtimer A
+        DCD     IntDefaultHandler           ; Timer 4 subtimer B
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
@@ -207,8 +207,8 @@ __Vectors
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
-        DCD     IntDefaultHandler		    ; Timer 5 subtimer A
-        DCD     ADCTriggerHandler           ; Timer 5 subtimer B
+        DCD     Timer5AHandler              ; Timer 5 subtimer A
+        DCD     Timer5BHandler              ; Timer 5 subtimer B
         DCD     IntDefaultHandler           ; Wide Timer 0 subtimer A
         DCD     IntDefaultHandler           ; Wide Timer 0 subtimer B
         DCD     IntDefaultHandler           ; Wide Timer 1 subtimer A

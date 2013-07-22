@@ -65,7 +65,7 @@ static InitializeGlobalPWM(void) {
   
     // We use the first half of the timer to set the pins high
     // The second half we use check for lowering pins
-    TimerConfigure(WTIMER5_BASE, TIMER_CFG_SPLIT_PAIR | 
+    TimerConfigure(TIMER5_BASE, TIMER_CFG_SPLIT_PAIR | 
                                  TIMER_CFG_A_PERIODIC | 
                                  TIMER_CFG_B_PERIODIC);    
   
@@ -80,6 +80,8 @@ static InitializeGlobalPWM(void) {
     TimerIntEnable(TIMER5_BASE, TIMER_TIMB_TIMEOUT);
     IntEnable(INT_TIMER5A);
     IntEnable(INT_TIMER5B);
+    
+    // Enable bother timers
     TimerEnable(TIMER5_BASE, TIMER_BOTH);
     
     initialized = true;
