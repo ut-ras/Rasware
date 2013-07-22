@@ -75,48 +75,30 @@ void SetMotor(tMotor *mtr, float input) {
     if (mtr->brake) {
         if (input < 0) {
             // CCW (P, ~P)
-            SetPWMDuty(mtr->pwm0, 1.0f-input);
-            SetPWMPhase(mtr->pwm0, input);
-            
-            SetPWMDuty(mtr->pwm1, input);
-            SetPWMPhase(mtr->pwm1, 0.0f);
+            SetPWM(mtr->pwm0, 1.0f-input, input);
+            SetPWM(mtr->pwm1, input, 0.0f);
         } else if (input > 0) {
             // CW (P, 0)
-            SetPWMDuty(mtr->pwm0, input);
-            SetPWMPhase(mtr->pwm0, 0.0f);
-            
-            SetPWMDuty(mtr->pwm1, 0.0f);
-            SetPWMPhase(mtr->pwm1, 0.0f);
+            SetPWM(mtr->pwm0, input, 0.0f);
+            SetPWM(mtr->pwm1, 0.0f, 0.0f);
         } else {
             // S (1, 0)
-            SetPWMDuty(mtr->pwm0, 1.0f);
-            SetPWMPhase(mtr->pwm0, 0.0f);
-            
-            SetPWMDuty(mtr->pwm1, 0.0f);
-            SetPWMPhase(mtr->pwm1, 0.0f);
+            SetPWM(mtr->pwm0, 1.0f, 0.0f);
+            SetPWM(mtr->pwm1, 0.0f, 0.0f);
         }
     } else {
         if (input < 0) {
             // CCW (P, 1)
-            SetPWMDuty(mtr->pwm0, 1.0f-input);
-            SetPWMPhase(mtr->pwm0, input);
-            
-            SetPWMDuty(mtr->pwm1, 1.0f);
-            SetPWMPhase(mtr->pwm1, 0.0f);
+            SetPWM(mtr->pwm0, 1.0f-input, input);
+            SetPWM(mtr->pwm1, 1.0f, 0.0f);
         } else if (input > 0) {
             // CW (P, P)
-            SetPWMDuty(mtr->pwm0, input);
-            SetPWMPhase(mtr->pwm0, input);
-            
-            SetPWMDuty(mtr->pwm1, 0.0f);
-            SetPWMPhase(mtr->pwm1, 0.0f);
+            SetPWM(mtr->pwm0, input, 0.0f);
+            SetPWM(mtr->pwm1, input, 0.0f);
         } else {
             // S (1, 1)
-            SetPWMDuty(mtr->pwm0, 1.0f);
-            SetPWMPhase(mtr->pwm0, 1.0f);
-            
-            SetPWMDuty(mtr->pwm1, 0.0f);
-            SetPWMPhase(mtr->pwm1, 0.0f);
+            SetPWM(mtr->pwm0, 1.0f, 0.0f);
+            SetPWM(mtr->pwm1, 1.0f, 0.0f);
         }
     }
 }

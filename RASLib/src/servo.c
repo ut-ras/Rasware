@@ -44,5 +44,5 @@ tServo *InitializeServo(tPin pin) {
 // This function sets a servo value, with 0.0 being 2.5% and 1.0 being 12.5%
 void SetServo(tServo *servo, float value) { 
     // Set pwm to proper value
-    SetPWMDuty(servo, 0.025f + (value * 0.10f));
+    SetPWM(servo, 0.025f + (value * 0.10f), 0.0f);
 }
