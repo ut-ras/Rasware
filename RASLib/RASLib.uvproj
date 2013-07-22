@@ -440,6 +440,11 @@
               <FileType>1</FileType>
               <FilePath>.\src\gpio.c</FilePath>
             </File>
+            <File>
+              <FileName>pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\pwm.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
