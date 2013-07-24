@@ -8,11 +8,11 @@
 
 #include "RASDemo.h"
 
-tMotor *motors[2];
+tMotor *motors[12];
 
 void initMotors(void) {
-    motors[0] = InitializeMotor(PIN_A4, PIN_A5, false);
-    motors[1] = InitializeMotor(PIN_A6, PIN_A7, false);
+    motors[0] = InitializeMotor(PIN_E3, PIN_E2, true);
+    motors[1] = InitializeMotor(PIN_E5, PIN_E4, true);
 }
 
 void motorDemo(void) {
@@ -30,23 +30,23 @@ void motorDemo(void) {
 			putc(ch);
 			if (ch == 'w') {
 				left = speed;
-				right = -speed;
+				right = speed;
 			} else if (ch == 's') {
 				left = -speed;
-				right = speed;
+				right = -speed;
 			} else if (ch == 'a') {
 				left = -speed;
-				right = -speed;
+				right = speed;
 			} else if (ch == 'd') {
 				left = speed;
-				right = speed;
+				right = -speed;
 			} else if (ch == ' ') {
 				left = 0;
 				right = 0;
 			}
 			SetMotor(motors[0], left);
 			SetMotor(motors[1], right);
-			UARTprintf("Set Motor to 0x%x%x 0x%x%x\r", left, right);
+			UARTprintf(" Set Motor to %d %d  \r", (int)(left*100), (int)(right*100));
 		}
 	}
 	

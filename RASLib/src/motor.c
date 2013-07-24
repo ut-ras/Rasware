@@ -75,8 +75,8 @@ void SetMotor(tMotor *mtr, float input) {
     if (mtr->brake) {
         if (input < 0) {
             // CCW (P, ~P)
-            SetPWM(mtr->pwm0, 1.0f-input, input);
-            SetPWM(mtr->pwm1, input, 0.0f);
+            SetPWM(mtr->pwm0, 1.0f+input, -input);
+            SetPWM(mtr->pwm1, -input, 0.0f);
         } else if (input > 0) {
             // CW (P, 0)
             SetPWM(mtr->pwm0, input, 0.0f);
@@ -89,7 +89,7 @@ void SetMotor(tMotor *mtr, float input) {
     } else {
         if (input < 0) {
             // CCW (P, 1)
-            SetPWM(mtr->pwm0, 1.0f-input, input);
+            SetPWM(mtr->pwm0, 1.0f+input, -input);
             SetPWM(mtr->pwm1, 1.0f, 0.0f);
         } else if (input > 0) {
             // CW (P, P)
