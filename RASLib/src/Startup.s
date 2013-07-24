@@ -92,7 +92,6 @@ __heap_limit
         EXTERN PortDHandler
         EXTERN PortEHandler
         EXTERN PortFHandler
-        EXTERN Timer5AHandler
         EXTERN Timer5BHandler
         EXTERN WTimer5AHandler
         EXTERN WTimer5BHandler
@@ -207,7 +206,7 @@ __Vectors
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
-        DCD     Timer5AHandler              ; Timer 5 subtimer A
+        DCD     IntDefaultHandler           ; Timer 5 subtimer A
         DCD     Timer5BHandler              ; Timer 5 subtimer B
         DCD     IntDefaultHandler           ; Wide Timer 0 subtimer A
         DCD     IntDefaultHandler           ; Wide Timer 0 subtimer B

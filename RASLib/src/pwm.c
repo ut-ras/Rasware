@@ -40,8 +40,7 @@ struct PWM {
     // Period of the signal
     unsigned long period;
     
-    // Tick number to set states
-    unsigned long on;
+    // Tick number to set state off
     unsigned long off;
 };
 
@@ -98,7 +97,6 @@ tPWM *InitializePWM(tPin pin, float freq) {
     // zero phase and 50% duty cycle
     pwm->pin = pin;
     pwm->period = (unsigned long)(PWM_RESOLUTION / freq);
-    pwm->on = 0;
     pwm->off = pwm->period / 2;
     
     // Prepare to write to pin
@@ -115,52 +113,46 @@ tPWM *InitializePWM(tPin pin, float freq) {
 // adjust the tick counter in each to the new value,
 // and update pins if they match the tick count
 void Timer5BHandler(void) {
-    int i;
+    tPWM *pwm, *end;
     
     TimerIntClear(TIMER5_BASE, TIMER_TIMB_TIMEOUT);
     
     // Iterate over all pwm signals
-    for (i=0; i < pwmCount; i++) {
-        tPWM *pwm = &pwmBuffer[i];
-        
+    end = &pwmBuffer[pwmCount];
+    for (pwm = pwmBuffer; pwm != end; pwm++) {
         // Update tick counter
-        pwm->tick = (pwm->tick + 1) % pwm->period;
+        pwm->tick++;
         
         // Check if pin needs to be changed.
         // Check for `off' first, because if duty is set to 0, 
-        // we don't want to turn on the pin
+        // we don't want to turn on the pin. Clear the ticks if it is
+        // past the period to avoid a division and save a few cycles.
         if (pwm->tick == pwm->off) {
             GPIOPinWrite(PORT_VAL(pwm->pin), PIN_VAL(pwm->pin), 0x00);
-        } else if (pwm->tick == pwm->on) {
+            
+        } else if (pwm->tick == pwm->period) {
             GPIOPinWrite(PORT_VAL(pwm->pin), PIN_VAL(pwm->pin), 0xff);
+            
+            pwm->tick = 0;
         }
     }
 }
 
 // This function sets a pwm duty cycle and phase
 // Both Duty Cycle and Phase must be in percentage
+// Tick count will reset on count, allowing for pwm synchronization
 void SetPWM(tPWM *pwm, float duty, float phase) {
-    // First set the `on' time to be phase * period ticks
-    pwm->on = (unsigned long)(phase * pwm->period);
+    // Limit the range of both values to [0.0,1.0]
+    duty = (duty > 1.0f) ? 1.0f :
+           (duty < 0.0f) ? 0.0f : duty;
+    phase = (phase > 1.0f) ? 1.0f :
+            (phase < 0.0f) ? 0.0f : phase;
     
-    // Then set the `off' time to be duty * period ticks 
-    // added to the calculated `on' time
-    pwm->off = pwm->on + (unsigned long)(duty * pwm->period);
-}
-
-// This function sets a pwm frequency
-// Frequency must be specified in hertz
-void SetPWMFrequency(tPWM *pwm, float freq) {
-    // First find the duty and phase for later
-    // Phase is on time / period
-    float phase = pwm->on / (float)pwm->period;
-    // Duty Cycle is (off - on) / period
-    float duty = (pwm->off - pwm->on) / (float)pwm->period;
-    
-    // Set the period to 1/freq, and multiply by resolution
-    // for number of individual ticks
-    pwm->period = (unsigned long)(PWM_RESOLUTION / freq);
-    
-    // Set the phase and duty with the new period
-    SetPWM(pwm, duty, phase);
+    // Set the tick to given phase * period ticks * -1
+    // This will underflow, but will overflow after the delay
+    // and create the passed phase. Note, casting negative floating
+    // values to unsigned integers results in the value 0.
+    pwm->tick = -(unsigned long)(phase * pwm->period);
+    // Then set the `off' time to be duty * period ticks
+    pwm->off = (unsigned long)(duty * pwm->period);
 }
