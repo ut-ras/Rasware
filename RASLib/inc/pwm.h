@@ -33,7 +33,7 @@
 
 // PWM resolution must be known at compile time
 // Resolution is per second
-#define PWM_RESOLUTION 128000
+#define PWM_RESOLUTION 64000
 
 // Definition of struct PWM in pwm.c
 typedef struct PWM tPWM;
