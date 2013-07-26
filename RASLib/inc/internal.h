@@ -6,7 +6,7 @@
 #include "inc/hw_types.h"
 
 // Definition of callback function pointer
-typedef void (*tCallback)(void*);
+typedef void (*tCallback)();
 
 // Does nothing; used as placeholder in time.c and gpioints.c
 void Dummy(void*);

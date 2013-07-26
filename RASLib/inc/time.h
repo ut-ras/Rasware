@@ -37,14 +37,14 @@ tTime GetTimeS(void);
 float GetTime(void);
 
 // Schedules a callback function to be called in given time
-void CallInUS(void (*callback)(void*), void *data, tTime us);
-void CallInS(void (*callback)(void*), void *data, tTime s);
-void CallIn(void (*callback)(void*), void *data, float s);
+void CallInUS(tCallback callback, void *data, tTime us);
+void CallInS(tCallback callback, void *data, tTime s);
+void CallIn(tCallback callback, void *data, float s);
 
 // Schedules a callback function to be called repeatedly
-void CallEveryUS(void (*callback)(void*), void *data, tTime us);
-void CallEveryS(void (*callback)(void*), void *data, tTime s);
-void CallEvery(void (*callback)(void*), void *data, float s);
+void CallEveryUS(tCallback callback, void *data, tTime us);
+void CallEveryS(tCallback callback, void *data, tTime s);
+void CallEvery(tCallback callback, void *data, float s);
 
 // Busy waits for given time
 void WaitUS(tTime ms);

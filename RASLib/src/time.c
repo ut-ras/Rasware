@@ -40,10 +40,16 @@ static long USTicks = 0;
 
 // Relevant task info
 typedef struct {
+    // target time value
     tTime target;
+    
+    // If repeating, then repeatTime 
+    // holds the period
     tTime repeatTime;
+    
+    // Callback data
     void *data;
-    void (*callback)(void*);
+    tCallback callback;
 } tTask;
 
 // Cyclic buffer of waiting tasks
@@ -188,7 +194,7 @@ void WTimer5BHandler(void) {
 }
 
 // Schedules a callback function to be called in given microseconds
-void CallInUS(void (*callback)(void*), void *data, tTime us) {
+void CallInUS(tCallback callback, void *data, tTime us) {
     tTask task;
   
     task.target = systemTimeUS + us;
@@ -202,16 +208,16 @@ void CallInUS(void (*callback)(void*), void *data, tTime us) {
     SetNextTaskInt();
 }
 
-void CallInS(void (*callback)(void*), void *data, tTime s) {
+void CallInS(tCallback callback, void *data, tTime s) {
     CallInUS(callback, data, s*US_IN_S);
 }
 
-void CallIn(void (*callback)(void*), void *data, float s) {
+void CallIn(tCallback callback, void *data, float s) {
     CallInUS(callback, data, (tTime)(s*US_IN_S));
 }
 
 // Schedules a callback function to be called repeatedly
-void CallEveryUS(void (*callback)(void*), void *data, tTime us) {
+void CallEveryUS(tCallback callback, void *data, tTime us) {
     tTask task;
   
     task.target = systemTimeUS + us;
@@ -224,17 +230,17 @@ void CallEveryUS(void (*callback)(void*), void *data, tTime us) {
     SetNextTaskInt();
 }
 
-void CallEveryS(void (*callback)(void*), void *data, tTime s) {
+void CallEveryS(tCallback callback, void *data, tTime s) {
     CallEveryUS(callback, data, s*US_IN_S);
 }
 
-void CallEvery(void (*callback)(void*), void *data, float s) {
+void CallEvery(tCallback callback, void *data, float s) {
     CallEveryUS(callback, data, (tTime)(s*US_IN_S));
 }
 
 // Busy waits for given milliseconds
-static void WaitHandler(void *flag) {
-    *(int*)flag = 1;
+static void WaitHandler(int *flag) {
+    *flag = 1;
 }
 
 void WaitUS(tTime us) {

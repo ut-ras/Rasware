@@ -105,7 +105,7 @@ tBoolean GetPin(tPin pin) {
     GPIOPinTypeGPIOInput(PORT_VAL(pin), PIN_VAL(pin));
     
     // Get the actual pin value
-    return GPIOPinRead(PORT_VAL(pin), PIN_VAL(pin));
+    return GPIOPinRead(PORT_VAL(pin), PIN_VAL(pin)) ? 1 : 0;
 }
 
 // Set Pin value as a boolean
