@@ -105,7 +105,7 @@ tBoolean GetPin(tPin pin) {
     GPIOPinTypeGPIOInput(PORT_VAL(pin), PIN_VAL(pin));
     
     // Get the actual pin value
-    return GPIOPinRead(PORT_VAL(pin), PIN_VAL(pin)) ? 1 : 0;
+    return GPIOPinRead(PORT_VAL(pin), PIN_VAL(pin)) ? true : false;
 }
 
 // Set Pin value as a boolean
@@ -114,7 +114,7 @@ void SetPin(tPin pin, tBoolean val) {
     GPIOPinTypeGPIOOutput(PORT_VAL(pin), PIN_VAL(pin));
     
     // Set the actual pin value
-    GPIOPinWrite(PORT_VAL(pin), PIN_VAL(pin), val ? PIN_VAL(pin) : 0);
+    GPIOPinWrite(PORT_VAL(pin), PIN_VAL(pin), val ? 0xff : 0x00);
 }
 
 // Set a pin into high impedance mode
