@@ -24,6 +24,8 @@
 #ifndef __TIME_H__
 #define __TIME_H__
 
+#include "internal.h"
+
 // Definition of time type intended to store microseconds. 
 // Will last for 584 thousand years.
 typedef unsigned long long tTime;
@@ -37,14 +39,19 @@ tTime GetTimeS(void);
 float GetTime(void);
 
 // Schedules a callback function to be called in given time
-void CallInUS(tCallback callback, void *data, tTime us);
-void CallInS(tCallback callback, void *data, tTime s);
-void CallIn(tCallback callback, void *data, float s);
+// The return value can be used to stop the call with CallStop
+int CallInUS(tCallback callback, void *data, tTime us);
+int CallInS(tCallback callback, void *data, tTime s);
+int CallIn(tCallback callback, void *data, float s);
 
 // Schedules a callback function to be called repeatedly
-void CallEveryUS(tCallback callback, void *data, tTime us);
-void CallEveryS(tCallback callback, void *data, tTime s);
-void CallEvery(tCallback callback, void *data, float s);
+// The return value can be used to stop the call with CallStop
+int CallEveryUS(tCallback callback, void *data, tTime us);
+int CallEveryS(tCallback callback, void *data, tTime s);
+int CallEvery(tCallback callback, void *data, float s);
+
+// Stops a pending call based on the passed identifier
+void CallStop(int id);
 
 // Busy waits for given time
 void WaitUS(tTime ms);
