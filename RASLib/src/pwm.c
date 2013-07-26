@@ -96,6 +96,7 @@ tPWM *InitializePWM(tPin pin, float freq) {
     // Setup the initial data with frequency as given
     // zero phase and 50% duty cycle
     pwm->pin = pin;
+    pwm->tick = 0;
     pwm->period = (unsigned long)(PWM_RESOLUTION / freq);
     pwm->off = pwm->period / 2;
     
@@ -121,19 +122,19 @@ void Timer5BHandler(void) {
     end = &pwmBuffer[pwmCount];
     for (pwm = pwmBuffer; pwm != end; pwm++) {
         // Update tick counter
-        pwm->tick++;
+        pwm->tick--;
         
         // Check if pin needs to be changed.
         // Check for `off' first, because if duty is set to 0, 
         // we don't want to turn on the pin. Clear the ticks if it is
-        // past the period to avoid a division and save a few cycles.
+        // past the zero to avoid a division and save a few cycles.
         if (pwm->tick == pwm->off) {
             GPIOPinWrite(PORT_VAL(pwm->pin), PIN_VAL(pwm->pin), 0x00);
             
-        } else if (pwm->tick == pwm->period) {
+        } else if (pwm->tick == 0) {
             GPIOPinWrite(PORT_VAL(pwm->pin), PIN_VAL(pwm->pin), 0xff);
             
-            pwm->tick = 0;
+            pwm->tick = pwm->period;
         }
     }
 }
@@ -148,11 +149,11 @@ void SetPWM(tPWM *pwm, float duty, float phase) {
     phase = (phase > 1.0f) ? 1.0f :
             (phase < 0.0f) ? 0.0f : phase;
     
-    // Set the tick to given phase * period ticks * -1
-    // This will underflow, but will overflow after the delay
-    // and create the passed phase. Note, casting negative floating
-    // values to unsigned integers results in the value 0.
-    pwm->tick = -(unsigned long)(phase * pwm->period);
+    // Set the tick to given phase * period ticks
+    // We then add it to the period as we are counting down
+    // to cause a delay
+    pwm->tick = pwm->period + (unsigned long)(phase * pwm->period);
     // Then set the `off' time to be duty * period ticks
-    pwm->off = (unsigned long)(duty * pwm->period);
+    // Subtract it from the period as we are counting down
+    pwm->off = pwm->period - (unsigned long)(duty * pwm->period);
 }
