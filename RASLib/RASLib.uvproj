@@ -333,8 +333,8 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>4</Optim>
-            <oTime>1</oTime>
+            <Optim>0</Optim>
+            <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>0</OneElfS>
             <Strict>0</Strict>
@@ -444,6 +444,11 @@
               <FileName>pwm.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\pwm.c</FilePath>
+            </File>
+            <File>
+              <FileName>sonar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\sonar.c</FilePath>
             </File>
           </Files>
         </Group>
