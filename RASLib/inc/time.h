@@ -30,24 +30,25 @@
 // Will last for 584 thousand years.
 typedef unsigned long long tTime;
 
+// Macro for converting seconds to microseconds
+// Also handles conversion from floats
+#define US(s) ((tTime)((s)*1000*1000))
+
 // Initializes a system timer with millisecond resolution
 void InitializeSystemTime(void);
 
 // Outputs system time
 tTime GetTimeUS(void);
-tTime GetTimeS(void);
 float GetTime(void);
 
 // Schedules a callback function to be called in given time
 // The return value can be used to stop the call with CallStop
 int CallInUS(tCallback callback, void *data, tTime us);
-int CallInS(tCallback callback, void *data, tTime s);
 int CallIn(tCallback callback, void *data, float s);
 
 // Schedules a callback function to be called repeatedly
 // The return value can be used to stop the call with CallStop
 int CallEveryUS(tCallback callback, void *data, tTime us);
-int CallEveryS(tCallback callback, void *data, tTime s);
 int CallEvery(tCallback callback, void *data, float s);
 
 // Stops a pending call based on the passed identifier
@@ -55,7 +56,6 @@ void CallStop(int id);
 
 // Busy waits for given time
 void WaitUS(tTime ms);
-void WaitS(tTime s);
 void Wait(float s);
 
 #endif // __TIME_H__

@@ -36,8 +36,6 @@
 static volatile tTime systemTimeUS = 0;
 static long USTicks = 0;
 
-#define US_IN_S (1000*1000)
-
 // Relevant task info
 typedef struct {
     // Task identifier
@@ -66,7 +64,7 @@ unsigned int taskEnd = 0;
 tTask taskBuffer[TASK_BUFF_SIZE];
 
 // Next identifier
-int nextID = 1;
+int nextID = 42;
 
 
 // Initializes a system timer with microsecond resolution
@@ -78,9 +76,9 @@ void InitializeSystemTime(void) {
     taskStart = 0;
     taskEnd = 0;
   
-    // Find the system clock divided by 1000000, which results in 
+    // Find the system clock divided by 1s, which results in 
     // 1 US for the timer
-    USTicks = SysCtlClockGet() / US_IN_S;
+    USTicks = SysCtlClockGet() / US(1);
   
     // Enable the timer 
     SysCtlPeripheralEnable(SYSCTL_PERIPH_WTIMER5);
@@ -93,7 +91,7 @@ void InitializeSystemTime(void) {
                                  TIMER_CFG_B_ONE_SHOT);    
   
     // Setup timer A to run for a full second
-    TimerLoadSet(WTIMER5_BASE, TIMER_A, US_IN_S * USTicks);
+    TimerLoadSet(WTIMER5_BASE, TIMER_A, US(1) * USTicks);
     TimerIntEnable(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
   
     // Only enable the timer B interrupt when it is needed
@@ -111,19 +109,15 @@ tTime GetTimeUS(void) {
            + systemTimeUS;
 }
 
-tTime GetTimeS(void) {
-    return GetTimeUS() / US_IN_S;
-}
-
 float GetTime(void) {
     return ((TimerValueGet(WTIMER5_BASE, TIMER_A) / (float)USTicks)
-            + systemTimeUS) / US_IN_S;
+            + systemTimeUS) / US(1);
 }
 
 // Handler that simply updates the time by one second
 void WTimer5AHandler(void) {
     TimerIntClear(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
-    systemTimeUS += US_IN_S;
+    systemTimeUS += US(1);
 }
 
 // Called internally to register a task
@@ -238,12 +232,8 @@ int CallInUS(tCallback callback, void *data, tTime us) {
     return task.id;
 }
 
-int CallInS(tCallback callback, void *data, tTime s) {
-    return CallInUS(callback, data, s*US_IN_S);
-}
-
 int CallIn(tCallback callback, void *data, float s) {
-    return CallInUS(callback, data, (tTime)(s*US_IN_S));
+    return CallInUS(callback, data, US(s));
 }
 
 // Schedules a callback function to be called repeatedly
@@ -268,12 +258,8 @@ int CallEveryUS(tCallback callback, void *data, tTime us) {
     return task.id;
 }
 
-int CallEveryS(tCallback callback, void *data, tTime s) {
-    return CallEveryUS(callback, data, s*US_IN_S);
-}
-
 int CallEvery(tCallback callback, void *data, float s) {
-    return CallEveryUS(callback, data, (tTime)(s*US_IN_S));
+    return CallEveryUS(callback, data, US(s));
 }
 
 // Stops a pending call based on the passed identifier
@@ -308,11 +294,7 @@ void WaitUS(tTime us) {
     CallInUS(WaitHandler, (void *)&waitFlag, us);
     while(!waitFlag);
 }
-
-void WaitS(tTime s) {
-    WaitUS(s*US_IN_S);
-}
   
 void Wait(float s) {
-    WaitUS((tTime)(s*US_IN_S));
+    WaitUS(US(s));
 }
