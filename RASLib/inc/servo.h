@@ -21,6 +21,8 @@
 //
 //*****************************************************************************
 
+#include "pwm.h"
+
 #include "inc/hw_types.h"
 #include "inc/hw_memmap.h"
 #include "driverlib/gpio.h"
@@ -30,22 +32,15 @@
 #ifndef __SERVO_H__
 #define __SERVO_H__
 
-#define SERVO_GENERATOR_RESOLUTION 4000
-#define SERVO_GENERATOR_RATE 50
-#define SERVO_FUNCTION_BUFFER_SIZE 16
+// All a servo needs is a pointer to a pwm
+typedef tPWM tServo;
 
-// macro to create a servo signal generator
-// e.g.,
-// AddServo(Arm,F,1)
-// creates InitializeServoArm() and SetServoArm(unsigned char)
-#define AddServo(NAME,PORT,PIN) \
-unsigned long NAME ## ServoSelect; \
-void InitializeServo ## NAME (void){   \
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIO ## PORT); \
-    NAME ## ServoSelect = AddServoFunction(GPIO_PORT ## PORT ## _BASE, GPIO_PIN_ ## PIN); \
-} \
-void SetServo ## NAME (unsigned char input){ \
-    SetServoPosition( NAME ## ServoSelect, input); \
-}
+// Function to initialize a servo on a pin
+// The returned pointer can be used by the SetPWM function
+tServo *InitializeServo(tPin pin);
+
+// Servo output is 50hz with 2.5% to 12.5% duty cycle, centered at 7.5%
+// This function sets a servo value, with 0.0 being 2.5% and 1.0 being 12.5%
+void SetServo(tServo *servo, float value);
 
 #endif //  __SERVO_H__

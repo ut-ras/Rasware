@@ -8,28 +8,28 @@
 
 #include "RASDemo.h"
 
+tEncoder *demoEncoder[2];
+
 void initEncoders(void) {
-	//InitializeEncoders(false, false);
-	UARTprintf("Encoder init not working.\n");
-	//Replace with InitialieEncoder calls
+    demoEncoder[0] = InitializeEncoder(PIN_B0, PIN_B1);
+    demoEncoder[1] = InitializeEncoder(PIN_B2, PIN_B3);
 }
 
 void encoderDemo(void) {
-	/* 2012 Encoder Demo Code
+	// 2012 Encoder Demo Code
 	UARTprintf("Press:\nany key-read encoder values\n");
-	UARTprintf("any key after read begins-quit\n");{
-		signed long encoder0, encoder1, counter = 0;
-		PresetEncoderCounts(0, 0);
+	UARTprintf("any key after read begins-quit\n");
+    
+    ResetEncoder(demoEncoder[0]);
+    ResetEncoder(demoEncoder[1]);
 
-		while(!keyWasPressed()) {	  
-			encoder0 = GetEncoderCount(ENCODER_0);	 
-			encoder1 = GetEncoderCount(ENCODER_1);
-			GetEncoderCounts(&encoder0, &encoder1);
-			UARTprintf("enc0:%d  enc1:%d      \r",encoder0,encoder1);
-			counter++;
-		}
+    while(!keyWasPressed()) {
+        UARTprintf("enc0:%d  enc1:%d      \r",
+                   GetEncoder(demoEncoder[0]),
+                   GetEncoder(demoEncoder[1]) );
 	}
-	UARTprintf("\n");*/
+    
+	UARTprintf("\n");
 	
 	UARTprintf("Encoder Demo not working.\n");
 }
