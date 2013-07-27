@@ -21,6 +21,8 @@
 //
 //*****************************************************************************
 
+#include "pwm.h"
+
 #include "inc/hw_types.h"
 #include "inc/hw_memmap.h"
 #include "driverlib/gpio.h"
@@ -29,37 +31,14 @@
 #ifndef __MOTOR_H__
 #define __MOTOR_H__
 
-#define MOTOR_GENERATOR_RESOLUTION 5000
-#define MOTOR_GENERATOR_RATE 20
-#define MOTOR_FUNCTION_BUFFER_SIZE 4
+// Definition of struct Motor in motor.c
+typedef struct Motor tMotor;
 
-typedef enum{BRAKE, COAST} tMotorMode;
+// Function to initialize a motor on a pair of pins
+// The returned pointer can be used by the SetMotor function
+tMotor *InitializeMotor(tPin a, tPin b, tBoolean brake);
 
-// macro to create a motor signal generator
-// e.g.,
-// AddMotor(Left,F,2,F,3,COAST)
-// creates InitializeMotorLeft() and SetMotorLeft(unsigned char)
-#define AddMotor(NAME,PORT0,PIN0,PORT1,PIN1,MODE) \
-unsigned long NAME ## MotorSelect; \
-void InitializeMotor ## NAME (void){   \
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIO ## PORT0); \
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIO ## PORT1); \
-    NAME ## MotorSelect = AddMotorFunction(GPIO_PORT ## PORT0 ## _BASE, GPIO_PIN_ ## PIN0, GPIO_PORT ## PORT1 ## _BASE, GPIO_PIN_ ## PIN1, MODE); \
-} \
-void SetMotor ## NAME (float input){ \
-    SetMotorPosition( NAME ## MotorSelect, input); \
-}
-
-// Note: it is not recommended to call this function directly. Instead, use the
-// AddMotor macro above to generate a unique InitializeMotor function
-unsigned long AddMotorFunction(unsigned long port0,
-                               unsigned long pin0,
-                               unsigned long port1,
-                               unsigned long pin1,
-                               tMotorMode mode);
-
-// Note: it is not recommended to call this function directly. Instead, use the
-// AddMotor macro above to generate a unique SetMotor function
-void SetMotorPosition(unsigned long index, float input);
+// This function sets a motor speed
+void SetMotor(tMotor *mtr, float speed);
 
 #endif //  __MOTOR_H__

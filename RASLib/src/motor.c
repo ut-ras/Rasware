@@ -27,143 +27,78 @@
 #include "driverlib/interrupt.h"
 #include "driverlib/timer.h"
 
-typedef struct{ 
-    unsigned long port0; 
-    unsigned long pin0;
-    unsigned long port1; 
-    unsigned long pin1;
-    signed long value0;
-    signed long value1;
-    tMotorMode mode;
-    tBoolean active;
-} tMotor;
-static tMotor rgMotorFunctions[MOTOR_FUNCTION_BUFFER_SIZE];
+// Definition of struct Motor
+// Defined to tMotor in motor.h
+struct Motor {
+    // PWM signals used by motors
+    tPWM *pwm0;
+    tPWM *pwm1;
 
-void InitializeMotorGenerator(void)
-{
-    int i;
-    // Initialze the motor generator buffer to 0 (0 = inactive)
-    for( i = 0; i < MOTOR_FUNCTION_BUFFER_SIZE; i++){
-        rgMotorFunctions[i].active = false;
-    }
+    // True if braking is applied
+    tBoolean brake;
+};
+
+// Buffer of motor structs to use
+// There can only be the total count of pins/2 since each
+// motor needs 2 pins
+tMotor motorBuffer[PIN_COUNT / 2];
+
+int motorCount = 0;
+
+
+// Function to initialize a motor on a pair of pins
+// The returned pointer can be used by the SetMotor function
+tMotor *InitializeMotor(tPin a, tPin b, tBoolean brake) {
+    // Grab the next motor
+    tMotor *mtr = &motorBuffer[motorCount++];
     
-    // Enable SysCtrl for Timer4
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER4); 
+    // Setup the initial data
+    mtr->brake = brake;
     
-    // Configure Timer4A to be periodic, maintaining the configuration for Timer4B
-    TimerConfigure(TIMER4_BASE, TIMER4_CFG_R | TIMER_CFG_SPLIT_PAIR | TIMER_CFG_B_PERIODIC);
-	
-    // Enable the Timer4A interrupt
-    IntEnable(INT_TIMER4B);
-    TimerIntEnable(TIMER4_BASE, TIMER_TIMB_TIMEOUT );
+    // Initialize pwm on both pins
+    mtr->pwm0 = InitializePWM(a, 20.0f);
+    mtr->pwm1 = InitializePWM(b, 20.0f);
     
-    // Load Timer4A with a frequency of MOTOR_GENERATOR_RESOLUTION * MOTOR_GENERATOR_RATE
-    TimerLoadSet(TIMER4_BASE, TIMER_B, SysCtlClockGet() / MOTOR_GENERATOR_RESOLUTION / MOTOR_GENERATOR_RATE);
-    
-    // Enable Timer4A
-    TimerEnable(TIMER4_BASE, TIMER_B);
+    // Return the new motor
+    return mtr;
 }
 
-// Sets the Motor generator's output to the specified value
-// \param index is the motor to set
-// \param input is the value to set at, 0 being stopped, 1 being full forward, and -1 being full back;
-void SetMotorPosition(unsigned long index, float input){
-    if(input > 1 || input < -1) return; // restrict input
-    switch(rgMotorFunctions[index].mode)
-    {
-        case BRAKE: if(input < 0){ // CCW P(~P)
-                        rgMotorFunctions[index].value0 = MOTOR_GENERATOR_RESOLUTION * (-input);
-                        rgMotorFunctions[index].value1 = MOTOR_GENERATOR_RESOLUTION * input;
-                    }
-                    else if(input > 0){ // CW P0
-                        rgMotorFunctions[index].value0 = MOTOR_GENERATOR_RESOLUTION * input;
-                        rgMotorFunctions[index].value1 = 0;
-                    }
-                    else{ //S 10
-                        rgMotorFunctions[index].value0 = MOTOR_GENERATOR_RESOLUTION;
-                        rgMotorFunctions[index].value1 = 0;
-                    }
-                    break;    
-        case COAST: if(input < 0){ // CCW P1
-                        rgMotorFunctions[index].value0 = MOTOR_GENERATOR_RESOLUTION * (-input);
-                        rgMotorFunctions[index].value1 = MOTOR_GENERATOR_RESOLUTION;
-                    }
-                    else if(input > 0){ // CW PP
-                        rgMotorFunctions[index].value0 = MOTOR_GENERATOR_RESOLUTION * input;
-                        rgMotorFunctions[index].value1 = MOTOR_GENERATOR_RESOLUTION * input;
-                    }
-                    else{ //S 11
-                        rgMotorFunctions[index].value0 = MOTOR_GENERATOR_RESOLUTION;
-                        rgMotorFunctions[index].value1 = MOTOR_GENERATOR_RESOLUTION;
-                    }
-                    break;
-    }
-}
-
-// Declares a new motor function pin
-// Motor pins are run by bit-banging in software
-// \param port is the port base (ex. GPIO_PORTA_BASE)
-// \param pin is the pin in that port (ex. GPIO_PIN_0)
-// \return the index of the motor in the buffer
-// 
-// Note: Uses Timer4B. Do not use elsewhere is this function is called
-unsigned long AddMotorFunction( unsigned long port0, unsigned long pin0 , unsigned long port1, unsigned long pin1 , tMotorMode mode){
-    static unsigned long count = 0;
-    static tBoolean fIsMotorFuncInitialized = false;
+// This function sets a motor speed
+void SetMotor(tMotor *mtr, float input) { 
+    // Check the input range
+    if(input > 1 || input < -1)
+        return;
     
-    // Check to see if the motor generator is initialized. If not, initialize.
-    if(!fIsMotorFuncInitialized){
-        InitializeMotorGenerator();
-        
-        //  Flag as initialized
-        fIsMotorFuncInitialized = true;
-    }
-    
-    // Find the next availible spot in the buffer
-    GPIOPinTypeGPIOOutput(port0, pin0); 
-    GPIOPinTypeGPIOOutput(port1, pin1);
-    
-    // Put the new task in the buffer
-    rgMotorFunctions[count].port0 = port0;
-    rgMotorFunctions[count].pin0 = pin0;
-    rgMotorFunctions[count].port1 = port1;
-    rgMotorFunctions[count].pin1 = pin1;
-    rgMotorFunctions[count].mode = mode;
-    rgMotorFunctions[count].active = true;
-    SetMotorPosition(count, 0);
-    GPIOPinWrite(port0, pin0, pin0);
-    GPIOPinWrite(port1, pin1, pin1);
-    return count++;
-}
-
-void MotorGeneratorHandler(void)
-{
-    static unsigned long cMotorGenTime = 0;
-    int i = 0;
-    // Increment a counter in terms of motor generator time
-    cMotorGenTime = ((cMotorGenTime+1)%MOTOR_GENERATOR_RESOLUTION);
-    
-    // Iterate through the motor functions
-    while( i != MOTOR_FUNCTION_BUFFER_SIZE && rgMotorFunctions[i].active )
-    {
-        if(cMotorGenTime == 0){ 
-            // If the motor time is 0, assert all the motor pins high/low
-            GPIOPinWrite(rgMotorFunctions[i].port0, rgMotorFunctions[i].pin0, rgMotorFunctions[i].value0 > 0 ? rgMotorFunctions[i].pin0 : 0);
-            GPIOPinWrite(rgMotorFunctions[i].port1, rgMotorFunctions[i].pin1, rgMotorFunctions[i].value1 > 0 ? rgMotorFunctions[i].pin1 : 0);
+    // Operate the motor controller
+    // Motor controller operation is specific 
+    // to the TLE5205-2
+    if (mtr->brake) {
+        if (input < 0) {
+            // CCW (P, ~P)
+            SetPWM(mtr->pwm0, 1.0f+input, -input);
+            SetPWM(mtr->pwm1, -input, 0.0f);
+        } else if (input > 0) {
+            // CW (P, 0)
+            SetPWM(mtr->pwm0, input, 0.0f);
+            SetPWM(mtr->pwm1, 0.0f, 0.0f);
+        } else {
+            // S (1, 0)
+            SetPWM(mtr->pwm0, 1.0f, 0.0f);
+            SetPWM(mtr->pwm1, 0.0f, 0.0f);
         }
-        else{ 
-            if(cMotorGenTime == rgMotorFunctions[i].value0){
-                // If the motor time is a pin's setpoint, assert that pin low/high
-                GPIOPinWrite(rgMotorFunctions[i].port0, rgMotorFunctions[i].pin0, rgMotorFunctions[i].value0 > 0 ? 0 : rgMotorFunctions[i].pin0);
-            }
-            if(cMotorGenTime == rgMotorFunctions[i].value1){
-                // If the motor time is a pin's setpoint, assert that pin low/high
-                GPIOPinWrite(rgMotorFunctions[i].port1, rgMotorFunctions[i].pin1, rgMotorFunctions[i].value1 > 0 ? 0 : rgMotorFunctions[i].pin1);
-            }
+    } else {
+        if (input < 0) {
+            // CCW (P, 1)
+            SetPWM(mtr->pwm0, 1.0f+input, -input);
+            SetPWM(mtr->pwm1, 1.0f, 0.0f);
+        } else if (input > 0) {
+            // CW (P, P)
+            SetPWM(mtr->pwm0, input, 0.0f);
+            SetPWM(mtr->pwm1, input, 0.0f);
+        } else {
+            // S (1, 1)
+            SetPWM(mtr->pwm0, 1.0f, 0.0f);
+            SetPWM(mtr->pwm1, 1.0f, 0.0f);
         }
-        i++;	
     }
-    
-    // Clear the interrupt
-    TimerIntClear(TIMER4_BASE, TIMER_TIMB_TIMEOUT);
 }

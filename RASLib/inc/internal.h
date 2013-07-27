@@ -1,23 +1,14 @@
 // Note: this code is for internal use only. Projects that use RASLib should never include it.
 
-#include "gpioints.h"
+#ifndef __INTERNAL_H__
+#define __INTERNAL_H__
+
+#include "inc/hw_types.h"
+
+// Definition of callback function pointer
+typedef void (*tCallback)();
 
 // Does nothing; used as placeholder in time.c and gpioints.c
-void Dummy(void);
+void Dummy(void*);
 
-// Note: it is not recommended to call this function directly. Instead, use the
-// AddServo macro defined in servo.h to generate a unique InitializeServo function
-unsigned long AddServoFunction(unsigned long port, unsigned long pin);
-
-// Note: it is not recommended to call this function directly. Instead, use the
-// AddServo macro defined in servo.h to generate a unique SetServo function
-void SetServoPosition(unsigned long index, float input);
-
-// Note: it is not recommended to call this function directly. Instead, use the
-// InitializeEncoder macro defined in encoder.h
-int AddEncoder(unsigned long ulPeripheral,
-               unsigned long ulPort,
-               unsigned char ucPinA,
-               unsigned char ucPinB,
-               unsigned long ulInterrupt,
-               tGPIO_Port port);
+#endif // __INTERNAL_H__

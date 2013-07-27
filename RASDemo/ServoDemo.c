@@ -4,50 +4,40 @@
 #include "time.h"
 #include "servo.h"
 
-AddServo(One,A,2)
+tServo *servo;
+
 void initServo(void) {
-	//InitializeServoGenerator();
-		InitializeServoOne();
+    servo = InitializeServo(PIN_A2);
 }
 
 void servoDemo(void) {
-	/* 2012 Servo Demo code
-	UARTprintf("Press:\n  a-'up' 10\n  w-'up' 1\n  s-'down' 1\n");
-	UARTprintf("  d-'down' 10\n  enter-quit\n");
+	// 2012 Servo Demo code
+	UARTprintf("Press:\n  a-'up' 0.10\n  w-'up' 0.01\n  s-'down' 0.01\n");
+	UARTprintf("  d-'down' 0.10\n  enter-quit\n");
 	
-	{
-		unsigned char position = 0;
+	{   float position = 0;
 		char newline = 13;
 		char ch;
 		
-		UARTprintf("position: %u  ",position);
+		UARTprintf("position: 0x%x%x  ", position);
 		ch = getc();
+        
 		while(ch != newline) {
 			if (ch == 'w')
-				position++;
+				position += 0.01f;
 			else if (ch == 's')
-				position--;	 
+				position -= 0.01f;	 
 			else if (ch == 'a')
-				position+=10;
+				position += 0.10f;
 			else if (ch == 'd')
-				position-=10;
-			SetServoPosition(SERVO_0, position); 
-			SetServoPosition(SERVO_1, position);
-			SetServoPosition(SERVO_2, position);
-			SetServoPosition(SERVO_3, position);
-			UARTprintf("%u  ",position);	 
+				position -= 0.10f;
+            
+			SetServo(servo, position);
+            
+			UARTprintf("\rposition: 0x%x%x  ",position);	 
 			ch = getc();
 		}
 				 
 		UARTprintf("\n");
-	}*/
-		//From Frank's test
-    UARTprintf("Servo Test Starting...\n");
-    for(;;){
-        static int i = 0;
-        SetServoOne(i);
-        UARTprintf("Servo Output: %d   \r",i);
-        i = (i+1)%256;
-        WaitUS(100000);
 	}
 }

@@ -26,7 +26,7 @@
 #include "driverlib/sysctl.h"
 #include "init.h"
 #include "time.h"
-#include "gpioints.h"
+#include "gpio.h"
 #include "driverlib/fpu.h"
 #include "driverlib/interrupt.h"
 
@@ -45,7 +45,7 @@ void InitializeMCU(void)
     InitializeSystemTime();
     
     //Initialize GPIO Interrupt Handlers
-    InitializeGPIOInterruptHandlers();
+    InitializeGPIO();
     
     //Enable global interrupts
     IntMasterEnable();    

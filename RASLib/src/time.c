@@ -21,6 +21,8 @@
 //
 //*****************************************************************************
 
+#include "time.h"
+#include "gpio.h"
 #include "inc/hw_types.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_ints.h"
@@ -29,21 +31,26 @@
 #include "driverlib/systick.h"
 #include "driverlib/timer.h"
 #include "driverlib/interrupt.h"
-#include "time.h"
-#include "gpioints.h"
 
 // Global System Clock
 static volatile tTime systemTimeUS = 0;
 static long USTicks = 0;
 
-#define US_IN_S (1000*1000)
-
 // Relevant task info
 typedef struct {
+    // Task identifier
+    int id;
+    
+    // Target time value
     tTime target;
+    
+    // If repeating, then repeatTime 
+    // holds the period
     tTime repeatTime;
+    
+    // Callback data
     void *data;
-    void (*callback)(void*);
+    tCallback callback;
 } tTask;
 
 // Cyclic buffer of waiting tasks
@@ -56,6 +63,9 @@ unsigned int taskEnd = 0;
 
 tTask taskBuffer[TASK_BUFF_SIZE];
 
+// Next identifier
+int nextID = 42;
+
 
 // Initializes a system timer with microsecond resolution
 void InitializeSystemTime(void) {
@@ -66,9 +76,9 @@ void InitializeSystemTime(void) {
     taskStart = 0;
     taskEnd = 0;
   
-    // Find the system clock divided by 1000000, which results in 
+    // Find the system clock divided by 1s, which results in 
     // 1 US for the timer
-    USTicks = SysCtlClockGet() / US_IN_S;
+    USTicks = SysCtlClockGet() / US(1);
   
     // Enable the timer 
     SysCtlPeripheralEnable(SYSCTL_PERIPH_WTIMER5);
@@ -81,7 +91,7 @@ void InitializeSystemTime(void) {
                                  TIMER_CFG_B_ONE_SHOT);    
   
     // Setup timer A to run for a full second
-    TimerLoadSet(WTIMER5_BASE, TIMER_A, US_IN_S * USTicks);
+    TimerLoadSet(WTIMER5_BASE, TIMER_A, US(1) * USTicks);
     TimerIntEnable(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
   
     // Only enable the timer B interrupt when it is needed
@@ -99,19 +109,15 @@ tTime GetTimeUS(void) {
            + systemTimeUS;
 }
 
-tTime GetTimeS(void) {
-    return GetTimeUS() / US_IN_S;
-}
-
 float GetTime(void) {
     return ((TimerValueGet(WTIMER5_BASE, TIMER_A) / (float)USTicks)
-            + systemTimeUS) / US_IN_S;
+            + systemTimeUS) / US(1);
 }
 
 // Handler that simply updates the time by one second
 void WTimer5AHandler(void) {
     TimerIntClear(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
-    systemTimeUS += US_IN_S;
+    systemTimeUS += US(1);
 }
 
 // Called internally to register a task
@@ -141,7 +147,7 @@ static void RegisterTask(tTask *task) {
 
 // Setup timer B to trigger an interrupt for the next task
 static void SetNextTaskInt(void) {
-    tTime usUntil;
+    tTime until, time;
   
     // Check to make sure there even is a task
     if (taskEnd == taskStart) {
@@ -149,13 +155,25 @@ static void SetNextTaskInt(void) {
         return;
     }
 
-    // Calculate the next task's eta
-    usUntil = taskBuffer[taskStart].target - GetTimeUS();
-      
-    // Check for 32bit overflow in which case we can just 
-    // interrupt as late as possible. The handler will do nothing.
-    TimerLoadSet(WTIMER5_BASE, TIMER_B, 
-                 (usUntil > 0xffffffff) ? 0xffffffff : usUntil);
+    until = taskBuffer[taskStart].target;
+    time = GetTimeUS();
+    
+    // If its past the target already we should fire immediately
+    if (time > until) {
+        // Put a single cycle because why not
+        until = 1;
+    } else {
+        // Calculate the next task's eta
+        until = (until - time) * USTicks;
+        
+        // Check for 32bit overflow in which case we can just 
+        // interrupt as late as possible. The handler will do nothing.
+        if (until > 0xffffffff)
+            until = 0xffffffff;
+    }
+    
+    // Load the timer
+    TimerLoadSet(WTIMER5_BASE, TIMER_B, until);
       
     // Enable the actual interrupt
     TimerIntEnable(WTIMER5_BASE, TIMER_TIMB_TIMEOUT);
@@ -163,12 +181,16 @@ static void SetNextTaskInt(void) {
 
 // Handler used to manage waiting tasks
 void WTimer5BHandler(void) {
+    // Get the current time with US precision
+    tTime time = GetTimeUS();
+    
     TimerIntClear(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
   
     // If there is a task waiting, call it and 
     // remove it from the buffer
     while (taskStart != taskEnd && 
-           systemTimeUS >= taskBuffer[taskStart].target) {
+           time >= taskBuffer[taskStart].target) {
+               
         tTask *task = &taskBuffer[taskStart];
       
         task->callback(task->data);
@@ -188,10 +210,15 @@ void WTimer5BHandler(void) {
 }
 
 // Schedules a callback function to be called in given microseconds
-void CallInUS(void (*callback)(void*), void *data, tTime us) {
+// The return value can be used to stop the call with CallStop
+int CallInUS(tCallback callback, void *data, tTime us) {
     tTask task;
   
-    task.target = systemTimeUS + us;
+    // Claim the next task id
+    task.id = nextID++;
+    
+    // Setup the tasks info
+    task.target = GetTimeUS() + us;
     // Zero repeatTime indicates it should run once
     task.repeatTime = 0;
     task.callback = callback;
@@ -200,21 +227,25 @@ void CallInUS(void (*callback)(void*), void *data, tTime us) {
     // Register it to be called
     RegisterTask(&task);
     SetNextTaskInt();
+    
+    // Return the id we are using
+    return task.id;
 }
 
-void CallInS(void (*callback)(void*), void *data, tTime s) {
-    CallInUS(callback, data, s*US_IN_S);
-}
-
-void CallIn(void (*callback)(void*), void *data, float s) {
-    CallInUS(callback, data, (tTime)(s*US_IN_S));
+int CallIn(tCallback callback, void *data, float s) {
+    return CallInUS(callback, data, US(s));
 }
 
 // Schedules a callback function to be called repeatedly
-void CallEveryUS(void (*callback)(void*), void *data, tTime us) {
+// The return value can be used to stop the call with CallStop
+int CallEveryUS(tCallback callback, void *data, tTime us) {
     tTask task;
-  
-    task.target = systemTimeUS + us;
+    
+    // Claim the next task id
+    task.id = nextID++;
+    
+    // Setup the task info
+    task.target = GetTimeUS() + us;
     task.repeatTime = us;
     task.callback = callback;
     task.data = data;
@@ -222,31 +253,48 @@ void CallEveryUS(void (*callback)(void*), void *data, tTime us) {
     // Register it to be called
     RegisterTask(&task);
     SetNextTaskInt();
+    
+    // Return the id we are using
+    return task.id;
 }
 
-void CallEveryS(void (*callback)(void*), void *data, tTime s) {
-    CallEveryUS(callback, data, s*US_IN_S);
+int CallEvery(tCallback callback, void *data, float s) {
+    return CallEveryUS(callback, data, US(s));
 }
 
-void CallEvery(void (*callback)(void*), void *data, float s) {
-    CallEveryUS(callback, data, (tTime)(s*US_IN_S));
+// Stops a pending call based on the passed identifier
+void CallStop(int id) {
+    int i;
+    
+    // We have to just iterate all tasks to find it
+    for (i = taskStart; i != taskEnd; i = TASK_MASK(i+1)) {
+        
+        if (taskBuffer[i].id == id) {
+            // If we find it, just replace it with the Dummy function
+            // It will be removed after it triggers
+            taskBuffer[i].callback = Dummy;
+            // Also clear the repeat time, so we don't fill up 
+            // with looping dummies
+            taskBuffer[i].repeatTime = 0;
+            
+            // IDs should be unique, so we can just return
+            return;
+        }
+    }
 }
+    
 
 // Busy waits for given milliseconds
-static void WaitHandler(void *flag) {
-    *(int*)flag = 1;
+static void WaitHandler(int *flag) {
+    *flag = 1;
 }
 
 void WaitUS(tTime us) {
-    int waitFlag = 0;
-    CallInUS(WaitHandler, &waitFlag, us);
+    volatile int waitFlag = 0;
+    CallInUS(WaitHandler, (void *)&waitFlag, us);
     while(!waitFlag);
-}
-
-void WaitS(tTime s) {
-    WaitUS(s*US_IN_S);
 }
   
 void Wait(float s) {
-    WaitUS((tTime)(s*US_IN_S));
+    WaitUS(US(s));
 }
