@@ -142,7 +142,8 @@ void CallOnPin(tCallback callback, void *data, tPin pin) {
         task->callback = callback;
         
         // Setup the interrupts
-        GPIOPinIntEnable(PORT_VAL(pin), PIN_VAL(pin));
         GPIOIntTypeSet(PORT_VAL(pin), PIN_VAL(pin), GPIO_BOTH_EDGES);
+        GPIOPinIntClear(PORT_VAL(pin), PIN_VAL(pin));
+        GPIOPinIntEnable(PORT_VAL(pin), PIN_VAL(pin));
     }
 }

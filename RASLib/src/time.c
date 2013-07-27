@@ -100,7 +100,7 @@ void InitializeSystemTime(void) {
     // Enable the timers and interrupts
     IntEnable(INT_WTIMER5A);
     IntEnable(INT_WTIMER5B);
-    TimerEnable(WTIMER5_BASE, TIMER_BOTH);
+    TimerEnable(WTIMER5_BASE, TIMER_A);
 }
 
 // Outputs system time in microseconds
@@ -150,10 +150,8 @@ static void SetNextTaskInt(void) {
     tTime until, time;
   
     // Check to make sure there even is a task
-    if (taskEnd == taskStart) {
-        TimerIntDisable(WTIMER5_BASE, TIMER_TIMB_TIMEOUT);
+    if (taskEnd == taskStart)
         return;
-    }
 
     until = taskBuffer[taskStart].target;
     time = GetTimeUS();
@@ -175,8 +173,11 @@ static void SetNextTaskInt(void) {
     // Load the timer
     TimerLoadSet(WTIMER5_BASE, TIMER_B, until);
       
-    // Enable the actual interrupt
+    // Enable the interrupt and timer
+    // interrupt might have been disabled to prevent race conditions
+    // and timer is disabled after one_shot
     TimerIntEnable(WTIMER5_BASE, TIMER_TIMB_TIMEOUT);
+    TimerEnable(WTIMER5_BASE, TIMER_B);
 }
 
 // Handler used to manage waiting tasks
@@ -184,7 +185,7 @@ void WTimer5BHandler(void) {
     // Get the current time with US precision
     tTime time = GetTimeUS();
     
-    TimerIntClear(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
+    TimerIntClear(WTIMER5_BASE, TIMER_TIMB_TIMEOUT);
   
     // If there is a task waiting, call it and 
     // remove it from the buffer
