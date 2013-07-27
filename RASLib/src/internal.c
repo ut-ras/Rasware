@@ -1,4 +1,4 @@
 #include "internal.h"
 
 // Does nothing
-void Dummy(void) {}
+void Dummy(void *meh) {}
