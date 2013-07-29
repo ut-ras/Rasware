@@ -82,13 +82,13 @@ typedef struct ADCModule {
     
     // The ADCs being read continously are
     // stored in this linked list
-    tADC *continous;
+    tADC *contQueue;
     
     // The ADCs being read once are stored 
     // in this linked list, with the end pointed
-    // to by last for efficiency
-    tADC *single;
-    tADC *last;
+    // to for efficiency
+    tADC *singleQueue;
+    tADC **singleEnd;
     
     // A simple flag for initialization
     tBoolean initialized;
@@ -96,7 +96,7 @@ typedef struct ADCModule {
 
 
 // Array of available modules
-tADCModule modBuffer[ADC_MODULE_COUNT] = {
+static tADCModule modBuffer[ADC_MODULE_COUNT] = {
     {ADC0_BASE, SYSCTL_PERIPH_ADC0, INT_ADC0SS0},
     {ADC1_BASE, SYSCTL_PERIPH_ADC1, INT_ADC1SS0},
 };
@@ -128,15 +128,15 @@ struct ADC {
 };
 
 // Buffer of adc structs to use
-tADC adcBuffer[ADC_COUNT];
+static tADC adcBuffer[ADC_COUNT];
 
-int adcCount = 0;
+static int adcCount = 0;
 
 
 // A lookup table for channel values based on pins
 // unfortunately ADC_CTL_CH0 == 0 so we can't just use
 // null values to indicate an invalid pin so we use -1
-const signed long CHANNELS[PIN_COUNT] = {
+static const signed long CHANNELS[PIN_COUNT] = {
 /* Port A */  -1,           -1,          -1,          -1,          -1,           -1,           -1, -1,
 /* Port B */  -1,           -1,          -1,          -1,          ADC_CTL_CH10, ADC_CTL_CH11, -1, -1,
 /* Port C */  -1,           -1,          -1,          -1,          -1,           -1,           -1, -1,
@@ -153,6 +153,12 @@ static void InitializeADCModule(tADCModule *mod) {
     // Check if we have already initialized
     if (mod->initialized)
         return;
+
+    // Reset the queues appropriately
+    mod->contQueue = 0;
+
+    mod->singleQueue = 0;
+    mod->singleEnd = &mod->singleQueue;
     
     // Enable clocking for ADC
     SysCtlPeripheralEnable(mod->PERIPH);
@@ -203,7 +209,7 @@ tADC *InitializeADC(tPin pin) {
 
 // Internally used function to setup the continous sequence
 static void SetupContinous(tADCModule *mod, unsigned long trigger) {
-    tADC *adc = mod->continous;
+    tADC *adc = mod->contQueue;
     int i = 0;
     
     // Create the sequence from scratch
@@ -244,7 +250,7 @@ static void TriggerSingle(tADCModule *mod) {
 // and efficiency is the primary concern.
 #define ADC_S0_HANDLER(MOD)                         \
 void ADC##MOD##SS0Handler(void) {                   \
-    tADC *adc = modBuffer[MOD].continous;           \
+    tADC *adc = modBuffer[MOD].contQueue;           \
     unsigned long data[8];                          \
     unsigned long *d = data;                        \
                                                     \
@@ -266,7 +272,7 @@ ADC_S0_HANDLER(1);
 #define ADC_S1_HANDLER(MOD)                                 \
 void ADC##MOD##SS1Handler(void) {                           \
     tADCModule *mod = &modBuffer[MOD];                      \
-    tADC *adc = mod->single;                                \
+    tADC *adc = mod->singleQueue;                           \
                                                             \
     ADCIntClear(ADC##MOD##_BASE, 1);                        \
     ADCSequenceDataGet(ADC##MOD##_BASE, 1, &adc->value);    \
@@ -278,13 +284,12 @@ void ADC##MOD##SS1Handler(void) {                           \
     adc->in_callback = false;                               \
                                                             \
     adc->pending = false;                                   \
-    mod->single = adc->next;                                \
-    adc->next = 0;                                          \
+    mod->singleQueue = adc->next;                           \
                                                             \
-    if (mod->single)                                        \
+    if (mod->singleQueue)                                   \
         TriggerSingle(mod);                                 \
     else                                                    \
-        mod->last = 0;                                      \
+        mod->singleEnd = &mod->singleQueue;                 \
 }
 
 ADC_S1_HANDLER(0);
@@ -314,16 +319,14 @@ void ADCBackgroundRead(tADC *adc, tCallback callback, void *data) {
     // Flag that we are pending
     adc->pending = true;
     
-    // If there is already adcs being read, 
-    // add us to the queue. Otherwise, create
-    // the queue and trigger the adc module.
-    if (mod->last) {
-        mod->last->next = adc;
-        mod->last = adc;
-    } else {
-        mod->single = mod->last = adc;
+    // Add us to the queue
+    *mod->singleEnd = adc;
+    mod->singleEnd = &adc->next;
+    adc->next = 0;
+
+    // If nothing was being read, we need to trigger the module
+    if (mod->singleQueue == adc)
         TriggerSingle(mod);
-    }
 }
     
 
@@ -349,27 +352,28 @@ float ADCRead(tADC *adc) {
 // the ADC to complete, the ADC will read as fast as possible without overlap
 void ADCReadContinouslyUS(tADC *adc, tTime us) {
     tADCModule *mod = adc->module;
-    
+
     // First check if the module already has continous ADCs
-    if (mod->continous) {
+    if (mod->contQueue) {
         // If so, we need to stop it temporarily
         ADCSequenceDisable(mod->BASE, 0);
         
         if (mod->id)
             CallStop(mod->id);
         
-        // And set the period
-        mod->period = us;
-    } else {
-        // Otherwise we only need to check if the period is smaller
+        // And set the period to be the smallest value
         if (us < mod->period)
             mod->period = us;
+
+    } else {
+        // Otherwise we just set the new period
+        mod->period = us;
     }
     
     // We're lazy and order doesn't matter, so we just stick 
     // the new adc in the front of the list
-    adc->next = mod->continous;
-    mod->continous = adc;
+    adc->next = mod->contQueue;
+    mod->contQueue = adc;
     
     // Check if the given speed is too fast
     if (mod->period <= ADC_TIME * ADC_OVERSAMPLING_FACTOR) {
@@ -384,6 +388,9 @@ void ADCReadContinouslyUS(tADC *adc, tTime us) {
         SetupContinous(mod, ADC_TRIGGER_PROCESSOR);
         mod->id = CallEvery(ADCTriggerHandler, mod, mod->period);
     }
+
+    // Don't forget to set the continous flag
+    adc->continous = true;
 }
     
 void ADCReadContinously(tADC *adc, float s) {
