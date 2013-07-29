@@ -34,6 +34,10 @@ typedef unsigned long long tTime;
 // Also handles conversion from floats
 #define US(s) ((tTime)((s)*1000*1000))
 
+// Number of tasks to internally allocate
+// Surpassing this value will cleanly return an id of 0
+#define TASK_COUNT 64
+
 // Initializes a system timer with millisecond resolution
 void InitializeSystemTime(void);
 
