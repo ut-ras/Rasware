@@ -238,6 +238,10 @@ int CallInUS(tCallback callback, void *data, tTime us) {
     // Grab the next available task
     task = unusedQueue;
     unusedQueue = task->next;
+
+    // Update the end if nescessary
+    if (!unusedQueue)
+        unusedEnd = &unusedQueue;
   
     // Claim the next task id
     task->id = nextID++;
@@ -273,6 +277,10 @@ int CallEveryUS(tCallback callback, void *data, tTime us) {
     // Grab the next available task
     task = unusedQueue;
     unusedQueue = task->next;
+
+    // Update the end if nescessary
+    if (!unusedQueue)
+        unusedEnd = &unusedQueue;
     
     // Claim the next task id
     task->id = nextID++;
