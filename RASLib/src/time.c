@@ -37,7 +37,7 @@ static volatile tTime systemTimeUS = 0;
 static long USTicks = 0;
 
 // Relevant task info
-typedef struct {
+typedef struct Task {
     // Task identifier
     int id;
     
@@ -51,30 +51,45 @@ typedef struct {
     // Callback data
     void *data;
     tCallback callback;
+
+    // Pointer to next task in linked list
+    tTask *next;
 } tTask;
 
-// Cyclic buffer of waiting tasks
-// Must be a power of 2 for masking to work
-#define TASK_BUFF_SIZE 32
-#define TASK_MASK(n) ((TASK_BUFF_SIZE-1) & (n))
 
-unsigned int taskStart = 0;
-unsigned int taskEnd = 0;
+// Queue of tasks implemented as a linked list
+static tTask *pendingQueue;
 
-tTask taskBuffer[TASK_BUFF_SIZE];
+// Queue of unused tasks also a linked list
+// The end is identified for efficiency
+static tTask *unusedQueue;
+static tTask **unusedEnd;
+
+// Buffer of tasks to use
+static tTask taskBuffer[TASK_COUNT];
 
 // Next identifier
-int nextID = 42;
+static int nextID = 42;
 
 
 // Initializes a system timer with microsecond resolution
 void InitializeSystemTime(void) {
+    int i;
+
     // Reset global clock
     systemTimeUS = 0;
   
-    // Reset buffer just in case its been used
-    taskStart = 0;
-    taskEnd = 0;
+    // Reset queue and thread all tasks in the buffer together
+    unusedQueue = &taskBuffer[0];
+    unusedEnd = &unusedQueue;
+
+    for (i = 0; i < TASK_COUNT-1; i++)
+        taskBuffer[i].next = &taskBuffer[i+1];
+
+    taskBuffer[TASK_COUNT-1].next = 0;
+
+    // Reset the pending queue as well
+    pendingQueue = 0;
   
     // Find the system clock divided by 1s, which results in 
     // 1 US for the timer
@@ -122,27 +137,26 @@ void WTimer5AHandler(void) {
 
 // Called internally to register a task
 static void RegisterTask(tTask *task) {
-    unsigned int i, prev;
-  
     // Disable any incoming tasks temporarily
     TimerIntDisable(WTIMER5_BASE, TIMER_TIMB_TIMEOUT);
   
-    // Start at the back and work forward moving any later tasks back  
-    for (i = taskEnd; i != taskStart; i = prev) {
-        prev = TASK_MASK(i-1);
-      
-        if (taskBuffer[prev].target > task->target) {
-            taskBuffer[i] = taskBuffer[prev];
-        } else {
-            break;
+    // Either create the queue or stick the task 
+    // at the end of the pending queue
+    if (!pendingQueue) {
+        pendingQueue = task;
+        task->next = 0;
+
+    } else {
+        tTask *p;
+
+        for (p = pendingQueue; p->next != 0; p = p->next) {
+            if (p->next->target > task->target)
+                break;
         }
+
+        task->next = p->next;
+        p->next = task;
     }
-    
-    // Put our task into the task buffer
-    taskBuffer[i] = *task;
-    
-    // Increase the buffer size
-    taskEnd = TASK_MASK(taskEnd+1);
 }
 
 // Setup timer B to trigger an interrupt for the next task
@@ -150,10 +164,10 @@ static void SetNextTaskInt(void) {
     tTime until, time;
   
     // Check to make sure there even is a task
-    if (taskEnd == taskStart)
+    if (!pendingQueue)
         return;
 
-    until = taskBuffer[taskStart].target;
+    until = pendingQueue->target;
     time = GetTimeUS();
     
     // If its past the target already we should fire immediately
@@ -187,23 +201,25 @@ void WTimer5BHandler(void) {
     
     TimerIntClear(WTIMER5_BASE, TIMER_TIMB_TIMEOUT);
   
-    // If there is a task waiting, call it and 
-    // remove it from the buffer
-    while (taskStart != taskEnd && 
-           time >= taskBuffer[taskStart].target) {
-               
-        tTask *task = &taskBuffer[taskStart];
+    // Handling any waiting tasks
+    while (pendingQueue && time >= pendingQueue->target) {
+        // remove it from the buffer
+        tTask *task = pendingQueue;
+        pendingQueue = task->next;
       
         task->callback(task->data);
         
-        // Reregister the function if it wants to repeat
         if (task->repeatTime) {
+            // Reregister the function if it wants to repeat
             task->target += task->repeatTime;
             RegisterTask(task);
+
+        } else {
+            // Otherwise we stick it back in the available tasks
+            *unusedEnd = task;
+            unusedEnd = &task->next;
+            task->next = 0;
         }
-        
-        // Pop the buffer
-        taskStart = TASK_MASK(taskStart+1);
     }
     
     // Setup the next task
@@ -213,24 +229,32 @@ void WTimer5BHandler(void) {
 // Schedules a callback function to be called in given microseconds
 // The return value can be used to stop the call with CallStop
 int CallInUS(tCallback callback, void *data, tTime us) {
-    tTask task;
+    tTask *task;
+
+    // Check if any tasks are available
+    if (!unusedQueue)
+        return 0;
+
+    // Grab the next available task
+    task = unusedQueue;
+    unusedQueue = task->next;
   
     // Claim the next task id
-    task.id = nextID++;
+    task->id = nextID++;
     
     // Setup the tasks info
-    task.target = GetTimeUS() + us;
+    task->target = GetTimeUS() + us;
     // Zero repeatTime indicates it should run once
-    task.repeatTime = 0;
-    task.callback = callback;
-    task.data = data;
+    task->repeatTime = 0;
+    task->callback = callback;
+    task->data = data;
       
     // Register it to be called
-    RegisterTask(&task);
+    RegisterTask(task);
     SetNextTaskInt();
     
     // Return the id we are using
-    return task.id;
+    return task->id;
 }
 
 int CallIn(tCallback callback, void *data, float s) {
@@ -240,23 +264,31 @@ int CallIn(tCallback callback, void *data, float s) {
 // Schedules a callback function to be called repeatedly
 // The return value can be used to stop the call with CallStop
 int CallEveryUS(tCallback callback, void *data, tTime us) {
-    tTask task;
+    tTask *task;
+
+    // Check if any tasks are available
+    if (!unusedQueue)
+        return 0;
+
+    // Grab the next available task
+    task = unusedQueue;
+    unusedQueue = task->next;
     
     // Claim the next task id
-    task.id = nextID++;
+    task->id = nextID++;
     
     // Setup the task info
-    task.target = GetTimeUS() + us;
-    task.repeatTime = us;
-    task.callback = callback;
-    task.data = data;
+    task->target = GetTimeUS() + us;
+    task->repeatTime = us;
+    task->callback = callback;
+    task->data = data;
       
     // Register it to be called
-    RegisterTask(&task);
+    RegisterTask(task);
     SetNextTaskInt();
     
     // Return the id we are using
-    return task.id;
+    return task->id;
 }
 
 int CallEvery(tCallback callback, void *data, float s) {
@@ -265,19 +297,24 @@ int CallEvery(tCallback callback, void *data, float s) {
 
 // Stops a pending call based on the passed identifier
 void CallStop(int id) {
-    int i;
+    tTask *p;
+
+    // Check if there even are any tasks
+    if (!pendingQueue)
+        return;
     
     // We have to just iterate all tasks to find it
-    for (i = taskStart; i != taskEnd; i = TASK_MASK(i+1)) {
+    for (p = pendingQueue; p->next; p = p->next) {
         
-        if (taskBuffer[i].id == id) {
-            // If we find it, just replace it with the Dummy function
-            // It will be removed after it triggers
-            taskBuffer[i].callback = Dummy;
-            // Also clear the repeat time, so we don't fill up 
-            // with looping dummies
-            taskBuffer[i].repeatTime = 0;
-            
+        if (p->next->id == id) {
+            // Remove it from the queue and throw it back in the unused pile
+            tTask *task = p->next;
+            p->next = task->next;
+
+            *unusedEnd = task;
+            unusedEnd = &task->next;
+            task->next = 0;
+
             // IDs should be unique, so we can just return
             return;
         }
