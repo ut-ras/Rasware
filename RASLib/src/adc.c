@@ -279,6 +279,7 @@ void ADC##MOD##SS1Handler(void) {                           \
                                                             \
     adc->pending = false;                                   \
     mod->single = adc->next;                                \
+    adc->next = 0;                                          \
                                                             \
     if (mod->single)                                        \
         TriggerSingle(mod);                                 \
