@@ -47,6 +47,8 @@ Setup for Windows (WIP)
 
 ### Install drivers for the Launchpad ###
 
+Note: for windows 8, the drivers are unsigned, so installing them requires you to activate special permissions. Basically follow this process: http://www.tabletroms.com/forums/visual-land-tablets/5894-how-install-unsigned-drivers-windows-8-a.html. (Or else the Device Manager just won't let you install drivers.)
+
 1. Go to <http://www.ti.com/tool/stellaris_icdi_drivers>.
 2. Click `Download` to download the drivers to your computer.
 3. Unzip to downloaded file.
