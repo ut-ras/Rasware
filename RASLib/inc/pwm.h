@@ -31,21 +31,18 @@
 #ifndef __PWM_H__
 #define __PWM_H__
 
-// PWM resolution must be known at compile time
-// Resolution is per second
-#define PWM_RESOLUTION 64000
-
 // Definition of struct PWM in pwm.c
 typedef struct PWM tPWM;
 
 // Function to initialize pwm on a pin
 // The returned pointer can be used by the SetPWM function
 // Frequency must be specified in hertz
+// If the number of frequencies passes the number of available
+// modules, which is currently 12, then a null pointer is returned
 tPWM *InitializePWM(tPin pin, float freq);
 
 // This function sets a pwm duty cycle and phase
 // Both Duty Cycle and Phase must be in percentage
-// Tick count will reset on count, allowing for pwm synchronization
 void SetPWM(tPWM *pwm, float duty, float phase);
 
 #endif //  __PWM_H__
