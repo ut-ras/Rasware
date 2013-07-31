@@ -42,7 +42,7 @@
 // Definition of struct Sonar in sonar.c
 typedef struct Sonar tSonar;
 
-// Function to initialize an encoder on a pair of pins
+// Function to initialize a sonar on a pair of pins
 // The returned pointer can be used by the SonarRead functions
 tSonar *InitializeSonar(tPin trigger, tPin echo);
 

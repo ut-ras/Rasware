@@ -32,293 +32,367 @@
 #include "driverlib/gpio.h"
 #include "adc.h"
 
-/***************** GLOBAL VARIABLES *****************/
-unsigned long g_rgADCValues[ADC_BUFFER_SIZE];
+
+// Definition of ADC Pin-map for the TM4C1233H6PM / LM4F120H5QR/
+// ADC#  | Pin Assignement
+// ------+-----------------
+// AIN0  |  PIN_E3 
+// AIN1  |  PIN_E2 
+// AIN2  |  PIN_E1
+// AIN3  |  PIN_E0
+// AIN4  |  PIN_D3
+// AIN5  |  PIN_D2
+// AIN6  |  PIN_D1
+// AIN7  |  PIN_D0
+// AIN8  |  PIN_E5
+// AIN9  |  PIN_E4
+// AIN10 |  PIN_B4
+// AIN11 |  PIN_B5
+
+// Resolution is a property of the microcontroller
+// and is 12 bits for the LM4F
+#define ADC_RESOLUTION 12
+#define ADC_MAX (1<<ADC_RESOLUTION)
+
+// The ADC read time is also per microcontroller
+// Yes, the ADC in the LM4F takes a single microsecond
+// Oversampling will slow this down and is taken into account below
+#define ADC_TIME 1
+
+// The number of ADC modules also varies per microcontroller,
+// this program takes care to spread the created ADCs accross
+// the available modules, however special care must be take 
+// to make sure the ADC / Module ratio does not exceed 8
+// which is the maximum ADCs the first sequence can hold
+#define ADC_MODULE_COUNT 2
 
 
-//****** Definition of ADC Pin-map for the TM4C1233H6PM / LM4F120H5QR ******/
-//****** ADC#  ***** Pin Assignement
-//****** ----- ***** ------------
-//****** AIN0  *****     PE3 
-//****** AIN1  *****     PE2 
-//****** AIN2  *****     PE1
-//****** AIN3  *****     PE0
-//****** AIN4  *****     PD3
-//****** AIN5  *****     PD2
-//****** AIN6  *****     PD1
-//****** AIN7  *****     PD0
-//****** AIN8  *****     PE5
-//****** AIN9  *****     PE4
-//****** AIN10 *****     PB4
-//****** AIN11 *****     PB5
+// Internally used struct representing
+// a single ADC module
+typedef struct ADCModule {
+    // Constant StellarisWare values 
+    // specific to each module
+    const unsigned long BASE;
+    const unsigned long PERIPH;
+    const unsigned long INT;
+    
+    // Timing related information
+    int id;
+    tTime period;
+    
+    // The ADCs being read continously are
+    // stored in this linked list
+    tADC *contQueue;
+    
+    // The ADCs being read once are stored 
+    // in this linked list, with the end pointed
+    // to for efficiency
+    tADC *singleQueue;
+    tADC **singleEnd;
+    
+    // A simple flag for initialization
+    tBoolean initialized;
+} tADCModule;
 
-static const unsigned long ADCPortBase[] = {
-    GPIO_PORTE_BASE, 
-    GPIO_PORTE_BASE,
-    GPIO_PORTE_BASE,
-    GPIO_PORTE_BASE,
-    GPIO_PORTD_BASE,
-    GPIO_PORTD_BASE,
-    GPIO_PORTD_BASE,
-    GPIO_PORTD_BASE,
-    GPIO_PORTE_BASE,
-    GPIO_PORTE_BASE,
-    GPIO_PORTB_BASE,
-    GPIO_PORTB_BASE
+
+// Array of available modules
+static tADCModule modBuffer[ADC_MODULE_COUNT] = {
+    {ADC0_BASE, SYSCTL_PERIPH_ADC0, INT_ADC0SS0},
+    {ADC1_BASE, SYSCTL_PERIPH_ADC1, INT_ADC1SS0},
 };
-static const unsigned char ADCGPIOPin[] = {
-    GPIO_PIN_3,
-    GPIO_PIN_2,
-    GPIO_PIN_1,
-    GPIO_PIN_0,
-    GPIO_PIN_3,
-    GPIO_PIN_2,
-    GPIO_PIN_1,
-    GPIO_PIN_0,
-    GPIO_PIN_5,
-    GPIO_PIN_4,
-    GPIO_PIN_4,
-    GPIO_PIN_5
+
+
+// Definition of struct ADC
+// Defined to tADC in adc.h
+struct ADC {
+    // Pointer to the module its using
+    tADCModule *module;
+    
+    // The most recent accumulated value
+    unsigned long value;
+    
+    // The pin we're reading from
+    tPin pin;
+    
+    // Callback data
+    tCallback callback;
+    void *data;
+    
+    // The next ADC in linked lists
+    tADC *next;
+    
+    // Some state variables
+    tBoolean in_callback : 1;
+    tBoolean continous : 1;
+    volatile tBoolean pending : 1;
 };
 
-// Initializes primary ADC controller
-// Free running, values to be read from mailbox g_rgADCValues
-// 128khz Sampling rate with 64 sample hardware averaging = 2ks/s
-// Rates can be changed by the #defines in the header
-// Uses ADC0 and 1, Sequencers 0 through 2 on each, and Timer5B
-static void InitializeADCMain(void){
-    int i;
-    // Give intial values to the globals
-    for( i = 0; i < ADC_BUFFER_SIZE; i++ ){
-        g_rgADCValues[i]=0;
-    }
+// Buffer of adc structs to use
+static tADC adcBuffer[ADC_COUNT];
+
+static int adcCount = 0;
+
+
+// A lookup table for channel values based on pins
+// unfortunately ADC_CTL_CH0 == 0 so we can't just use
+// null values to indicate an invalid pin so we use -1
+static const signed long CHANNELS[PIN_COUNT] = {
+/* Port A */  -1,           -1,          -1,          -1,          -1,           -1,           -1, -1,
+/* Port B */  -1,           -1,          -1,          -1,          ADC_CTL_CH10, ADC_CTL_CH11, -1, -1,
+/* Port C */  -1,           -1,          -1,          -1,          -1,           -1,           -1, -1,
+/* Port D */  ADC_CTL_CH7,  ADC_CTL_CH6, ADC_CTL_CH5, ADC_CTL_CH4, -1,           -1,           -1, -1,
+/* Port E */  ADC_CTL_CH3,  ADC_CTL_CH2, ADC_CTL_CH1, ADC_CTL_CH0, ADC_CTL_CH9,  ADC_CTL_CH8,  -1, -1,
+/* Port F */  -1,           -1,          -1,          -1,          -1,           -1,           -1, -1,
+};
+
+
+// Function to initialize an entire module. Checks
+// if module has already been intialized. Does not
+// actually start any sequences
+static void InitializeADCModule(tADCModule *mod) {
+    // Check if we have already initialized
+    if (mod->initialized)
+        return;
+
+    // Reset the queues appropriately
+    mod->contQueue = 0;
+
+    mod->singleQueue = 0;
+    mod->singleEnd = &mod->singleQueue;
     
-    // Enable clocking for Timer5, ADC0, ADC1, PortB, PortD, and PortE 
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER5); 
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0); 
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC1);
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
-    
-    // Configure Timer5B to be periodic, maintaining the configuration for Timer5A
-    TimerConfigure(TIMER5_BASE, TIMER5_CFG_R | TIMER_CFG_SPLIT_PAIR | TIMER_CFG_B_PERIODIC);
-	
-    // Enable the Timer5B interrupt
-    IntEnable(INT_TIMER5B);
-    TimerIntEnable(TIMER5_BASE, TIMER_TIMB_TIMEOUT );
-    
-    // Enable sample sequence 1 with a processor signal trigger.  Sequence 1 will 
-    // do up to four samples when the processor sends a signal to start the conversion.
-    // Each ADC module has 4 programmable sequences, sequence 0 to sequence 3.
-    ADCSequenceConfigure(ADC0_BASE, 0, ADC_TRIGGER_PROCESSOR, 0);
-    ADCSequenceConfigure(ADC0_BASE, 1, ADC_TRIGGER_PROCESSOR, 1);
-    ADCSequenceConfigure(ADC0_BASE, 2, ADC_TRIGGER_PROCESSOR, 2);
-    ADCSequenceConfigure(ADC1_BASE, 0, ADC_TRIGGER_PROCESSOR, 0);
-    ADCSequenceConfigure(ADC1_BASE, 1, ADC_TRIGGER_PROCESSOR, 1);
-    ADCSequenceConfigure(ADC1_BASE, 2, ADC_TRIGGER_PROCESSOR, 2);
-    
-    // Configure step 0 and 1 on sequences .  Sample channel 0 (ADC_CTL_CH0),
-    // then sample channel 1 (ADC_CTL_CH1) and configure the interrupt flag
-    // (ADC_CTL_IE) to be set when the sample is done.  Tell the ADC logic
-    // that this is the last conversion on sequence 1 (ADC_CTL_END).
-    /// Sequence 3 has only one step, sequence 1 and 2 have 4 steps, and sequence 0 has 8 programmable steps.   
-    // For more information on the ADC sequences and steps, refer to the datasheet.
-    ADCSequenceStepConfigure(ADC0_BASE, 0, 0,  ADC_CTL_CH0);
-    ADCSequenceStepConfigure(ADC0_BASE, 0, 1,  ADC_CTL_CH1 | ADC_CTL_IE | ADC_CTL_END);
-    ADCSequenceStepConfigure(ADC0_BASE, 1, 0,  ADC_CTL_CH2);
-    ADCSequenceStepConfigure(ADC0_BASE, 1, 1,  ADC_CTL_CH3 | ADC_CTL_IE | ADC_CTL_END);
-    ADCSequenceStepConfigure(ADC0_BASE, 2, 0,  ADC_CTL_CH4);
-    ADCSequenceStepConfigure(ADC0_BASE, 2, 1,  ADC_CTL_CH5 | ADC_CTL_IE | ADC_CTL_END);
-    ADCSequenceStepConfigure(ADC1_BASE, 0, 0,  ADC_CTL_CH6);
-    ADCSequenceStepConfigure(ADC1_BASE, 0, 1,  ADC_CTL_CH7 | ADC_CTL_IE | ADC_CTL_END);
-    ADCSequenceStepConfigure(ADC1_BASE, 1, 0,  ADC_CTL_CH8);
-    ADCSequenceStepConfigure(ADC1_BASE, 1, 1,  ADC_CTL_CH9 | ADC_CTL_IE | ADC_CTL_END);
-    ADCSequenceStepConfigure(ADC1_BASE, 2, 0,  ADC_CTL_CH10);
-    ADCSequenceStepConfigure(ADC1_BASE, 2, 1,  ADC_CTL_CH11 | ADC_CTL_IE | ADC_CTL_END);
+    // Enable clocking for ADC
+    SysCtlPeripheralEnable(mod->PERIPH);
     
     // Enable hardware oversampling (higher precision results)
-    ADCHardwareOversampleConfigure( ADC0_BASE , HW_OVERSAMPLING_FACTOR );
-    ADCHardwareOversampleConfigure( ADC1_BASE , HW_OVERSAMPLING_FACTOR );
+    ADCHardwareOversampleConfigure(mod->BASE , ADC_OVERSAMPLING_FACTOR);
     
-    // Load Timer5B with a frequency of ADC_SAMPLE_RATE * HW_OVERSAMPLING_FACTOR
-    TimerLoadSet(TIMER5_BASE, TIMER_B, SysCtlClockGet() / ADC_SAMPLE_RATE / HW_OVERSAMPLING_FACTOR);
+    // Enable the ADC interrupts, we only use the first two
+    IntEnable(mod->INT);
+    IntEnable(mod->INT + 1);
+    ADCIntEnable(mod->BASE, 0);
+    ADCIntEnable(mod->BASE, 1);
     
-    // Enable Timer5B
-    TimerEnable(TIMER5_BASE, TIMER_B);
+    mod->initialized = true;
 }
 
-void InitializeADC(tADC adc){
-    static tBoolean isADCMainInitialized = false;
-    if(!isADCMainInitialized){
-        InitializeADCMain();
-        isADCMainInitialized = true;
+
+// Function to initialize an ADC on a pin, if ADC
+// is not supported in hardware on the given pin, 
+// then a null pointer is returned
+// The returned pointer can be used by the ADCRead functions
+tADC *InitializeADC(tPin pin) {
+    tADC *adc;
+
+    // If the channel value is -1, that means the pin is not supported
+    if (CHANNELS[pin] < 0)
+        return 0;
+    
+    // Grab the next adc and
+    // assign it to an adc module
+    adc = &adcBuffer[adcCount];
+    adc->module = &modBuffer[adcCount % ADC_MODULE_COUNT];
+    adcCount++;
+    
+    // Check for module initialization
+    InitializeADCModule(adc->module);
+    
+    // Setup initial data
+    adc->pin = pin;
+    
+    // Make the pin type ADC
+    GPIOPinTypeADC(PORT_VAL(pin), PIN_VAL(pin));
+    
+    // Return the new adc
+    return adc;
+}
+
+
+// Internally used function to setup the continous sequence
+static void SetupContinous(tADCModule *mod, unsigned long trigger) {
+    tADC *adc = mod->contQueue;
+    int i = 0;
+    
+    // Create the sequence from scratch
+    // decently low priority
+    ADCSequenceConfigure(mod->BASE, 0, trigger, 2);
+    
+    // Create a sequence step for each pin
+    for (; adc->next != 0; adc = adc->next)
+        ADCSequenceStepConfigure(mod->BASE, 0, i++, CHANNELS[adc->pin]);
+    
+    // The last pin must also have the interrupt and end flags
+    ADCSequenceStepConfigure(mod->BASE, 0, i, ADC_CTL_IE | ADC_CTL_END |
+                                              CHANNELS[adc->pin]);
+    
+    // Just enable the sequence
+    ADCSequenceEnable(mod->BASE, 0);
+}
+
+// Internally used function to read the next pending single adc.
+static void TriggerSingle(tADCModule *mod) {    
+    // Create the sequence from scratch
+    // priority is just a bit above the continous reads
+    ADCSequenceConfigure(mod->BASE, 1, ADC_TRIGGER_PROCESSOR, 1);
+    
+    // Create the sequence step, which there is only one of
+    // with the next adc's pin.
+    ADCSequenceStepConfigure(mod->BASE, 1, 0, ADC_CTL_IE | ADC_CTL_END | 
+                                              CHANNELS[mod->singleQueue->pin]);
+    
+    // Enable the sequence and trigger it
+    ADCSequenceEnable(mod->BASE, 1);
+    ADCProcessorTrigger(mod->BASE, 1);
+}
+
+
+// Interrupt handlers for sequence 0, which is used
+// for continous interrupts. Not callbacks need to be called
+// and efficiency is the primary concern.
+#define ADC_S0_HANDLER(MOD)                         \
+void ADC##MOD##SS0Handler(void) {                   \
+    tADC *adc = modBuffer[MOD].contQueue;           \
+    unsigned long data[8];                          \
+    unsigned long *d = data;                        \
+                                                    \
+    ADCIntClear(ADC##MOD##_BASE, 0);                \
+    ADCSequenceDataGet(ADC##MOD##_BASE, 0, data);   \
+                                                    \
+    for (; adc != 0; adc = adc->next)               \
+        adc->value = *d++;                          \
+}
+
+ADC_S0_HANDLER(0);
+ADC_S0_HANDLER(1);
+
+
+// Interrupt handlers for sequence 1, which is used
+// for single reads. Calls the callback and sets up
+// the next pending adc to be read. We also disable the
+// sequence here so it can be configured in the next trigger.
+#define ADC_S1_HANDLER(MOD)                                 \
+void ADC##MOD##SS1Handler(void) {                           \
+    tADCModule *mod = &modBuffer[MOD];                      \
+    tADC *adc = mod->singleQueue;                           \
+                                                            \
+    ADCIntClear(ADC##MOD##_BASE, 1);                        \
+    ADCSequenceDataGet(ADC##MOD##_BASE, 1, &adc->value);    \
+                                                            \
+    ADCSequenceDisable(ADC##MOD##_BASE, 1);                 \
+                                                            \
+    adc->in_callback = true;                                \
+    adc->callback(adc->data);                               \
+    adc->in_callback = false;                               \
+                                                            \
+    adc->pending = false;                                   \
+    mod->singleQueue = adc->next;                           \
+                                                            \
+    if (mod->singleQueue)                                   \
+        TriggerSingle(mod);                                 \
+    else                                                    \
+        mod->singleEnd = &mod->singleQueue;                 \
+}
+
+ADC_S1_HANDLER(0);
+ADC_S1_HANDLER(1);
+
+
+// Interrupt handler for periodic calls
+void ADCTriggerHandler(tADCModule *mod) {
+    ADCProcessorTrigger(mod->BASE, 0);
+}
+
+
+// This function sets up an ADC to be run in the background
+// A callback can be passed, in which a call to ADCRead 
+// will return with the newly obtained value immediately
+void ADCBackgroundRead(tADC *adc, tCallback callback, void *data) {
+    tADCModule *mod = adc->module;
+    
+    // Setup the callback data
+    adc->callback = callback ? callback : Dummy;
+    adc->data = data;
+    
+    // If we're already reading just return
+    if (adc->pending || adc->continous)
+        return;
+    
+    // Flag that we are pending
+    adc->pending = true;
+    
+    // Add us to the queue
+    *mod->singleEnd = adc;
+    mod->singleEnd = &adc->next;
+    adc->next = 0;
+
+    // If nothing was being read, we need to trigger the module
+    if (mod->singleQueue == adc)
+        TriggerSingle(mod);
+}
+    
+
+// This function returns the value measured as a percentage
+// If the ADC is not continously reading,
+// then the function will busy wait for the results
+float ADCRead(tADC *adc) {
+    // Check if we need to read a value
+    if (!adc->in_callback && !adc->continous) {
+        // Just call ADCBackgroundRead and busy wait
+        ADCBackgroundRead(adc, 0, 0);
+        while (adc->pending);
     }
     
-    //Select the specified adc's pin mux to type adc
-    GPIOPinTypeADC(ADCPortBase[adc], ADCGPIOPin[adc]);
+    // Calculate the ratio and return it
+    return adc->value / (float)(ADC_MAX);
+}
+
+
+// These function set up an ADC to read indefinitly
+// Any following calls to ADCRead will return the most recent value
+// If the passed time between calls is less than the time it takes for
+// the ADC to complete, the ADC will read as fast as possible without overlap
+void ADCReadContinouslyUS(tADC *adc, tTime us) {
+    tADCModule *mod = adc->module;
     
-    //Enable the sequencer for the specified adc and wait until the first accumulation finishes
-    switch( adc/2 ){ // Two adc's per sequencer
-        case 0: // Enable ADC0:Sequence 0
-                ADCSequenceEnable(ADC0_BASE, 0);
-                
-                // Enable ADC0:Sequence 0 interrupt
-                ADCIntEnable(ADC0_BASE, 0);
-                
-                // Busy-wait until the sequence finishes
-                while(!ADCIntStatus(ADC0_BASE,0,false));
-                
-                // Enter the interrupt handler and complete initialization
-                IntEnable(INT_ADC0SS0);
-                
-                break;
-        case 1: // Enable ADC0:Sequence 1
-                ADCSequenceEnable(ADC0_BASE, 1);
-                
-                // Enable ADC0:Sequence 1 interrupt
-                ADCIntEnable(ADC0_BASE, 1);
-                
-                // Busy-wait until the sequence finishes
-                while(!ADCIntStatus(ADC0_BASE,1,false));
-                
-                // Enter the interrupt handler and complete initialization
-                IntEnable(INT_ADC0SS1);
-                
-                break;
-        case 2: // Enable ADC0:Sequence 2
-                ADCSequenceEnable(ADC0_BASE, 2);
-                
-                // Enable ADC0:Sequence 2 interrupt
-                ADCIntEnable(ADC0_BASE, 2);
-                
-                // Busy-wait until the sequence finishes
-                while(!ADCIntStatus(ADC0_BASE,2,false));
-                
-                // Enter the interrupt handler and complete initialization
-                IntEnable(INT_ADC0SS2);
-                
-                break;
-        case 3: // Enable ADC1:Sequence 0
-                ADCSequenceEnable(ADC1_BASE, 0);
-                
-                // Enable ADC1:Sequence 0 interrupt
-                ADCIntEnable(ADC1_BASE, 0);
-                
-                // Busy-wait until the sequence finishes
-                while(!ADCIntStatus(ADC1_BASE,0,false));
-                
-                // Enter the interrupt handler and complete initialization
-                IntEnable(INT_ADC1SS0);
-                
-                break;
-        case 4: // Enable ADC1:Sequence 1
-                ADCSequenceEnable(ADC1_BASE, 1);
-                
-                // Enable ADC1:Sequence 1 interrupt
-                ADCIntEnable(ADC1_BASE, 1);
-                
-                // Busy-wait until the sequence finishes
-                while(!ADCIntStatus(ADC1_BASE,1,false));
-                
-                // Enter the interrupt handler and complete initialization
-                IntEnable(INT_ADC1SS1);
-                
-                break;
-        case 5: // Enable ADC1:Sequence 2
-                ADCSequenceEnable(ADC1_BASE, 2);
-                
-                // Enable ADC1:Sequence 2 interrupt
-                ADCIntEnable(ADC1_BASE, 2);
-                
-                // Busy-wait until the sequence finishes
-                while(!ADCIntStatus(ADC1_BASE,2,false));
-                
-                // Enter the interrupt handler and complete initialization
-                IntEnable(INT_ADC1SS2);
-                
-                break;
+    // First check if the module already has continous ADCs
+    if (mod->contQueue) {
+        // If so, we need to stop it temporarily
+        ADCSequenceDisable(mod->BASE, 0);
+        
+        if (mod->id)
+            CallStop(mod->id);
+        
+        // And set the period to be the smallest value
+        if (us < mod->period)
+            mod->period = us;
+
+    } else {
+        // Otherwise we just set the new period
+        mod->period = us;
     }
     
-}
-
-// Returns the latest value read from the specified ADC pin
-// \param index is the ADC pin to read
-// \return latest value read from the specified ADC pin
-unsigned long GetADC(tADC adc) { 
-    static tBoolean isADCInitialized[ADC_BUFFER_SIZE] = {false,};
-    if(!isADCInitialized[adc]){
-        InitializeADC(adc);
-        isADCInitialized[adc] = true;
+    // We're lazy and order doesn't matter, so we just stick 
+    // the new adc in the front of the list
+    adc->next = mod->contQueue;
+    mod->contQueue = adc;
+    
+    // Check if the given speed is too fast
+    if (mod->period <= ADC_TIME * ADC_OVERSAMPLING_FACTOR) {
+        // In which case we set it to always be triggered 
+        // and clear the id
+        SetupContinous(mod, ADC_TRIGGER_ALWAYS);
+        mod->id = 0;
+        
+    } else {
+        // Just setup the sequence to trigger on a
+        // scheduled interrupt for the given time
+        SetupContinous(mod, ADC_TRIGGER_PROCESSOR);
+        mod->id = CallEveryUS(ADCTriggerHandler, mod, mod->period);
     }
-    return g_rgADCValues[adc];
+
+    // Don't forget to set the continous flag
+    adc->continous = true;
 }
-
-// Interrupt handler for ADC0:Sequencer 0
-void ADC0SS0Handler(void){
-    // Put the new ADC readings into a global container
-    ADCSequenceDataGet(ADC0_BASE, 0, &g_rgADCValues[ADC0]);
     
-    // Clear the interrupt
-    ADCIntClear(ADC0_BASE, 0);
-}
-
-// Interrupt handler for ADC0:Sequencer 1
-void ADC0SS1Handler(void){
-    // Put the new ADC readings into a global container
-    ADCSequenceDataGet(ADC0_BASE, 1, &g_rgADCValues[ADC2]);
-    
-    // Clear the interrupt
-    ADCIntClear(ADC0_BASE, 1);
-}
-
-// Interrupt handler for ADC0:Sequencer 2
-void ADC0SS2Handler(void){
-    // Put the new ADC readings into a global container
-    ADCSequenceDataGet(ADC0_BASE, 2, &g_rgADCValues[ADC4]);
-    
-    // Clear the interrupt
-    ADCIntClear(ADC0_BASE, 2);
-}
-
-// Interrupt handler for ADC1:Sequencer 0
-void ADC1SS0Handler(void){
-    // Put the new ADC readings into a global container
-    ADCSequenceDataGet(ADC1_BASE, 0, &g_rgADCValues[ADC6]);
-    
-    // Clear the interrupt
-    ADCIntClear(ADC1_BASE, 0);
-}
-
-// Interrupt handler for ADC1:Sequencer 1
-void ADC1SS1Handler(void){
-    // Put the new ADC readings into a global container
-    ADCSequenceDataGet(ADC1_BASE, 1, &g_rgADCValues[ADC8]);
-    
-    // Clear the interrupt
-    ADCIntClear(ADC1_BASE, 1);
-}
-
-// Interrupt handler for ADC1:Sequencer 2
-void ADC1SS2Handler(void){
-    // Put the new ADC readings into a global container
-    ADCSequenceDataGet(ADC1_BASE, 2, &g_rgADCValues[ADC10]);
-    
-    // Clear the interrupt
-    ADCIntClear(ADC1_BASE, 2);
-}
-
-
-// Interrupt handler for Timer5B
-void ADCTriggerHandler(void){
-    // Trigger ADC0:Sequence1
-    ADCProcessorTrigger(ADC0_BASE, 0);
-    ADCProcessorTrigger(ADC0_BASE, 1);
-    ADCProcessorTrigger(ADC0_BASE, 2);
-    ADCProcessorTrigger(ADC1_BASE, 0);
-    ADCProcessorTrigger(ADC1_BASE, 1);
-    ADCProcessorTrigger(ADC1_BASE, 2);
-    
-    // Clear the interrupt
-    TimerIntClear(TIMER5_BASE, TIMER_TIMB_TIMEOUT);
+void ADCReadContinously(tADC *adc, float s) {
+    ADCReadContinouslyUS(adc, US(s));
 }

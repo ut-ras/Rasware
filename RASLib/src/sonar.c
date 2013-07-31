@@ -228,7 +228,7 @@ void SonarReadContinouslyUS(tSonar *snr, tTime us) {
     snr->continous = true;
     
     // Check if there isn't enough time for the sensor to be read
-    if (us < SONAR_TIMEOUT + SONAR_PULSE)
+    if (us <= SONAR_TIMEOUT + SONAR_PULSE)
         // If there isn't, read as fast as possible
         SonarBackgroundRead(snr, ContinousReadHandler, snr);
     else
