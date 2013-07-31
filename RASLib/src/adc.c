@@ -214,7 +214,7 @@ static void SetupContinous(tADCModule *mod, unsigned long trigger) {
     
     // Create the sequence from scratch
     // decently low priority
-    ADCSequenceConfigure(mod->BASE, 1, trigger, 2);
+    ADCSequenceConfigure(mod->BASE, 0, trigger, 2);
     
     // Create a sequence step for each pin
     for (; adc->next != 0; adc = adc->next)
@@ -225,7 +225,7 @@ static void SetupContinous(tADCModule *mod, unsigned long trigger) {
                                               CHANNELS[adc->pin]);
     
     // Just enable the sequence
-    ADCSequenceEnable(mod->BASE, 1);
+    ADCSequenceEnable(mod->BASE, 0);
 }
 
 // Internally used function to read the next pending single adc.
@@ -237,7 +237,7 @@ static void TriggerSingle(tADCModule *mod) {
     // Create the sequence step, which there is only one of
     // with the next adc's pin.
     ADCSequenceStepConfigure(mod->BASE, 1, 0, ADC_CTL_IE | ADC_CTL_END | 
-                                              CHANNELS[mod->single->pin]);
+                                              CHANNELS[mod->singleQueue->pin]);
     
     // Enable the sequence and trigger it
     ADCSequenceEnable(mod->BASE, 1);
@@ -352,7 +352,7 @@ float ADCRead(tADC *adc) {
 // the ADC to complete, the ADC will read as fast as possible without overlap
 void ADCReadContinouslyUS(tADC *adc, tTime us) {
     tADCModule *mod = adc->module;
-
+    
     // First check if the module already has continous ADCs
     if (mod->contQueue) {
         // If so, we need to stop it temporarily
@@ -386,7 +386,7 @@ void ADCReadContinouslyUS(tADC *adc, tTime us) {
         // Just setup the sequence to trigger on a
         // scheduled interrupt for the given time
         SetupContinous(mod, ADC_TRIGGER_PROCESSOR);
-        mod->id = CallEvery(ADCTriggerHandler, mod, mod->period);
+        mod->id = CallEveryUS(ADCTriggerHandler, mod, mod->period);
     }
 
     // Don't forget to set the continous flag
