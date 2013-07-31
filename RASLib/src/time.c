@@ -53,7 +53,7 @@ typedef struct Task {
     tCallback callback;
 
     // Pointer to next task in linked list
-    tTask *next;
+    struct Task *next;
 } tTask;
 
 
@@ -137,26 +137,21 @@ void WTimer5AHandler(void) {
 
 // Called internally to register a task
 static void RegisterTask(tTask *task) {
+    tTask **p;
+    
     // Disable any incoming tasks temporarily
     TimerIntDisable(WTIMER5_BASE, TIMER_TIMB_TIMEOUT);
-  
-    // Either create the queue or stick the task 
-    // at the end of the pending queue
-    if (!pendingQueue) {
-        pendingQueue = task;
-        task->next = 0;
-
-    } else {
-        tTask *p;
-
-        for (p = pendingQueue; p->next != 0; p = p->next) {
-            if (p->next->target > task->target)
-                break;
-        }
-
-        task->next = p->next;
-        p->next = task;
+    
+    // Iterate through the queue until we find a 
+    // later task or hit the end
+    for (p = &pendingQueue; *p; p = &(*p)->next) {
+        if ((*p)->target > task->target)
+            break;
     }
+    
+    // Insert the task into the queue
+    task->next = *p;
+    *p = task;
 }
 
 // Setup timer B to trigger an interrupt for the next task
@@ -305,26 +300,19 @@ int CallEvery(tCallback callback, void *data, float s) {
 
 // Stops a pending call based on the passed identifier
 void CallStop(int id) {
-    tTask *p;
+    tTask **p;
 
-    // Check if there even are any tasks
-    if (!pendingQueue)
-        return;
-    
     // We have to just iterate all tasks to find it
-    for (p = pendingQueue; p->next; p = p->next) {
+    for (p = &pendingQueue; *p; p = &(*p)->next) {
         
-        if (p->next->id == id) {
+        if ((*p)->id == id) {
             // Remove it from the queue and throw it back in the unused pile
-            tTask *task = p->next;
-            p->next = task->next;
-
+            tTask *task = *p;
+            *p = task->next;
+            
             *unusedEnd = task;
             unusedEnd = &task->next;
             task->next = 0;
-
-            // IDs should be unique, so we can just return
-            return;
         }
     }
 }
