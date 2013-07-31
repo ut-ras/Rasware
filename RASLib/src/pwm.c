@@ -247,7 +247,8 @@ tPWM *InitializePWM(tPin pin, float freq) {
 // same time value, as that occurs often in synchronized pwm
 #define TIMER_HANDLER(BASE, TIM)                                                \
 void WTimer##BASE##TIM##Handler(void) {                                         \
-    tPWMEvent *event = modBuffer[2*BASE + (TIMER_##TIM == TIMER_B)].event;      \
+    tPWMModule *mod = &modBuffer[2*BASE + (TIMER_##TIM == TIMER_B)];            \
+    tPWMEvent *event = mod->event;                                              \
                                                                                 \
     TimerIntClear(TIMER##BASE##_BASE, TIMER_TIM##TIM##_TIMEOUT);                \
                                                                                 \
@@ -257,6 +258,7 @@ void WTimer##BASE##TIM##Handler(void) {                                         
         GPIOPinWrite(PORT_VAL(event->pin), PIN_VAL(event->pin), event->state);  \
     } while (event->timing == 0);                                               \
                                                                                 \
+    mod->event = event;                                                         \
     TimerLoadSet(TIMER##BASE##_BASE, TIMER_##TIM, event->timing);               \
     TimerEnable(TIMER##BASE##_BASE, TIMER_##TIM);                               \
 }
