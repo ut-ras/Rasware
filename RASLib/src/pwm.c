@@ -47,8 +47,11 @@ typedef struct PWMModule {
     unsigned long period;
     
     // All we need is a single pwm signal 
-    // to get at the cycle
+    // as an entry point into the cycle
     tPWM *entry;
+
+    // We also need to keep track of where we are
+    tPWMEvent *event;
 } tPWMModule;
 
 
@@ -88,13 +91,12 @@ typedef struct PWMEvent {
     struct PWMEvent *prev;
 } tPWMEvent;
 
+
 // Definition of struct PWM
 // defined to be tPWM in pwm.h
 struct PWM {
-    // The owning module
-    tPWMModule *module;
-    
-    // Value of phase and duty
+    // The timing values associated with the signal
+    unsigned long period;
     unsigned long phase;
     unsigned long duty;
     
@@ -111,9 +113,31 @@ static int pwmCount = 0;
 
 
 // Module initialization function called internally
-static InitializedPWMModule(PWMModule *mod) {
+// Requires a pwm signal to use
+static InitializedPWMModule(PWMModule *mod, tPWM *pwm) {
     // Use either timer A (shift 0) or timer B (shift 8)
     int tshift = (mod->TIMER == TIMER_A) ? 0 : 8;
+
+    // We take the period from the pwm signal
+    mod->period = pwm->period;
+
+    // Then we setup the initial cycle
+    pwm->phase = 0;
+    pwm->duty = mod->period / 2;
+
+    pwm->up.timing = pwm->duty;
+    pwm->down.timing = pwm->duty;
+
+    // Connect the linked list
+    pwm->up.next = pwm->up.prev = &pwm->down;
+    pwm->down.next = pwm->up.next = &pwm->up;
+
+    // Use the given pwm as the entry point
+    mod->entry = pwm;
+
+    // And we set the start of the cycle
+    mod->event = &pwm->up;
+    
     
     // Enable the timer
     SysCtlPeripheralEnable(mod->PERIPH);
@@ -124,14 +148,39 @@ static InitializedPWMModule(PWMModule *mod) {
                               *mod->CFG_R |
                               (TIMER_TIMA_TIMEOUT << tshift));
     
-    // Setup the timer to fire immediately
-    TimerLoadSet(mod->BASE, mod->TIMER, 1);
+    // Setup the timer
+    TimerLoadSet(mod->BASE, mod->TIMER, pwm->up.timing);
     TimerEnable(mod->BASE, mod->TIMER);
     
     // Enable the interrupt
     IntEnable(mod->INT);
     TimerIntEnable(mod->BASE, TIMER_TIMA_TIMEOUT << tshift);
 }
+
+
+// Internally used helper function for inserting new pwm signals
+static void InsertPWM(tPWMModule *mod, tPWM *pwm) {
+    // Setup the pwm to have no duty cycle and phase equal
+    // to the entry point so insertion will not affect the cycle
+    pwm->phase = mod->entry->phase;
+    pwm->duty = 0;
+    pwm->up.timing = 0;
+    pwm->down.timing = 0;
+
+    // First we insert the pwm events into the entry point
+    // without any timing associated with them
+    pwm->up.prev = mod->entry;
+    pwm->up.next = &pwm->down;
+    pwm->down.prev = &pwm->up;
+    pwm->down.next = mod->entry->next;
+
+    mod->entry->next->prev = &pwm->down;
+    mod->entry->next = &pwm->up;
+
+    // Then we simply call SetPWM and let it entangle the
+    // nodes appropriately
+    SetPWM(pwm, 0.5f, 0.0f);
+}    
 
 
 // Function to initialize pwm on a pin
@@ -141,7 +190,6 @@ tPWM *InitializePWM(tPin pin, float freq) {
     tPWMModule *mod;
     tPWM *pwm;
     int i;
-    unsigned long period;
     
     // Grab the next pwm
     pwm = &pwmBuffer[pwmCount++];
@@ -156,7 +204,7 @@ tPWM *InitializePWM(tPin pin, float freq) {
     pwm->down.pin = pin;
     
     // Calculate period
-    period = (unsigned long)(SysCtlClockGet() / freq);
+    pwm->period = (unsigned long)(SysCtlClockGet() / freq);
     
     // Find a module with the given frequency
     for (i = 0; i < PWM_MODULE_COUNT; i++) {
@@ -165,24 +213,9 @@ tPWM *InitializePWM(tPin pin, float freq) {
         if (i == modCount) {
             // Grab the next module
             mod = &modBuffer[modCount++];
-            
-            // Keep track of the period
-            mod->period = period;
-            
-            // Assign the pwm signal at 50% duty cycle
-            // because the modules needs values to iterate over
-            pwm->phase = 0;
-            pwm->duty = period / 2;
-            pwm->up.timing = pwm->duty;
-            pwm->down.timing = pwm->duty;
-            
-            // Create the initial cycle
-            pwm->up.next = pwm->up.prev = &pwm->down;
-            pwm->down.next = pwm->down.prev = &pwm->up;
-            mod->entry = pwm;
-            
+
             // Initialize
-            InitializePWMModule(mod);
+            InitializePWMModule(mod, pwm);
             
             // Return the running pwm
             return pwm;
@@ -194,98 +227,149 @@ tPWM *InitializePWM(tPin pin, float freq) {
             // Grab the module
             mod = &modBuffer[i];
             
-            // Assign the module with no duty cycle and 
-            // a phase equal to the entry point
-            pwm->phase = mod->entry->phase;
-            pwm->duty = 0;
-            pwm->up.timing = 0;
-            pwm->down.timing = 0;
-            
-            // Create the tiny link and put it after the entry point
-            pwm->up.next = &pwm->down;
-            pwm->down.prev = &pwm->up;
-            
-            pwm->up.prev = mod->entry;
-            pwm->up.prev->next = &pwm->up;
-            
-            pwm->down.next = mod->entry->next;
-            pwm->down.next->prev = &pwm->down;
-            
-            // Set the a duty cycle of 50% for consistency
-            SetPWM(pwm, 0.5, 0);
+            // Add the new signal to the running ones
+            InsertPWM(mod, pwm);
             
             // Return the running pwm
             return pwm;
         }
     }
     
-    // If no module is found, we put the pwm back and 
+    // If no module is available, we put the pwm back and 
     // just return a null for failure
     pwmCount--;
     return 0;
 }
 
-/*** TODO all implementation below here ***/1
 
-// In the handler, we need to simply update the state and
-// move to the next event and setup the new timer value
-#define TIMER_HANDLER(MOD)                          \
-void WTimer##MOD##Handler(void) {                   \
-    tADC *adc = modBuffer[MOD].contQueue;           \
-    unsigned long data[8];                          \
-    unsigned long *d = data;                        \
-                                                    \
-    ADCIntClear(ADC##MOD##_BASE, 0);                \
-    ADCSequenceDataGet(ADC##MOD##_BASE, 0, data);   \
-                                                    \
-    for (; adc != 0; adc = adc->next)               \
-        adc->value = *d++;                          \
+// In the handler, we need to move to the next event, set the state, and
+// setup the next timing value. We group any events together that have the
+// same time value, as that occurs often in synchronized pwm
+#define TIMER_HANDLER(BASE, TIM)                                                \
+void WTimer##BASE##TIM##Handler(void) {                                         \
+    tPWMEvent *event = modBuffer[2*BASE + (TIMER_##TIM == TIMER_B)].event;      \
+                                                                                \
+    TimerIntClear(TIMER##BASE##_BASE, TIMER_TIM##TIM##_TIMEOUT);                \
+                                                                                \
+    do {                                                                        \
+        event = event->next;                                                    \
+                                                                                \
+        GPIOPinWrite(PORT_VAL(event->pin), PIN_VAL(event->pin), event->state);  \
+    } while (event->timing == 0);                                               \
+                                                                                \
+    TimerLoadSet(TIMER##BASE##_BASE, TIMER_##TIM, event->timing);               \
+    TimerEnable(TIMER##BASE##_BASE, TIMER_##TIM);                               \
 }
 
-// In the handler we need to go through each pwm signal,
-// adjust the tick counter in each to the new value,
-// and update pins if they match the tick count
-void Timer5BHandler(void) {
-    tPWM *pwm, *end;
-    
-    TimerIntClear(TIMER5_BASE, TIMER_TIMB_TIMEOUT);
-    
-    // Iterate over all pwm signals
-    end = &pwmBuffer[pwmCount];
-    for (pwm = pwmBuffer; pwm != end; pwm++) {
-        // Update tick counter
-        pwm->tick--;
-        
-        // Check if pin needs to be changed.
-        // Check for `off' first, because if duty is set to 0, 
-        // we don't want to turn on the pin. Clear the ticks if it is
-        // past the zero to avoid a division and save a few cycles.
-        if (pwm->tick == pwm->off) {
-            GPIOPinWrite(PORT_VAL(pwm->pin), PIN_VAL(pwm->pin), 0x00);
-            
-        } else if (pwm->tick == 0) {
-            GPIOPinWrite(PORT_VAL(pwm->pin), PIN_VAL(pwm->pin), 0xff);
-            
-            pwm->tick = pwm->period;
-        }
+// Interrupt handlers for each timer
+TIMER_HANDLER(0, A);
+TIMER_HANDLER(0, B);
+TIMER_HANDLER(1, A);
+TIMER_HANDLER(1, B);
+TIMER_HANDLER(2, A);
+TIMER_HANDLER(2, B);
+TIMER_HANDLER(3, A);
+TIMER_HANDLER(3, B);
+TIMER_HANDLER(4, A);
+TIMER_HANDLER(4, B);
+TIMER_HANDLER(5, A);
+TIMER_HANDLER(5, B);
+
+
+// This is an internally used function to move an 
+// event forward in a cycle. Must disentangle and
+// reentangle itself in the doubly linked list 
+static void MoveEventForward(tPWMEvent *event, unsigned long diff) {
+    tPWMEvent *prev = event->prev;
+
+    // Find the difference from the next node
+    diff += event->timing;
+
+    // Take it out of the list
+    event->prev->timing += event->timing;
+    event->next->prev = event->prev;
+    event->prev->next = event->next;
+
+    // Find out where it needs to go
+    while (prev->timing < diff) {
+        diff -= prev->timing;
+        prev = prev->prev;
     }
+
+    // Update its timing/position
+    event->timing = diff;
+    event->next = prev->next;
+    event->prev = prev;
+
+    // Insert it back into the list
+    prev->timing -= diff;
+    prev->next->prev = event;
+    prev->next = event;
 }
+
+// This is an internally used function to move an 
+// event backward in a cycle. Must disentangle and
+// reentangle itself in the doubly linked list 
+static void MoveEventBackward(tPWMEvent *event, unsigned long diff) {
+    tPWMEvent *prev = event->prev;
+
+    // Find the difference from the prev node
+    diff += prev->timing;
+
+    // Take it out of the list
+    event->prev->timing += event->timing;
+    event->next->prev = event->prev;
+    event->prev->next = event->next;
+
+    // Find out where it needs to go
+    while (prev->timing < diff) {
+        diff -= prev->timing;
+        prev = prev->next;
+    }
+
+    // Update its timing/position
+    event->timing = prev->timing - diff;
+    event->next = prev->next;
+    event->prev = prev;
+
+    // Insert it back into the list
+    prev->timing = diff;
+    prev->next->prev = event;
+    prev->next = event;
+}
+
 
 // This function sets a pwm duty cycle and phase
 // Both Duty Cycle and Phase must be in percentage
-// Tick count will reset on count, allowing for pwm synchronization
 void SetPWM(tPWM *pwm, float duty, float phase) {
+    unsigned long iphase, iduty;
+
     // Limit the range of both values to [0.0,1.0]
     duty = (duty > 1.0f) ? 1.0f :
            (duty < 0.0f) ? 0.0f : duty;
     phase = (phase > 1.0f) ? 1.0f :
             (phase < 0.0f) ? 0.0f : phase;
-    
-    // Set the tick to given phase * period ticks
-    // We then add it to the period as we are counting down
-    // to cause a delay
-    pwm->tick = pwm->period + (unsigned long)(phase * pwm->period);
-    // Then set the `off' time to be duty * period ticks
-    // Subtract it from the period as we are counting down
-    pwm->off = pwm->period - (unsigned long)(duty * pwm->period);
+
+    // Calculate the new absolute phase and duty
+    iphase = (unsigned long)(phase * pwm->period);
+    iduty = iphase + (unsigned long)(duty * pwm->period);
+
+    // The order of the following movements in the cycle is important
+    // to make sure the events don't overlap at 0% and 100% duty cycles
+
+    // Push the events forward if nescessary
+    if (iphase < pwm->phase)
+        MoveEventForward(&pwm->up, pwm->phase - iphase);
+    if (iduty < pwm->duty)
+        MoveEventForward(&pwm->down, pwm->duty - iduty);
+
+    // Push the events backward if nescessary
+    if (iduty > pwm->duty)
+        MoveEventBackward(&pwm->down, iduty - pwm->duty);
+    if (iphase > pwm->phase)
+        MoveEventBackward(&pwm->up, iphase - pwm->phase);
+
+    // Update the new phase/duty values
+    pwm->phase = iphase;
+    pwm->duty = iduty;
 }
