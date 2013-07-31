@@ -32,7 +32,7 @@
 #include "internal.h"
 
 // Port table is used externally to lookup port values
-unsigned long portTable[PORT_COUNT] = {
+const unsigned long PIN_PORTS[PORT_COUNT] = {
     GPIO_PORTA_BASE,
     GPIO_PORTB_BASE,
     GPIO_PORTC_BASE,

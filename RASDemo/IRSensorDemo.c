@@ -11,12 +11,17 @@
 
 #include "RASDemo.h"
 
+tADC *adc[4];
+
 void initIRSensor(void) {
 	/*SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC);
 	ADCSequenceConfigure(ADC_BASE,0, ADC_TRIGGER_PROCESSOR, 0);
 	ADCSequenceStepConfigure(ADC_BASE, 0, 0, ADC_CTL_IE | ADC_CTL_END | ADC_CTL_CH0);
 	ADCSequenceEnable(ADC_BASE, 0);*/
-	InitializeADC();
+	adc[0] = InitializeADC(PIN_E2);
+    adc[1] = InitializeADC(PIN_E3);
+    adc[2] = InitializeADC(PIN_E4);
+    adc[3] = InitializeADC(PIN_E5);
 	//UARTprintf("init IRSensor not working.\n");
 }
 
@@ -31,10 +36,21 @@ void initIRSensor(void) {
 void IRSensorDemo(void) {
 	// 2012 IRSensor Demo
 	UARTprintf("press any key to quit\n");
+    
+    ADCReadContinouslyUS(adc[0], 0);
+    ADCReadContinouslyUS(adc[1], 0);
+    ADCReadContinouslyUS(adc[2], 0);
+    ADCReadContinouslyUS(adc[3], 0);
 	
 	while(!keyWasPressed()) {
-		unsigned long ADCValue = GetADC(0);
-	 	UARTprintf("IR value: %d\r",ADCValue);
+		float ADCValue = ADCRead(adc[0]);
+	 	UARTprintf("IR value: %d\t", (int)(1000 * ADCValue));
+        ADCValue = ADCRead(adc[1]);
+	 	UARTprintf(" %d\t", (int)(1000 * ADCValue));
+        ADCValue = ADCRead(adc[2]);
+	 	UARTprintf(" %d\t", (int)(1000 * ADCValue));
+        ADCValue = ADCRead(adc[3]);
+	 	UARTprintf(" %d\r", (int)(1000 * ADCValue));
 	}	
 	UARTprintf("\n");
 	
