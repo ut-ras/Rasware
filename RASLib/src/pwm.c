@@ -45,12 +45,8 @@ typedef struct PWMModule {
     
     // Value of period module is set at
     unsigned long period;
-    
-    // All we need is a single pwm signal 
-    // as an entry point into the cycle
-    tPWM *entry;
 
-    // We also need to keep track of where we are
+    // We only need to keep track of where we are
     tPWMEvent *event;
 } tPWMModule;
 
@@ -85,6 +81,9 @@ typedef struct PWMEvent {
     
     // Ticks until next event
     unsigned long timing;
+
+    // The absolute timing from the begining of each cycle
+    unsigned long target;
     
     // Pointers for the double linked list
     struct PWMEvent *next;
@@ -95,10 +94,8 @@ typedef struct PWMEvent {
 // Definition of struct PWM
 // defined to be tPWM in pwm.h
 struct PWM {
-    // The timing values associated with the signal
+    // The period of the signal
     unsigned long period;
-    unsigned long phase;
-    unsigned long duty;
     
     // Events to use
     tPWMEvent up;
@@ -122,18 +119,14 @@ static InitializedPWMModule(PWMModule *mod, tPWM *pwm) {
     mod->period = pwm->period;
 
     // Then we setup the initial cycle
-    pwm->phase = 0;
-    pwm->duty = mod->period / 2;
-
-    pwm->up.timing = pwm->duty;
-    pwm->down.timing = pwm->duty;
+    pwm->up.target = 0;
+    pwm->up.timing = pwm->period / 2;
+    pwm->down.target = pwm->period / 2;
+    pwm->down.timing = pwm->period / 2;
 
     // Connect the linked list
     pwm->up.next = pwm->up.prev = &pwm->down;
     pwm->down.next = pwm->up.next = &pwm->up;
-
-    // Use the given pwm as the entry point
-    mod->entry = pwm;
 
     // And we set the start of the cycle
     mod->event = &pwm->up;
@@ -162,20 +155,23 @@ static InitializedPWMModule(PWMModule *mod, tPWM *pwm) {
 static void InsertPWM(tPWMModule *mod, tPWM *pwm) {
     // Setup the pwm to have no duty cycle and phase equal
     // to the entry point so insertion will not affect the cycle
-    pwm->phase = mod->entry->phase;
-    pwm->duty = 0;
+    tPEMEvent *entry = mod->event;
+
+    pwm->up.target = entry->target;
     pwm->up.timing = 0;
+    pwm->down.target = entry->target;
     pwm->down.timing = 0;
 
     // First we insert the pwm events into the entry point
     // without any timing associated with them
-    pwm->up.prev = mod->entry;
+    // We insert it before as to not interfere with current operation
+    pwm->up.prev = entry->prev;
     pwm->up.next = &pwm->down;
     pwm->down.prev = &pwm->up;
-    pwm->down.next = mod->entry->next;
+    pwm->down.next = entry;
 
-    mod->entry->next->prev = &pwm->down;
-    mod->entry->next = &pwm->up;
+    entry->prev->next = &pwm->up;
+    entry->prev = &pwm->down;
 
     // Then we simply call SetPWM and let it entangle the
     // nodes appropriately
@@ -186,6 +182,8 @@ static void InsertPWM(tPWMModule *mod, tPWM *pwm) {
 // Function to initialize pwm on a pin
 // The returned pointer can be used by the SetPWM function
 // Frequency must be specified in hertz
+// If the number of frequencies passes the number of available
+// modules, which is currently 12, then a null pointer is returned
 tPWM *InitializePWM(tPin pin, float freq) {
     tPWMModule *mod;
     tPWM *pwm;
@@ -360,18 +358,18 @@ void SetPWM(tPWM *pwm, float duty, float phase) {
     // to make sure the events don't overlap at 0% and 100% duty cycles
 
     // Push the events forward if nescessary
-    if (iphase < pwm->phase)
-        MoveEventForward(&pwm->up, pwm->phase - iphase);
-    if (iduty < pwm->duty)
-        MoveEventForward(&pwm->down, pwm->duty - iduty);
+    if (iphase < pwm->up.target)
+        MoveEventForward(&pwm->up, pwm->up.target - iphase);
+    if (iduty < pwm->down.target)
+        MoveEventForward(&pwm->down, pwm->down.target - iduty);
 
     // Push the events backward if nescessary
-    if (iduty > pwm->duty)
-        MoveEventBackward(&pwm->down, iduty - pwm->duty);
-    if (iphase > pwm->phase)
-        MoveEventBackward(&pwm->up, iphase - pwm->phase);
+    if (iduty > pwm->down.target)
+        MoveEventBackward(&pwm->down, iduty - pwm->down.target);
+    if (iphase > pwm->up.target)
+        MoveEventBackward(&pwm->up, iphase - pwm->up.target);
 
     // Update the new phase/duty values
-    pwm->phase = iphase;
-    pwm->duty = iduty;
+    pwm->up.target = iphase;
+    pwm->down.target = iduty;
 }
