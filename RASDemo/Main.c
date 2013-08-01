@@ -6,7 +6,20 @@
 
 #include <RASLib/inc/time.h>
 
+#include <RASLib/inc/sonar.h>
+
     
+    tSonar *snr;
+    
+    void hi(void) {
+        UARTprintf("hi\n");
+    }
+    
+    void hello(int *n) {
+        UARTprintf("HELLLOOOOO\n");
+        CallStop(*n);
+    }
+    int b;
 int main(void)
 {	
 	char ch;	  	 
@@ -19,6 +32,20 @@ int main(void)
 		UARTprintf("  0=UART Demo\n  1=Motor Demo\n");
 		UARTprintf("  2=Servo Demo\n  3=Line Sensor\n");
 		UARTprintf("  4=IR Sensor Demo\n  5=Encoders Demo\n");
+        
+        
+        b = CallEvery(hi, 0, 0.2f);
+        CallIn(hello, &b, 1.0f);
+        
+        WaitUS(2000000);
+        
+        UARTprintf("GO SONAR!\n");
+        snr = InitializeSonar(PIN_A6, PIN_A7);
+        SonarReadContinouslyUS(snr, 0);
+        
+        while (1) {
+            UARTprintf("< %d >\t\t\r", (int)(1000 * SonarRead(snr)));
+        }
 		
 		UARTprintf(">> ");
 		ch = getc();
