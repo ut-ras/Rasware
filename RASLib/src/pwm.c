@@ -28,56 +28,109 @@
 #include "driverlib/interrupt.h"
 #include "driverlib/timer.h"
 
-// Definition of struct PWM
-// Defined to tPWM in pwm.h
-struct PWM {
+// The number of PWM modules is simply the number of 
+// available 32bit timers
+#define PWM_MODULE_COUNT 12
+
+// Internally used struct representing
+// a single PWM module
+typedef struct PWMModule {
+    // Constant StellarisWare values 
+    // specific to each module
+    const unsigned long BASE;
+    const unsigned long PERIPH;
+    const unsigned long INT;
+    const unsigned long TIMER;
+    unsigned long * const CFG_R;    
+    
+    // Value of period module is set at
+    unsigned long period;
+    
+    // All we need is a single pwm signal 
+    // to get at the cycle
+    tPWM *entry;
+} tPWMModule;
+
+
+// Array of available modules
+static tPWMModule modBuffer[PWM_MODULE_COUNT] = {
+    {WTIMER0_BASE, SYSCTL_PERIPH_WTIMER0, INT_WTIMER0, TIMER_A, &WTIMER0_CFG_R},
+    {WTIMER0_BASE, SYSCTL_PERIPH_WTIMER0, INT_WTIMER0, TIMER_B, &WTIMER0_CFG_R},
+    {WTIMER1_BASE, SYSCTL_PERIPH_WTIMER1, INT_WTIMER1, TIMER_A, &WTIMER1_CFG_R},
+    {WTIMER1_BASE, SYSCTL_PERIPH_WTIMER1, INT_WTIMER1, TIMER_B, &WTIMER1_CFG_R},
+    {WTIMER2_BASE, SYSCTL_PERIPH_WTIMER2, INT_WTIMER2, TIMER_A, &WTIMER2_CFG_R},
+    {WTIMER2_BASE, SYSCTL_PERIPH_WTIMER2, INT_WTIMER2, TIMER_B, &WTIMER2_CFG_R},
+    {WTIMER3_BASE, SYSCTL_PERIPH_WTIMER3, INT_WTIMER3, TIMER_A, &WTIMER3_CFG_R},
+    {WTIMER3_BASE, SYSCTL_PERIPH_WTIMER3, INT_WTIMER3, TIMER_B, &WTIMER3_CFG_R},
+    {WTIMER4_BASE, SYSCTL_PERIPH_WTIMER4, INT_WTIMER4, TIMER_A, &WTIMER4_CFG_R},
+    {WTIMER4_BASE, SYSCTL_PERIPH_WTIMER4, INT_WTIMER4, TIMER_B, &WTIMER4_CFG_R},
+    {WTIMER5_BASE, SYSCTL_PERIPH_WTIMER5, INT_WTIMER5, TIMER_A, &WTIMER5_CFG_R},
+    {WTIMER5_BASE, SYSCTL_PERIPH_WTIMER5, INT_WTIMER5, TIMER_B, &WTIMER5_CFG_R},
+};
+
+static int modCount = 0;
+
+
+// Definition of struct PWMEvent
+// which contains all info for a single signal change
+typedef struct PWMEvent {
     // Which pin is being driven
     tPin pin;
     
-    // Pin independent tick count
-    unsigned long tick;
+    // State to put pin into
+    unsigned char state;
     
-    // Period of the signal
-    unsigned long period;
+    // Ticks until next event
+    unsigned long timing;
     
-    // Tick number to set state off
-    unsigned long off;
+    // Pointers for the double linked list
+    struct PWMEvent *next;
+    struct PWMEvent *prev;
+} tPWMEvent;
+
+// Definition of struct PWM
+// defined to be tPWM in pwm.h
+struct PWM {
+    // The owning module
+    tPWMModule *module;
+    
+    // Value of phase and duty
+    unsigned long phase;
+    unsigned long duty;
+    
+    // Events to use
+    tPWMEvent up;
+    tPWMEvent down;
 };
 
-// Buffer of pwm structs to use
+// Buffer of pwms to use
 // There may potentially be a pwm signal on every pin
-tPWM pwmBuffer[PIN_COUNT];
+static tPWM pwmBuffer[PIN_COUNT];
 
-int pwmCount = 0;
+static int pwmCount = 0;
 
 
-// Global initialization function called internally
-// To setup shared interrupts
-static InitializeGlobalPWM(void) {
-    // flag for initialization
-    static tBoolean initialized = false;
+// Module initialization function called internally
+static InitializedPWMModule(PWMModule *mod) {
+    // Use either timer A (shift 0) or timer B (shift 8)
+    int tshift = (mod->TIMER == TIMER_A) ? 0 : 8;
     
-    // Check if we have already initialized
-    if (initialized)
-        return;
+    // Enable the timer
+    SysCtlPeripheralEnable(mod->PERIPH);
     
-    // Enable the timer 
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER5);
-  
     // We only need half a timer, so keep the configuration of the second half
-    TimerConfigure(TIMER5_BASE, TIMER5_CFG_R | 
-                                TIMER_CFG_SPLIT_PAIR | 
-                                TIMER_CFG_B_PERIODIC);
-  
-    // Set timer B to run every `tick' as defined by resolution
-    TimerLoadSet(TIMER5_BASE, TIMER_B, SysCtlClockGet() / PWM_RESOLUTION);
+    // Configure the timer for one shot usage
+    TimerConfigure(mod->BASE, TIMER_CFG_SPLIT_PAIR |
+                              *mod->CFG_R |
+                              (TIMER_TIMA_TIMEOUT << tshift));
     
-    // Enable the timer and interrupt
-    TimerIntEnable(TIMER5_BASE, TIMER_TIMB_TIMEOUT);
-    IntEnable(INT_TIMER5B);
-    TimerEnable(TIMER5_BASE, TIMER_B);
+    // Setup the timer to fire immediately
+    TimerLoadSet(mod->BASE, mod->TIMER, 1);
+    TimerEnable(mod->BASE, mod->TIMER);
     
-    initialized = true;
+    // Enable the interrupt
+    IntEnable(mod->INT);
+    TimerIntEnable(mod->BASE, TIMER_TIMA_TIMEOUT << tshift);
 }
 
 
@@ -85,29 +138,108 @@ static InitializeGlobalPWM(void) {
 // The returned pointer can be used by the SetPWM function
 // Frequency must be specified in hertz
 tPWM *InitializePWM(tPin pin, float freq) {
+    tPWMModule *mod;
     tPWM *pwm;
-    
-    // Make sure pwm is initialized
-    InitializeGlobalPWM();
+    int i;
+    unsigned long period;
     
     // Grab the next pwm
-    pwm = &pwmBuffer[pwmCount];
+    pwm = &pwmBuffer[pwmCount++];
     
-    // Setup the initial data with frequency as given
-    // zero phase and 50% duty cycle
-    pwm->pin = pin;
-    pwm->tick = 0;
-    pwm->period = (unsigned long)(PWM_RESOLUTION / freq);
-    pwm->off = pwm->period / 2;
+    // Setup the pwm events
+    pwm->up.state = 0xff;
+    pwm->down.state = 0x00;
     
-    // Prepare to write to pin
+    // Setup the pin
     GPIOPinTypeGPIOOutput(PORT_VAL(pin), PIN_VAL(pin));
+    pwm->up.pin = pin;
+    pwm->down.pin = pin;
     
-    // Increment after we are setup to avoid race conditions
-    pwmCount++;
+    // Calculate period
+    period = (unsigned long)(SysCtlClockGet() / freq);
     
-    // Return the new pwm
-    return pwm;
+    // Find a module with the given frequency
+    for (i = 0; i < PWM_MODULE_COUNT; i++) {
+        
+        // If we don't find a module we need to make a new one
+        if (i == modCount) {
+            // Grab the next module
+            mod = &modBuffer[modCount++];
+            
+            // Keep track of the period
+            mod->period = period;
+            
+            // Assign the pwm signal at 50% duty cycle
+            // because the modules needs values to iterate over
+            pwm->phase = 0;
+            pwm->duty = period / 2;
+            pwm->up.timing = pwm->duty;
+            pwm->down.timing = pwm->duty;
+            
+            // Create the initial cycle
+            pwm->up.next = pwm->up.prev = &pwm->down;
+            pwm->down.next = pwm->down.prev = &pwm->up;
+            mod->entry = pwm;
+            
+            // Initialize
+            InitializePWMModule(mod);
+            
+            // Return the running pwm
+            return pwm;
+        }
+        
+        // If we find a module with the period we're looking for, 
+        // stick our pwm in it
+        if (modBuffer[i].period == period) {
+            // Grab the module
+            mod = &modBuffer[i];
+            
+            // Assign the module with no duty cycle and 
+            // a phase equal to the entry point
+            pwm->phase = mod->entry->phase;
+            pwm->duty = 0;
+            pwm->up.timing = 0;
+            pwm->down.timing = 0;
+            
+            // Create the tiny link and put it after the entry point
+            pwm->up.next = &pwm->down;
+            pwm->down.prev = &pwm->up;
+            
+            pwm->up.prev = mod->entry;
+            pwm->up.prev->next = &pwm->up;
+            
+            pwm->down.next = mod->entry->next;
+            pwm->down.next->prev = &pwm->down;
+            
+            // Set the a duty cycle of 50% for consistency
+            SetPWM(pwm, 0.5, 0);
+            
+            // Return the running pwm
+            return pwm;
+        }
+    }
+    
+    // If no module is found, we put the pwm back and 
+    // just return a null for failure
+    pwmCount--;
+    return 0;
+}
+
+/*** TODO all implementation below here ***/1
+
+// In the handler, we need to simply update the state and
+// move to the next event and setup the new timer value
+#define TIMER_HANDLER(MOD)                          \
+void WTimer##MOD##Handler(void) {                   \
+    tADC *adc = modBuffer[MOD].contQueue;           \
+    unsigned long data[8];                          \
+    unsigned long *d = data;                        \
+                                                    \
+    ADCIntClear(ADC##MOD##_BASE, 0);                \
+    ADCSequenceDataGet(ADC##MOD##_BASE, 0, data);   \
+                                                    \
+    for (; adc != 0; adc = adc->next)               \
+        adc->value = *d++;                          \
 }
 
 // In the handler we need to go through each pwm signal,
