@@ -41,30 +41,30 @@ typedef struct PWMModule {
     const unsigned long PERIPH;
     const unsigned long INT;
     const unsigned long TIMER;
-    unsigned long * const CFG_R;    
+    volatile unsigned long * const CFG_R;    
     
     // Value of period module is set at
     unsigned long period;
 
     // We only need to keep track of where we are
-    tPWMEvent *event;
+    struct PWMEvent *event;
 } tPWMModule;
 
 
 // Array of available modules
 static tPWMModule modBuffer[PWM_MODULE_COUNT] = {
-    {WTIMER0_BASE, SYSCTL_PERIPH_WTIMER0, INT_WTIMER0, TIMER_A, &WTIMER0_CFG_R},
-    {WTIMER0_BASE, SYSCTL_PERIPH_WTIMER0, INT_WTIMER0, TIMER_B, &WTIMER0_CFG_R},
-    {WTIMER1_BASE, SYSCTL_PERIPH_WTIMER1, INT_WTIMER1, TIMER_A, &WTIMER1_CFG_R},
-    {WTIMER1_BASE, SYSCTL_PERIPH_WTIMER1, INT_WTIMER1, TIMER_B, &WTIMER1_CFG_R},
-    {WTIMER2_BASE, SYSCTL_PERIPH_WTIMER2, INT_WTIMER2, TIMER_A, &WTIMER2_CFG_R},
-    {WTIMER2_BASE, SYSCTL_PERIPH_WTIMER2, INT_WTIMER2, TIMER_B, &WTIMER2_CFG_R},
-    {WTIMER3_BASE, SYSCTL_PERIPH_WTIMER3, INT_WTIMER3, TIMER_A, &WTIMER3_CFG_R},
-    {WTIMER3_BASE, SYSCTL_PERIPH_WTIMER3, INT_WTIMER3, TIMER_B, &WTIMER3_CFG_R},
-    {WTIMER4_BASE, SYSCTL_PERIPH_WTIMER4, INT_WTIMER4, TIMER_A, &WTIMER4_CFG_R},
-    {WTIMER4_BASE, SYSCTL_PERIPH_WTIMER4, INT_WTIMER4, TIMER_B, &WTIMER4_CFG_R},
-    {WTIMER5_BASE, SYSCTL_PERIPH_WTIMER5, INT_WTIMER5, TIMER_A, &WTIMER5_CFG_R},
-    {WTIMER5_BASE, SYSCTL_PERIPH_WTIMER5, INT_WTIMER5, TIMER_B, &WTIMER5_CFG_R},
+    {WTIMER0_BASE, SYSCTL_PERIPH_WTIMER0, INT_WTIMER0A, TIMER_A, &WTIMER0_CFG_R},
+    {WTIMER0_BASE, SYSCTL_PERIPH_WTIMER0, INT_WTIMER0B, TIMER_B, &WTIMER0_CFG_R},
+    {WTIMER1_BASE, SYSCTL_PERIPH_WTIMER1, INT_WTIMER1A, TIMER_A, &WTIMER1_CFG_R},
+    {WTIMER1_BASE, SYSCTL_PERIPH_WTIMER1, INT_WTIMER1B, TIMER_B, &WTIMER1_CFG_R},
+    {WTIMER2_BASE, SYSCTL_PERIPH_WTIMER2, INT_WTIMER2A, TIMER_A, &WTIMER2_CFG_R},
+    {WTIMER2_BASE, SYSCTL_PERIPH_WTIMER2, INT_WTIMER2B, TIMER_B, &WTIMER2_CFG_R},
+    {WTIMER3_BASE, SYSCTL_PERIPH_WTIMER3, INT_WTIMER3A, TIMER_A, &WTIMER3_CFG_R},
+    {WTIMER3_BASE, SYSCTL_PERIPH_WTIMER3, INT_WTIMER3B, TIMER_B, &WTIMER3_CFG_R},
+    {WTIMER4_BASE, SYSCTL_PERIPH_WTIMER4, INT_WTIMER4A, TIMER_A, &WTIMER4_CFG_R},
+    {WTIMER4_BASE, SYSCTL_PERIPH_WTIMER4, INT_WTIMER4B, TIMER_B, &WTIMER4_CFG_R},
+    {WTIMER5_BASE, SYSCTL_PERIPH_WTIMER5, INT_WTIMER5A, TIMER_A, &WTIMER5_CFG_R},
+    {WTIMER5_BASE, SYSCTL_PERIPH_WTIMER5, INT_WTIMER5B, TIMER_B, &WTIMER5_CFG_R},
 };
 
 static int modCount = 0;
@@ -111,7 +111,7 @@ static int pwmCount = 0;
 
 // Module initialization function called internally
 // Requires a pwm signal to use
-static InitializedPWMModule(PWMModule *mod, tPWM *pwm) {
+static void InitializePWMModule(tPWMModule *mod, tPWM *pwm) {
     // Use either timer A (shift 0) or timer B (shift 8)
     int tshift = (mod->TIMER == TIMER_A) ? 0 : 8;
 
@@ -155,7 +155,7 @@ static InitializedPWMModule(PWMModule *mod, tPWM *pwm) {
 static void InsertPWM(tPWMModule *mod, tPWM *pwm) {
     // Setup the pwm to have no duty cycle and phase equal
     // to the entry point so insertion will not affect the cycle
-    tPEMEvent *entry = mod->event;
+    tPWMEvent *entry = mod->event;
 
     pwm->up.target = entry->target;
     pwm->up.timing = 0;
@@ -221,7 +221,7 @@ tPWM *InitializePWM(tPin pin, float freq) {
         
         // If we find a module with the period we're looking for, 
         // stick our pwm in it
-        if (modBuffer[i].period == period) {
+        if (modBuffer[i].period == pwm->period) {
             // Grab the module
             mod = &modBuffer[i];
             
