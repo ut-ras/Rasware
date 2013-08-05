@@ -33,8 +33,12 @@
 #include "driverlib/interrupt.h"
 
 // Global System Clock
-static volatile tTime systemTimeUS = 0;
-static long USTicks = 0;
+// Only contains resolution to sysTickPeriod
+static volatile tTime systemTiming = 0;
+
+// Timing information
+static long ticksInUS;
+static tTime sysTickTiming;
 
 // Relevant task info
 typedef struct Task {
@@ -77,7 +81,7 @@ void InitializeSystemTime(void) {
     int i;
 
     // Reset global clock
-    systemTimeUS = 0;
+    systemTiming = 0;
   
     // Reset queue and thread all tasks in the buffer together
     unusedQueue = &taskBuffer[0];
@@ -91,56 +95,63 @@ void InitializeSystemTime(void) {
     // Reset the pending queue as well
     pendingQueue = 0;
   
+
     // Find the system clock divided by 1s, which results in 
     // 1 US for the timer
-    USTicks = SysCtlClockGet() / US(1);
+    ticksInUS = SysCtlClockGet() / US(1);
+
+    // Find the time it SysTick takes in US
+    sysTickTiming = SYSTICK_PERIOD / ticksInUS;
+
   
-    // Enable the timer 
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_WTIMER5);
+    // Enable the task handling timer
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER5);
   
-    // We use the first half of the timer to keep track of the 
-    // microseconds that have passed
-    // The second half we use as a one shot to trigger pending tasks
-    TimerConfigure(WTIMER5_BASE, TIMER_CFG_SPLIT_PAIR | 
-                                 TIMER_CFG_A_PERIODIC_UP | 
-                                 TIMER_CFG_B_ONE_SHOT);    
+    // We use Timer 5 as a one shot to trigger pending tasks
+    TimerConfigure(TIMER5_BASE, TIMER_CFG_ONE_SHOT);    
   
-    // Setup timer A to run for a full second
-    TimerLoadSet(WTIMER5_BASE, TIMER_A, US(1) * USTicks);
-    TimerIntEnable(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
-  
-    // Only enable the timer B interrupt when it is needed
-    TimerIntDisable(WTIMER5_BASE, TIMER_TIMB_TIMEOUT);
+    // Only enable the timer interrupt when it is needed
+    TimerIntDisable(TIMER5_BASE, TIMER_TIMA_TIMEOUT);
     
-    // Enable the timers and interrupts
-    IntEnable(INT_WTIMER5A);
-    IntEnable(INT_WTIMER5B);
-    TimerEnable(WTIMER5_BASE, TIMER_A);
+    // Enable the interrupt
+    IntEnable(INT_TIMER5A);
+
+
+    // Setup the SysTick
+    SysTickPeriodSet(SYSTICK_PERIOD);
+
+    // Enable the interrupt
+    SysTickIntEnable();
+
+    // Start the global clock as the last thing we do
+    SysTickEnable();
 }
+
 
 // Outputs system time in microseconds
 tTime GetTimeUS(void) {
-    return (TimerValueGet(WTIMER5_BASE, TIMER_A) / USTicks)
-           + systemTimeUS;
+    return ((SYSTICK_PERIOD - SysTickValueGet()) / ticksInUS)
+           + systemTiming;
 }
 
 float GetTime(void) {
-    return ((TimerValueGet(WTIMER5_BASE, TIMER_A) / (float)USTicks)
-            + systemTimeUS) / US(1);
+    return (((SYSTICK_PERIOD - SysTickValueGet()) / (float)ticksInUS)
+            + systemTiming) / US(1);
 }
 
-/* // Handler that simply updates the time by one second
-void WTimer5AHandler(void) {
-    TimerIntClear(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
-    systemTimeUS += US(1);
-}*/
+
+// Simple SysTick handler just updates the time
+void SysTickHandler(void) {
+    systemTiming += sysTickTiming;
+}
+
 
 // Called internally to register a task
 static void RegisterTask(tTask *task) {
     tTask **p;
     
     // Disable any incoming tasks temporarily
-    TimerIntDisable(WTIMER5_BASE, TIMER_TIMB_TIMEOUT);
+    TimerIntDisable(TIMER5_BASE, TIMER_TIMA_TIMEOUT);
     
     // Iterate through the queue until we find a 
     // later task or hit the end
@@ -171,7 +182,7 @@ static void SetNextTaskInt(void) {
         until = 1;
     } else {
         // Calculate the next task's eta
-        until = (until - time) * USTicks;
+        until = (until - time) * ticksInUS;
         
         // Check for 32bit overflow in which case we can just 
         // interrupt as late as possible. The handler will do nothing.
@@ -180,21 +191,22 @@ static void SetNextTaskInt(void) {
     }
     
     // Load the timer
-    TimerLoadSet(WTIMER5_BASE, TIMER_B, until);
+    TimerLoadSet(TIMER5_BASE, TIMER_A, until);
       
     // Enable the interrupt and timer
     // interrupt might have been disabled to prevent race conditions
     // and timer is disabled after one_shot
-    TimerIntEnable(WTIMER5_BASE, TIMER_TIMB_TIMEOUT);
-    TimerEnable(WTIMER5_BASE, TIMER_B);
+    TimerIntEnable(TIMER5_BASE, TIMER_TIMA_TIMEOUT);
+    TimerEnable(TIMER5_BASE, TIMER_A);
 }
 
-/*// Handler used to manage waiting tasks
-void WTimer5BHandler(void) {
+
+// Handler used to manage waiting tasks
+void Timer5Handler(void) {
     // Get the current time with US precision
     tTime time = GetTimeUS();
     
-    TimerIntClear(WTIMER5_BASE, TIMER_TIMB_TIMEOUT);
+    TimerIntClear(TIMER5_BASE, TIMER_TIMA_TIMEOUT);
   
     // Handling any waiting tasks
     while (pendingQueue && time >= pendingQueue->target) {
@@ -219,7 +231,8 @@ void WTimer5BHandler(void) {
     
     // Setup the next task
     SetNextTaskInt();
-}*/
+}
+
 
 // Schedules a callback function to be called in given microseconds
 // The return value can be used to stop the call with CallStop
@@ -260,6 +273,7 @@ int CallIn(tCallback callback, void *data, float s) {
     return CallInUS(callback, data, US(s));
 }
 
+
 // Schedules a callback function to be called repeatedly
 // The return value can be used to stop the call with CallStop
 int CallEveryUS(tCallback callback, void *data, tTime us) {
@@ -297,6 +311,7 @@ int CallEveryUS(tCallback callback, void *data, tTime us) {
 int CallEvery(tCallback callback, void *data, float s) {
     return CallEveryUS(callback, data, US(s));
 }
+
 
 // Stops a pending call based on the passed identifier
 void CallStop(int id) {
