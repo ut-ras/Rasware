@@ -78,8 +78,6 @@ __heap_limit
 ; The vector table.
 ;
 ;******************************************************************************
-        EXTERN PeriodicFunctionHandler
-        EXTERN ADCTriggerHandler
         EXTERN ADC0SS0Handler
         EXTERN ADC0SS1Handler
         EXTERN ADC1SS0Handler
@@ -90,6 +88,8 @@ __heap_limit
         EXTERN PortDHandler
         EXTERN PortEHandler
         EXTERN PortFHandler
+        EXTERN SysTickHandler
+        EXTERN Timer5Handler
         EXTERN WTimer0AHandler
         EXTERN WTimer0BHandler
         EXTERN WTimer1AHandler
@@ -120,7 +120,7 @@ __Vectors
         DCD     IntDefaultHandler           ; Debug monitor handler
         DCD     0                           ; Reserved
         DCD     IntDefaultHandler           ; PendSV Handler
-        DCD     IntDefaultHandler           ; SysTick Handler
+        DCD     SysTickHandler              ; SysTick Handler
         DCD     PortAHandler                ; GPIO Port A
         DCD     PortBHandler                ; GPIO Port B
         DCD     PortCHandler                ; GPIO Port C
@@ -213,7 +213,7 @@ __Vectors
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
-        DCD     IntDefaultHandler           ; Timer 5 subtimer A
+        DCD     Timer5Handler               ; Timer 5 subtimer A
         DCD     IntDefaultHandler           ; Timer 5 subtimer B
         DCD     WTimer0AHandler             ; Wide Timer 0 subtimer A
         DCD     WTimer0BHandler             ; Wide Timer 0 subtimer B

@@ -34,11 +34,15 @@ typedef unsigned long long tTime;
 // Also handles conversion from floats
 #define US(s) ((tTime)((s)*1000*1000))
 
+// Number of ticks between SysTick interrupts
+// Limited to 24 bits on the LM4F
+#define SYSTICK_PERIOD 0xffffff
+
 // Number of tasks to internally allocate
 // Surpassing this value will cleanly return an id of 0
 #define TASK_COUNT 64
 
-// Initializes a system timer with millisecond resolution
+// Initializes a system timer with microsecond resolution
 void InitializeSystemTime(void);
 
 // Outputs system time
