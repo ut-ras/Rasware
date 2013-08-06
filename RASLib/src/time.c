@@ -129,11 +129,11 @@ float GetTime(void) {
             + systemTimeUS) / US(1);
 }
 
-// Handler that simply updates the time by one second
+/* // Handler that simply updates the time by one second
 void WTimer5AHandler(void) {
     TimerIntClear(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
     systemTimeUS += US(1);
-}
+}*/
 
 // Called internally to register a task
 static void RegisterTask(tTask *task) {
@@ -189,7 +189,7 @@ static void SetNextTaskInt(void) {
     TimerEnable(WTIMER5_BASE, TIMER_B);
 }
 
-// Handler used to manage waiting tasks
+/*// Handler used to manage waiting tasks
 void WTimer5BHandler(void) {
     // Get the current time with US precision
     tTime time = GetTimeUS();
@@ -219,7 +219,7 @@ void WTimer5BHandler(void) {
     
     // Setup the next task
     SetNextTaskInt();
-}
+}*/
 
 // Schedules a callback function to be called in given microseconds
 // The return value can be used to stop the call with CallStop

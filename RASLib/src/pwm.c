@@ -125,8 +125,8 @@ static void InitializePWMModule(tPWMModule *mod, tPWM *pwm) {
     pwm->down.timing = pwm->period / 2;
 
     // Connect the linked list
-    pwm->up.next = pwm->up.prev = &pwm->down;
-    pwm->down.next = pwm->up.next = &pwm->up;
+    pwm->up.prev = pwm->up.next = &pwm->down;
+    pwm->down.next = pwm->down.prev = &pwm->up;
 
     // And we set the start of the cycle
     mod->event = &pwm->up;
@@ -248,7 +248,7 @@ void WTimer##BASE##TIM##Handler(void) {                                         
     tPWMModule *mod = &modBuffer[2*BASE + (TIMER_##TIM == TIMER_B)];            \
     tPWMEvent *event = mod->event;                                              \
                                                                                 \
-    TimerIntClear(TIMER##BASE##_BASE, TIMER_TIM##TIM##_TIMEOUT);                \
+    TimerIntClear(WTIMER##BASE##_BASE, TIMER_TIM##TIM##_TIMEOUT);               \
                                                                                 \
     do {                                                                        \
         event = event->next;                                                    \
@@ -257,8 +257,8 @@ void WTimer##BASE##TIM##Handler(void) {                                         
     } while (event->timing == 0);                                               \
                                                                                 \
     mod->event = event;                                                         \
-    TimerLoadSet(TIMER##BASE##_BASE, TIMER_##TIM, event->timing);               \
-    TimerEnable(TIMER##BASE##_BASE, TIMER_##TIM);                               \
+    TimerLoadSet(WTIMER##BASE##_BASE, TIMER_##TIM, event->timing);              \
+    TimerEnable(WTIMER##BASE##_BASE, TIMER_##TIM);                              \
 }
 
 // Interrupt handlers for each timer
