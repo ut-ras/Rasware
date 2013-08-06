@@ -90,7 +90,16 @@ __heap_limit
         EXTERN PortDHandler
         EXTERN PortEHandler
         EXTERN PortFHandler
-        EXTERN Timer5BHandler
+        EXTERN WTimer0AHandler
+        EXTERN WTimer0BHandler
+        EXTERN WTimer1AHandler
+        EXTERN WTimer1BHandler
+        EXTERN WTimer2AHandler
+        EXTERN WTimer2BHandler
+        EXTERN WTimer3AHandler
+        EXTERN WTimer3BHandler
+        EXTERN WTimer4AHandler
+        EXTERN WTimer4BHandler
         EXTERN WTimer5AHandler
         EXTERN WTimer5BHandler
         
@@ -205,17 +214,17 @@ __Vectors
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
         DCD     IntDefaultHandler           ; Timer 5 subtimer A
-        DCD     Timer5BHandler              ; Timer 5 subtimer B
-        DCD     IntDefaultHandler           ; Wide Timer 0 subtimer A
-        DCD     IntDefaultHandler           ; Wide Timer 0 subtimer B
-        DCD     IntDefaultHandler           ; Wide Timer 1 subtimer A
-        DCD     IntDefaultHandler           ; Wide Timer 1 subtimer B
-        DCD     IntDefaultHandler           ; Wide Timer 2 subtimer A
-        DCD     IntDefaultHandler           ; Wide Timer 2 subtimer B
-        DCD     IntDefaultHandler           ; Wide Timer 3 subtimer A
-        DCD     IntDefaultHandler           ; Wide Timer 3 subtimer B
-        DCD     IntDefaultHandler           ; Wide Timer 4 subtimer A
-        DCD     IntDefaultHandler           ; Wide Timer 4 subtimer B
+        DCD     IntDefaultHandler           ; Timer 5 subtimer B
+        DCD     WTimer0AHandler             ; Wide Timer 0 subtimer A
+        DCD     WTimer0BHandler             ; Wide Timer 0 subtimer B
+        DCD     WTimer1AHandler             ; Wide Timer 1 subtimer A
+        DCD     WTimer1BHandler             ; Wide Timer 1 subtimer B
+        DCD     WTimer2AHandler             ; Wide Timer 2 subtimer A
+        DCD     WTimer2BHandler             ; Wide Timer 2 subtimer B
+        DCD     WTimer3AHandler             ; Wide Timer 3 subtimer A
+        DCD     WTimer3BHandler             ; Wide Timer 3 subtimer B
+        DCD     WTimer4AHandler             ; Wide Timer 4 subtimer A
+        DCD     WTimer4BHandler             ; Wide Timer 4 subtimer B
         DCD     WTimer5AHandler             ; Wide Timer 5 subtimer A
         DCD     WTimer5BHandler             ; Wide Timer 5 subtimer B
         DCD     IntDefaultHandler           ; FPU

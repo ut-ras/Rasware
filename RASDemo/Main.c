@@ -8,18 +8,6 @@
 
 #include <RASLib/inc/sonar.h>
 
-    
-    tSonar *snr;
-    
-    void hi(void) {
-        UARTprintf("hi\n");
-    }
-    
-    void hello(int *n) {
-        UARTprintf("HELLLOOOOO\n");
-        CallStop(*n);
-    }
-    int b;
 int main(void)
 {	
 	char ch;	  	 
@@ -34,19 +22,8 @@ int main(void)
 		UARTprintf("  4=IR Sensor Demo\n  5=Encoders Demo\n");
         
         
-        b = CallEvery(hi, 0, 0.2f);
-        CallIn(hello, &b, 1.0f);
+        //UARTprintf("\nSysTick: %d\n\n", SysCtlClockGet());
         
-        WaitUS(2000000);
-        
-        UARTprintf("GO SONAR!\n");
-        snr = InitializeSonar(PIN_A6, PIN_A7);
-        SonarReadContinouslyUS(snr, 0);
-        
-        while (1) {
-            UARTprintf("< %d >\t\t\r", (int)(1000 * SonarRead(snr)));
-        }
-		
 		UARTprintf(">> ");
 		ch = getc();
 		putc(ch);
