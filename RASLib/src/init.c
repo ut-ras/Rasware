@@ -42,7 +42,7 @@ void InitializeMCU(void)
                        SYSCTL_XTAL_16MHZ);
     
     //Initialize System Timer
-    //InitializeSystemTime();
+    InitializeSystemTime();
     
     //Initialize GPIO Interrupt Handlers
     InitializeGPIO();
