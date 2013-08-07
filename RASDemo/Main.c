@@ -20,10 +20,6 @@ int main(void)
 		UARTprintf("  0=UART Demo\n  1=Motor Demo\n");
 		UARTprintf("  2=Servo Demo\n  3=Line Sensor\n");
 		UARTprintf("  4=IR Sensor Demo\n  5=Encoders Demo\n");
-        
-        
-        //UARTprintf("\nSysTick: %d\n\n", SysCtlClockGet());
-        
 		UARTprintf(">> ");
 		ch = getc();
 		putc(ch);
