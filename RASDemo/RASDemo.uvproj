@@ -433,7 +433,7 @@
             <File>
               <FileName>uartstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\StellarisWare\utils\uartstdio.c</FilePath>
+              <FilePath>C:\StellarisWare\utils\uartstdio.c</FilePath>
             </File>
           </Files>
         </Group>
