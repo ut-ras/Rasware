@@ -15,6 +15,7 @@ Robotathon Setup Instructions
 1. Create a free GitHub account on [github.com](https://github.com/signup/free)
 2. Follow GitHub's great instructions for installing [Git](https://help.github.com/articles/set-up-git) on your computer.
 3. If you want to learn more about Git, you can read GitPro online for free (and legally, too!) at http://git-scm.com/book
+TODO: Add instructions to not have to input credentials every time
 
 ### Fork Rasware (only one Robotathon team member should do this step) ###
 
@@ -22,45 +23,46 @@ Robotathon Setup Instructions
 2. [Fork](https://help.github.com/articles/fork-a-repo) the project's code through the button on the top right. This will copy the project to your own account.
 3. On the team's forked repository Github page, go to Settings->Collaborators and add each team member as a collaborator
 
-### Download the code
-
-1. Each team member can now "clone" the team's forked repository to use on their local machines. In GitHub for Windows, simply click on `clone` next to the Rasware2013 project in the Github app. For linux, see the GitHub walkthough for using the command line to clone: https://help.github.com/articles/fork-a-repo.
-2. In the Github app for Windows, right click on Rasware2013 then click on `open in explorer` to open the folder containing the project. 
-
-Now that you and your team members have the code, let's look at how to compile it and run it on the Launchpad. 
+The remainder of the instructions will depend on what type of system you're running.
 
 Setup for Windows (WIP)
 -----------------
-### Install Stellarisware
 
-1. [TODO: decide on correct link and finish this section]
+### Install TortiseGIT
+1. Go to [Google Code]<https://code.google.com/p/tortoisegit/wiki/Download>
+2. Download the correct architecture according to your machine (If you don't know, Right Click in My Computer, click Properties, and check wht System Type is)
+3. Run the executable with default values
+
+### Install Stellarisware
+1. Go to [TI]<https://myportal.ti.com/portal/dt?provider=TIPassLoginSingleContainer&lt=myti&j5=2&j3=1&goto=https://my.ti.com/cgi-bin/home.pl> and create a new account.
+2. Go to [TI]<http://www.ti.com/tool/sw-lm3s>, and download SW-LM3S-LM4F.exe.
+3. When complete, run the installer with the default installation paths.
 
 ### Install Keil uVision ###
+1. Go to [TI]<http://www.ti.com/tool/SW-EK-TM4C123GXL> and download EK-TM4C123GXL-KEIL.exe.
+2. Extact the archive
+3. Navigate to Tools/Keil/ and run the installer.
 
-1. Download the installer from here: [TODO: add correct download link]
-2. When it's done, run the executable to install Keil uVision.
+### Install drivers for the Launchpad ###
+Note: for windows 8, the drivers are unsigned, so installing them requires you to activate special permissions. Basically follow this process: http://www.tabletroms.com/forums/visual-land-tablets/5894-how-install-unsigned-drivers-windows-8-a.html. (Or else the Device Manager just won't let you install drivers.)
+
+1. Plug in a Stellaris Launchpad to your computer with a usb cord.
+2. Windows should fail at installing divers.
+3. Go to the Device Manager on your computer.
+4.For each listing with a yellow warning, right-click and select `Update Driver`.
+5. Click `Browse my Computer` and navigate to the unzipped archive folder.
+6. Once all of the drivers are installed, not the COM port number that appears in the Device manager. It should read `Stellaris Virtual Serial Port (COM__)`.
 
 ### Install PuTTY ###
-
 1. Go to <http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html>.
 2. Under "for Windows on Intel x86" click on [putty.exe](http://the.earth.li/~sgtatham/putty/latest/x86/putty.exe) to save putty to your computer.
 
-### Install drivers for the Launchpad ###
-
-Note: for windows 8, the drivers are unsigned, so installing them requires you to activate special permissions. Basically follow this process: http://www.tabletroms.com/forums/visual-land-tablets/5894-how-install-unsigned-drivers-windows-8-a.html. (Or else the Device Manager just won't let you install drivers.)
-
-1. Go to <http://www.ti.com/tool/stellaris_icdi_drivers>.
-2. Click `Download` to download the drivers to your computer.
-3. Unzip to downloaded file.
-4. Plug in a Stellaris Launchpad to your computer with a usb cord.
-5. Windows should fail at installing divers.
-6. Go to the Device Manager on your computer.
-7. For each listing with a yellow warning, right-click and select `Update Driver`.
-8. Click `Browse my Computer` and navigate to the unzipped drivers.
-9. Once all of the drivers are installed, not the COM port number that appears in the Device manager. It should read `Stellaris Virtual Serial Port (COM__)`.
+### Download Code
+1. Choose a directory to work in
+2. Right click on directory, and select Git Clone
+3. Enter your forked repo's url, and press enter
 
 ### Compile and run RASDemo ###
-
 1. Open Rasware2013/RASDemo/RASDemo.uvproj with Keil uVision. This is an example project we made to demostrate how to get a lot of useful peripherals working with the Launchpad, like motors and line sensors. 
 2. With the Launchpad plugged into your computer, in Keil do Project->Build Target and then Flash->Download. This compiles and loads the project onto the Launchpad.
 3. Open PuTTY and connect to the board 
@@ -71,7 +73,16 @@ Note: for windows 8, the drivers are unsigned, so installing them requires you t
     5. Now the settings are saved in PuTTY. In the future, just open PuTTY and double click "Rasware2013" under "Saved Settings".
 [TODO: finish this section once RASDemo is done]
 
+### Starting your own project
+[TODO: Make a starter project for RASLets to use?]
+
+### Committing code back to the repo
+1. While in the directory, right click and select Git Commit
+2. Write useful commit comments. See [link]<https://github.com/erlang/otp/wiki/Writing-good-commit-messages>. Your teammates will thank you.
+3. You will be promted to do a Git Push. Do so. At this point, you've only made changes to the repo on your machine. The Git Push uploads the changes to GitHub.
+4. If you need to log in, check with a mentor to resetup 
+
 Setup for Linux (WIP)
 ---------------
 
-TODO: Basically get Jimmy or Cruz to write this
+[TODO: Jimmy/Cruz]
