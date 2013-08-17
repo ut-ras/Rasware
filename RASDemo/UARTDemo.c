@@ -1,26 +1,27 @@
+/* suppressed to make room for uart.h
 #include <inc/hw_types.h>		// tBoolean
 #include <inc/hw_memmap.h>
-#include <utils/uartstdio.h>	// input/output over UART
-#include <driverlib/uart.h>		// input/output over UART
+#include <utils/uartstdio.h>	// input/output over 
+#include <driverlib/uart.h>		// input/output over 
 #include <driverlib/gpio.h>
 #include <driverlib/sysctl.h>
 
 #include "RASDemo.h"
 
-void initUART(void) {
+void init(void) {
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);				
-    GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);	
-	UARTStdioInit(0);
+    GPIOPinType(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);	
+	StdioInit(0);
 }
 
 void uartDemo(void) {
-	UARTprintf("tell me something!\n-> ");
+	printf("tell me something!\n-> ");
 	
 	{
 		char charArray[100];
-		UARTgets(charArray, 100);
-		UARTprintf("you said, \"%s\"\n", charArray);
-		UARTprintf("thanks for the input!\n");
+		gets(charArray, 100);
+		printf("you said, \"%s\"\n", charArray);
+		printf("thanks for the input!\n");
 	}
 	
 	{
@@ -33,18 +34,14 @@ void uartDemo(void) {
 	}
 }
 
-char getc(void) {
-	char ch = UARTgetc();
-	return ch;
-}
-
 void putc(char ch) {
-	UARTprintf("%c",ch);
+	printf("%c",ch);
 }
 
 int keyWasPressed(void) {
-	if (UARTCharsAvail(UART0_BASE))	
+	if (CharsAvail(0_BASE))	
 		return 1;
 	else
 		return 0;
 }
+*/

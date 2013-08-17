@@ -1,9 +1,3 @@
-// Functions in UARTDemo
-void initUART(void);
-void uartDemo(void);
-char getc(void);
-void putc(char ch);
-int keyWasPressed(void);
 
 // Functions in MotorDemo
 
