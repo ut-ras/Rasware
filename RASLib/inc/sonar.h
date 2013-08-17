@@ -61,7 +61,7 @@ void SonarBackgroundRead(tSonar *snr, tCallback callback, void *data);
 // Any following calls to SonarRead will return the most recent value
 // If the passed time between calls is less than the time it takes for
 // the sonar to complete, the sonar will fire as fast as possible without overlap
-void SonarReadContinouslyUS(tSonar *snr, tTime us);
-void SonarReadContinously(tSonar *snr, float s);
+void SonarReadContinuouslyUS(tSonar *snr, tTime us);
+void SonarReadContinuously(tSonar *snr, float s);
 
 #endif //  __SONAR_H__

@@ -68,5 +68,5 @@ void ADCBackgroundRead(tADC *snr, tCallback callback, void *data);
 // Any following calls to ADCRead will return the most recent value
 // If the passed time between calls is less than the time it takes for
 // the ADC to complete, the ADC will read as fast as possible without overlap
-void ADCReadContinouslyUS(tADC *snr, tTime us);
-void ADCReadContinously(tADC *snr, float s);
+void ADCReadContinuouslyUS(tADC *snr, tTime us);
+void ADCReadContinuously(tADC *snr, float s);

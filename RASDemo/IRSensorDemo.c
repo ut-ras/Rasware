@@ -37,10 +37,10 @@ void IRSensorDemo(void) {
 	// 2012 IRSensor Demo
 	UARTprintf("press any key to quit\n");
     
-    ADCReadContinouslyUS(adc[0], 0);
-    ADCReadContinouslyUS(adc[1], 0);
-    ADCReadContinouslyUS(adc[2], 0);
-    ADCReadContinouslyUS(adc[3], 0);
+    ADCReadContinuouslyUS(adc[0], 0);
+    ADCReadContinuouslyUS(adc[1], 0);
+    ADCReadContinuouslyUS(adc[2], 0);
+    ADCReadContinuouslyUS(adc[3], 0);
 	
 	while(!keyWasPressed()) {
 		float ADCValue = ADCRead(adc[0]);

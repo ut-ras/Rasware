@@ -208,7 +208,7 @@ tADC *InitializeADC(tPin pin) {
 
 
 // Internally used function to setup the continous sequence
-static void SetupContinous(tADCModule *mod, unsigned long trigger) {
+static void SetupContinuous(tADCModule *mod, unsigned long trigger) {
     tADC *adc = mod->contQueue;
     int i = 0;
     
@@ -350,7 +350,7 @@ float ADCRead(tADC *adc) {
 // Any following calls to ADCRead will return the most recent value
 // If the passed time between calls is less than the time it takes for
 // the ADC to complete, the ADC will read as fast as possible without overlap
-void ADCReadContinouslyUS(tADC *adc, tTime us) {
+void ADCReadContinuouslyUS(tADC *adc, tTime us) {
     tADCModule *mod = adc->module;
     
     // First check if the module already has continous ADCs
@@ -379,13 +379,13 @@ void ADCReadContinouslyUS(tADC *adc, tTime us) {
     if (mod->period <= ADC_TIME * ADC_OVERSAMPLING_FACTOR) {
         // In which case we set it to always be triggered 
         // and clear the id
-        SetupContinous(mod, ADC_TRIGGER_ALWAYS);
+        SetupContinuous(mod, ADC_TRIGGER_ALWAYS);
         mod->id = 0;
         
     } else {
         // Just setup the sequence to trigger on a
         // scheduled interrupt for the given time
-        SetupContinous(mod, ADC_TRIGGER_PROCESSOR);
+        SetupContinuous(mod, ADC_TRIGGER_PROCESSOR);
         mod->id = CallEveryUS(ADCTriggerHandler, mod, mod->period);
     }
 
@@ -393,6 +393,6 @@ void ADCReadContinouslyUS(tADC *adc, tTime us) {
     adc->continous = true;
 }
     
-void ADCReadContinously(tADC *adc, float s) {
-    ADCReadContinouslyUS(adc, US(s));
+void ADCReadContinuously(tADC *adc, float s) {
+    ADCReadContinuouslyUS(adc, US(s));
 }

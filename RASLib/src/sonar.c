@@ -219,23 +219,23 @@ static void SingleReadHandler(tSonar *snr) {
 }
 
 // Handler for reading as fast as possible
-static void ContinousReadHandler(tSonar *snr) {
-    SonarBackgroundRead(snr, ContinousReadHandler, snr);
+static void ContinuousReadHandler(tSonar *snr) {
+    SonarBackgroundRead(snr, ContinuousReadHandler, snr);
 }
 
-void SonarReadContinouslyUS(tSonar *snr, tTime us) {
+void SonarReadContinuouslyUS(tSonar *snr, tTime us) {
     // Set the continous flag
     snr->continous = true;
     
     // Check if there isn't enough time for the sensor to be read
     if (us <= SONAR_TIMEOUT + SONAR_PULSE)
         // If there isn't, read as fast as possible
-        SonarBackgroundRead(snr, ContinousReadHandler, snr);
+        SonarBackgroundRead(snr, ContinuousReadHandler, snr);
     else
         // Otherwise just periodically call the single read handler
         CallEveryUS(SingleReadHandler, snr, us);
 }
 
-void SonarReadContinously(tSonar *snr, float s) {
-    SonarReadContinouslyUS(snr, US(s));
+void SonarReadContinuously(tSonar *snr, float s) {
+    SonarReadContinuouslyUS(snr, US(s));
 }
