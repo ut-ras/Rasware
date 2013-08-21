@@ -1,8 +1,8 @@
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 #include "jsmn.h"
 #include "time.h"
-#include "data_protocol.h"
+#include "json_protocol.h"
 
 struct {
     char *key;
@@ -18,6 +18,9 @@ struct {
     unsigned int keylen;
 } typedef tSub;
 
+//
+// Internal buffers for data
+//
 static tPub pubBuff[MAX_PUBLISHERS];
 static tSub subBuff[MAX_SUBSCRIBERS];
 static char keyBuff[KEY_BUFF_SIZE];
@@ -26,15 +29,18 @@ static unsigned int pubCount = 0,
                     subCount = 0,
                     keyBuffCount = 0;
 
+//
+// input/output buffer and jsmn stuff
+//
 static char inMsgBuff[MAX_IN_MSG_SIZE],
             outMsgBuff[MAX_OUT_MSG_SIZE];
 static jsmn_parser parser;
 static jsmntok_t tokens[MAX_IN_TOKENS];
 
-static const int elemExtra = 6, // 6 for the comma (or beginning bracket), the colon, and four quotes
-                 msgExtra = 3; // 3 for the closing bracket, ending newline, and null terminator
+static const int elemExtra = 6, // for the comma (or beginning bracket), the colon, and four quotes
+                 msgExtra = 3; // for the closing bracket, ending newline, and null terminator
 
-// This is so it'll be easy to change how messages are sent
+// These are here to make it easy to change how messages are printed
 static void printError(char* msg, int error) {
     printf("{\"error\":\"%s\",\"code\":%d}\n", msg, error);
 }
@@ -43,20 +49,31 @@ static void printMessage(char* msg) {
     printf("%s", msg);
 }
 
+// Apparentely <string.h> doesn't have strnlen, so we need to implement it here
+static unsigned int strnlen(char *str, unsigned int max_len) {
+    int i = 0;
+
+    while (str[i] && i < max_len) {
+        i++;
+    }
+
+    return i;
+}
+
 static int checkAndCopyKey(char *jsonkey, char **keyPtr, unsigned int *keyLenPtr) {
     unsigned int keyLen = strnlen(jsonkey, MAX_KEY_LEN); 
     char *keyCopy = keyBuff + keyBuffCount;
-    
+
     if (keyLen >= MAX_KEY_LEN) {
         printError("key exceeds max length", 0);
         return 0;
     }
-    
+
     if (keyBuffCount + keyLen >= KEY_BUFF_SIZE) {
         printError("key cannot fit in buffer", 0);
         return 0;
     }
-    
+
     strcpy(keyCopy, jsonkey);
     keyBuffCount += keyLen + 1; // 1 for the null terminator
 
@@ -66,20 +83,19 @@ static int checkAndCopyKey(char *jsonkey, char **keyPtr, unsigned int *keyLenPtr
     return 1;
 }
 
-// Adds a handler that will be called to create a string value for the given key 
+// Adds a handler that will be called to create a string value for the given key
 // (this will deepcopy jsonkey to an internal buffer)
 void AddPublisher(char *jsonkey, void *data, char* (*handler)(void*)) {
-    char *keyCopy;
     int success = 0;
-    
+
     if (pubCount >= MAX_PUBLISHERS) {
         printError("publisher limit already reached", 0);
         return;
     }
-    
+
     success = checkAndCopyKey(
-        jsonkey, 
-        &pubBuff[pubCount].key, 
+        jsonkey,
+        &pubBuff[pubCount].key,
         &pubBuff[pubCount].keylen
         );
 
@@ -96,24 +112,23 @@ void AddPublisher(char *jsonkey, void *data, char* (*handler)(void*)) {
 // Add a handler to be called whenever the given key is found in received messages
 // (this will deepcopy jsonkey to an internal buffer)
 void AddSubscriber(char *jsonkey, void *data, void (*handler)(void*,char*)) {
-    char *keyCopy;   
     int success = 0;
  
     if (subCount >= MAX_SUBSCRIBERS) {
         printError("subscriber limit already reached", 0);
         return;
     }
-    
+
     success = checkAndCopyKey(
-        jsonkey, 
-        &subBuff[subCount].key, 
-        &subBuff[subCount].keylen 
+        jsonkey,
+        &subBuff[subCount].key,
+        &subBuff[subCount].keylen
         );
 
     if (!success) {
         return;
     }
-    
+
     subBuff[subCount].data = data;
     subBuff[subCount].handler = handler;
 
@@ -121,7 +136,7 @@ void AddSubscriber(char *jsonkey, void *data, void (*handler)(void*,char*)) {
 }
 
 static void createAndPublishMessage(void *data) {
-    int i,  
+    int i,
         totalLen = 0;
     char *msgPtr = outMsgBuff,
          *format1 = "{\"%s\":\"%s\"",
@@ -129,8 +144,8 @@ static void createAndPublishMessage(void *data) {
          *format = format1;
 
     for (i = 0; i < pubCount; i++) {
-        char *key = pubBuff[i].key,
-             *value = pubBuff[i].handler(pubBuff[i].data);
+        char *value = pubBuff[i].handler(pubBuff[i].data);
+
         unsigned int valuelen = strnlen(value, MAX_VAL_LEN),
                      len = pubBuff[i].keylen + valuelen + elemExtra; 
 
@@ -145,9 +160,9 @@ static void createAndPublishMessage(void *data) {
         }
 
         sprintf(
-            msgPtr, 
-            format, 
-            pubBuff[i].key, 
+            msgPtr,
+            format,
+            pubBuff[i].key,
             pubBuff[i].handler(pubBuff[i].data)
             );
 
@@ -162,7 +177,7 @@ static void createAndPublishMessage(void *data) {
         sprintf(msgPtr, "}\n");
     }
 
-    printMessage(outMsgBuff); 
+    printMessage(outMsgBuff);
 }
 
 // Begins calling all pub handlers and encoding data every 'period' seconds
@@ -202,12 +217,14 @@ static int walkJSONMsg(int index, int isKey) {
 // Begins parsing messages and calling sub handlers in a blocking loop
 void BeginSubscribing(float secsBetweenReads) {
     while (1) {
-        char *res = gets(inMsgBuff); // TODO: this isn't safe--we need something like UARTgets(char* b, int max_size)
+        char *res = gets(inMsgBuff); // TODO: this isn't safe--we need something like gets(char* b, int max_size)
         inMsgBuff[MAX_IN_MSG_SIZE - 1] = 0; // because gets isn't safe
 
         if (res) {
+            int error;
+
             jsmn_init(&parser);
-            int error = jsmn_parse(&parser, inMsgBuff, tokens, MAX_IN_TOKENS);
+            error = jsmn_parse(&parser, inMsgBuff, tokens, MAX_IN_TOKENS);
 
             if (error == JSMN_SUCCESS) {
                 // recursively run thru the tokens, compare with subscriber keys
@@ -221,3 +238,4 @@ void BeginSubscribing(float secsBetweenReads) {
 
         Wait(secsBetweenReads);
     }
+}
