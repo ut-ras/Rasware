@@ -39,6 +39,8 @@
 static const char * const g_pcHex_U = "0123456789ABCDEF";
 static const char * const g_pcHex_L = "0123456789abcdef";
 
+
+
 // Sets up a simple console through UART0
 void InitializeUART(void)
 {
@@ -89,7 +91,7 @@ int keyWasPressed(void) {
 		return 0;
 }
 
-void convert(unsigned long ulValue, unsigned long ulCount, const char *pcHex, char ulNeg, char cFill, unsigned long ulBase)
+void convert(unsigned long ulValue, unsigned long ulCount, const char *pcHex, char cNeg, char cFill, unsigned long ulBase)
 {
 	char pcBuf[16];
 	unsigned long ulIdx, ulPos = 0;
@@ -103,21 +105,21 @@ void convert(unsigned long ulValue, unsigned long ulCount, const char *pcHex, ch
 	
 	// If the value is negative, reduce the count of padding
 	// characters needed.
-	if(ulNeg)
+	if(cNeg)
 	{
 			ulCount--;
 	}
 
 	// If the value is negative and the value is padded with
 	// zeros, then place the minus sign before the padding.
-	if(ulNeg && (cFill == '0'))
+	if(cNeg && (cFill == '0'))
 	{
 			// Place the minus sign in the output buffer.
 			pcBuf[ulPos++] = '-';
 
 			// The minus sign has been placed, so turn off the
 			// negative flag.
-			ulNeg = 0;
+			cNeg = 0;
 	}
 
 	// Provide additional padding at the beginning of the
@@ -132,7 +134,7 @@ void convert(unsigned long ulValue, unsigned long ulCount, const char *pcHex, ch
 
 	// If the value is negative, then place the minus sign
 	// before the number.
-	if(ulNeg)
+	if(cNeg)
 	{
 			// Place the minus sign in the output buffer.
 			pcBuf[ulPos++] = '-';
@@ -151,7 +153,7 @@ void convert(unsigned long ulValue, unsigned long ulCount, const char *pcHex, ch
 void printf(const char *pcString, ...)
 {
 	unsigned long ulValue, ulIdx, ulCount;
-  char *pcStr, ulNeg, cFill;
+  char *pcStr, cNeg, cFill;
 	const char *pcHex;
   va_list vaArgP;
 
@@ -250,17 +252,17 @@ again:
                         ulValue = -(long)ulValue;
 
                         // Indicate that the value is negative.
-                        ulNeg = 1;
+                        cNeg = 1;
                     }
                     else
                     {
                         // Indicate that the value is positive so that a minus
                         // sign isn't inserted.
-                        ulNeg = 0;
+                        cNeg = 0;
                     }
 
                     // Convert the value to ASCII.
-                    convert(ulValue, ulCount, pcHex, ulNeg, cFill, 10);
+                    convert(ulValue, ulCount, pcHex, cNeg, cFill, 10);
 										break;
                 }
 								
@@ -278,17 +280,17 @@ again:
                         ulValue = -(long)ulValue;
 
                         // Indicate that the value is negative.
-                        ulNeg = 1;
+                        cNeg = 1;
                     }
                     else
                     {
                         // Indicate that the value is positive so that a minus
                         // sign isn't inserted.
-                        ulNeg = 0;
+                        cNeg = 0;
                     }
 
                     // Convert the value to ASCII.
-                    convert(ulValue, ulCount, pcHex, ulNeg, cFill, 8);
+                    convert(ulValue, ulCount, pcHex, cNeg, cFill, 8);
 										break;
 								}
                 // Handle the %s command.
@@ -326,10 +328,10 @@ again:
 
                     // Indicate that the value is positive so that a minus sign
                     // isn't inserted.
-                    ulNeg = 0;
+                    cNeg = 0;
 
                     // Convert the value to ASCII.
-                    convert(ulValue, ulCount, pcHex, ulNeg, cFill, 10);
+                    convert(ulValue, ulCount, pcHex, cNeg, cFill, 10);
 										break;
                 }
 
@@ -345,13 +347,70 @@ again:
 
                     // Indicate that the value is positive so that a minus sign
                     // isn't inserted.
-                    ulNeg = 0;
+                    cNeg = 0;
 									
                     // Convert the value to ASCII.
-                    convert(ulValue, ulCount, pcHex, ulNeg, cFill, 16);
+                    convert(ulValue, ulCount, pcHex, cNeg, cFill, 16);
 										break;
                 }
 
+								// Handle the %f and %F commands.
+								case 'F': // Not different
+                case 'f':
+                {
+										//Declare and read a float, ignoring what the warning says
+										float fValue;
+										fValue = va_arg(vaArgP, float);
+									
+										//Check if the value is negative
+										if(fValue < 0)
+										{
+												cNeg = 1;
+												fValue = 0 - fValue;
+										}
+										else
+										{
+												cNeg = 0;
+										}
+									
+                    // Convert the integer value to ASCII.
+										convert((long)fValue, ulCount, pcHex, cNeg, cFill, 10);
+										//Remove the original integer value and multiply to move decimal places forward
+										fValue= 1000000 * (fValue - (float)((long)fValue));
+										UARTwrite(".", 1);
+										convert((long)fValue, ulCount, pcHex, 0, cFill, 10);
+										break;
+								}
+								
+								// Placeholder for remaining floating point flags
+								case 'E':
+								case 'A':
+									//Make the template string uppercase
+									pcHex = g_pcHex_U;
+                case 'a':
+								case 'e':
+                {
+										//This union is needed to get at the bits of the float
+										union fl {
+												float f;
+												long l;
+										} flValue;
+										
+										//Declare and read a float, ignoring what the warning says
+										float fValue;
+										fValue = va_arg(vaArgP, float);
+										
+										flValue.f = fValue;
+
+                    // Indicate that the value is positive so that a minus sign
+                    // isn't inserted.
+                    cNeg = 0;
+									
+                    // Currently prints raw value.
+										convert(flValue.l, ulCount, pcHex, cNeg, cFill, 16);
+										break;
+								}
+								
                 // Handle the %% command.
                 case '%':
                 {
