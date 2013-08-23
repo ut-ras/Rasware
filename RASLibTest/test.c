@@ -35,6 +35,10 @@ int main(void){
 	printf(" %3.1F ", fTest);
 	printf(" %8.2F ", fTest);
 	printf(" %08.3F \n", fTest);
+	printf("%f ", 1.0/0.0);
+	printf("%f ", 0.0/0.0);
+	printf("%f\n", -1.0/0.0);
+	printf("%f", 1e30f);
 	
 	while(1)
 	{

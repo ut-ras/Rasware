@@ -22,6 +22,7 @@
 //*****************************************************************************
 
 #include <stdarg.h>
+#include <math.h>
 #include "inc/hw_types.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_ints.h"
@@ -392,18 +393,34 @@ again:
                     {
                         cNeg = 0;
                     }
+                                        
+                    // Check for out of range constants
+                    if(isnan(dValue))
+                    {
+                            UARTwrite("NaN", 3);
+                            break;
+                    }
+                    if(dValue == INFINITY)
+                    {
+                            if(cNeg)
+                            {
+                                  UARTwrite("-", 1);
+                            }
+                            UARTwrite("INF", 8);
+                            break;
+                    }
                   
                     // Convert the integer value to ASCII.
-                    convert((long)dValue, ulCount, pcHex, cNeg, cFill, 10);
+                    convert((unsigned long)dValue, ulCount, pcHex, cNeg, cFill, 10);
                     //Remove the original integer value and multiply to move decimal places forward
-                    dValue = (dValue - (float)((long)dValue));
+                    dValue = (dValue - (float)((unsigned long)dValue));
                     //This loop clobbers ulCount, but it gets reset before we need it again
                     for(ulCount = 0; ulCount < ulDecCount; ulCount++)
                     {
                       dValue *= 10;
                     }
                     UARTwrite(".", 1);
-                    convert((long)dValue, ulDecCount, pcHex, 0, cFill, 10);
+                    convert((unsigned long)dValue, 0, pcHex, 0, cFill, 10);
                     break;
                 }
                 
@@ -418,7 +435,7 @@ again:
                     //This union is needed to get at the bits of the double
                     union dl {
                         double d;
-                        long l[2];
+                        unsigned long l[2];
                     } dlValue;
                     
                     //Declare and read a double, and load it into the union for now
