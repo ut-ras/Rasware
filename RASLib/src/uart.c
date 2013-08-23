@@ -398,39 +398,100 @@ again:
                     if(isnan(dValue))
                     {
                             UARTwrite("NaN", 3);
-                            break;
                     }
-                    if(dValue == INFINITY)
+                    else if(dValue == INFINITY)
                     {
-                            if(cNeg)
-                            {
-                                  UARTwrite("-", 1);
-                            }
-                            UARTwrite("INF", 8);
-                            break;
+                        if(cNeg)
+                        {
+                            UARTwrite("-INF", 4);
+                        }
+                        else
+                        {
+                            UARTwrite("INF", 3);
+                        }
                     }
-                  
-                    // Convert the integer value to ASCII.
-                    convert((unsigned long)dValue, ulCount, pcHex, cNeg, cFill, 10);
-                    //Remove the original integer value and multiply to move decimal places forward
-                    dValue = (dValue - (float)((unsigned long)dValue));
-                    //This loop clobbers ulCount, but it gets reset before we need it again
-                    for(ulCount = 0; ulCount < ulDecCount; ulCount++)
+                    else
                     {
-                      dValue *= 10;
+                        // Convert the integer value to ASCII.
+                        convert((unsigned long)dValue, ulCount, pcHex, cNeg, cFill, 10);
+                        //Remove the original integer value and multiply to move decimal places forward
+                        dValue = (dValue - (float)((unsigned long)dValue));
+                        //This loop clobbers ulCount, but it gets reset before we need it again
+                        for(ulCount = 0; ulCount < ulDecCount; ulCount++)
+                        {
+                          dValue *= 10;
+                        }
+                        UARTwrite(".", 1);
+                        convert((unsigned long)dValue, ulDecCount, pcHex, 0, '0', 10);
                     }
-                    UARTwrite(".", 1);
-                    convert((unsigned long)dValue, 0, pcHex, 0, cFill, 10);
                     break;
                 }
                 
                 // Placeholder for remaining floating point flags
                 case 'E':
+                  //Make the template string uppercase
+                  pcHex = g_pcHex_U;
+                case 'e':
+                {
+                    //Declare and read a double
+                    double dValue, dExp, dTmp;
+                    dValue = va_arg(vaArgP, double);
+                  
+                    //Check if the value is negative
+                    if(dValue < 0)
+                    {
+                        UARTwrite("-", 1);
+                        dValue = 0 - dValue;
+                    }
+                                        
+                    // Check for out of range constants
+                    if(isnan(dValue))
+                    {
+                        UARTwrite("NaN", 3);
+                    }
+                    else if(dValue == INFINITY)
+                    {
+                        UARTwrite("INF", 3);
+                    }
+                    else 
+                    {
+                        // Print the most significant digit
+                        dExp = log10(dValue);
+                        if(dExp < 0)
+                        {
+                            dTmp = dValue / pow(10, (long) dExp - 1);
+                            cNeg = 1;
+                            dExp = 0 - dExp;
+                        }
+                        else
+                        {
+                            dTmp = dValue / pow(10, (long) dExp);
+                            cNeg = 0;
+                        }
+                        UARTwrite(&pcHex[(int)dTmp], 1);
+                        UARTwrite(".", 1);
+                        
+                        // Print ulDecCount following digits
+                        while(ulDecCount --> 0)
+                        {
+                            dTmp -= (long) dTmp;
+                            dTmp *= 10;
+                            UARTwrite(&pcHex[(int)dTmp], 1);
+                        }
+                        
+                        // Write the exponent
+                        UARTwrite(&pcHex[14], 1);
+                        
+                        convert((unsigned long)dExp, 0, pcHex, cNeg, cFill, 10);
+                    }
+                    break;
+                }
+                
+                // Placeholder for remaining floating point flags
                 case 'A':
                   //Make the template string uppercase
                   pcHex = g_pcHex_U;
                 case 'a':
-                case 'e':
                 {
                     //This union is needed to get at the bits of the double
                     union dl {

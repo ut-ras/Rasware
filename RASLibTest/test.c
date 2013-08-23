@@ -1,5 +1,6 @@
 
 #include "init.h"
+#include "math.h"
 #include <RASLib/inc/uart.h>
 
 int main(void){
@@ -38,7 +39,9 @@ int main(void){
 	printf("%f ", 1.0/0.0);
 	printf("%f ", 0.0/0.0);
 	printf("%f\n", -1.0/0.0);
-	printf("%f", 1e30f);
+	printf("%E\n", 1e30f);
+	printf("%.2e ", .00000123);
+	printf("%f\n", .00000123);
 	
 	while(1)
 	{
