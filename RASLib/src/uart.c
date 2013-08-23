@@ -61,100 +61,100 @@ void InitializeUART(void)
 
 void StdioConfig(unsigned long ulPort, unsigned long ulBaud, unsigned long ulSrcClock)
 {
-	UARTStdioConfig(ulPort, ulBaud, ulSrcClock);
+  UARTStdioConfig(ulPort, ulBaud, ulSrcClock);
 }
 
 void StdioInit(unsigned long ulPort)
 {
-	UARTStdioInit(ulPort);
+  UARTStdioInit(ulPort);
 }
 
 void StdioInitExpClk(unsigned long ulPort, unsigned long ulBaud)
 {
-	UARTStdioInitExpClk(ulPort, ulBaud);
+  UARTStdioInitExpClk(ulPort, ulBaud);
 }
 
 int gets(char *pcBuf, unsigned long ulLen)
 {
-	return UARTgets(pcBuf, ulLen);
+  return UARTgets(pcBuf, ulLen);
 }
 
 unsigned char getc(void)
 {
-	return UARTgetc();
+  return UARTgetc();
 }
 
 int keyWasPressed(void) {
-	if (UARTCharsAvail(UART0_BASE))	
-		return 1;
-	else
-		return 0;
+  if (UARTCharsAvail(UART0_BASE))  
+    return 1;
+  else
+    return 0;
 }
 
 void convert(unsigned long ulValue, unsigned long ulCount, const char *pcHex, char cNeg, char cFill, unsigned long ulBase)
 {
-	char pcBuf[16];
-	unsigned long ulIdx, ulPos = 0;
-	
-	for(ulIdx = 1;
-			(((ulIdx * ulBase) <= ulValue) &&
-			(((ulIdx * ulBase) / ulBase) == ulIdx));
+  char pcBuf[16];
+  unsigned long ulIdx, ulPos = 0;
+  
+  for(ulIdx = 1;
+      (((ulIdx * ulBase) <= ulValue) &&
+      (((ulIdx * ulBase) / ulBase) == ulIdx));
       ulIdx *= ulBase, ulCount--)
   {
   }
-	
-	// If the value is negative, reduce the count of padding
-	// characters needed.
-	if(cNeg)
-	{
-			ulCount--;
-	}
+  
+  // If the value is negative, reduce the count of padding
+  // characters needed.
+  if(cNeg)
+  {
+      ulCount--;
+  }
 
-	// If the value is negative and the value is padded with
-	// zeros, then place the minus sign before the padding.
-	if(cNeg && (cFill == '0'))
-	{
-			// Place the minus sign in the output buffer.
-			pcBuf[ulPos++] = '-';
+  // If the value is negative and the value is padded with
+  // zeros, then place the minus sign before the padding.
+  if(cNeg && (cFill == '0'))
+  {
+      // Place the minus sign in the output buffer.
+      pcBuf[ulPos++] = '-';
 
-			// The minus sign has been placed, so turn off the
-			// negative flag.
-			cNeg = 0;
-	}
+      // The minus sign has been placed, so turn off the
+      // negative flag.
+      cNeg = 0;
+  }
 
-	// Provide additional padding at the beginning of the
-	// string conversion if needed.
-	if((ulCount > 1) && (ulCount < 16))
-	{
-			for(ulCount--; ulCount; ulCount--)
-			{
-					pcBuf[ulPos++] = cFill;
-			}
-	}
+  // Provide additional padding at the beginning of the
+  // string conversion if needed.
+  if((ulCount > 1) && (ulCount < 16))
+  {
+      for(ulCount--; ulCount; ulCount--)
+      {
+          pcBuf[ulPos++] = cFill;
+      }
+  }
 
-	// If the value is negative, then place the minus sign
-	// before the number.
-	if(cNeg)
-	{
-			// Place the minus sign in the output buffer.
-			pcBuf[ulPos++] = '-';
-	}
+  // If the value is negative, then place the minus sign
+  // before the number.
+  if(cNeg)
+  {
+      // Place the minus sign in the output buffer.
+      pcBuf[ulPos++] = '-';
+  }
 
-	// Convert the value into a string.
-	for(; ulIdx; ulIdx /= ulBase)
-	{
-			pcBuf[ulPos++] = pcHex[(ulValue / ulIdx) % ulBase];
-	}
+  // Convert the value into a string.
+  for(; ulIdx; ulIdx /= ulBase)
+  {
+      pcBuf[ulPos++] = pcHex[(ulValue / ulIdx) % ulBase];
+  }
 
-	// Write the string.
-	UARTwrite(pcBuf, ulPos);
+  // Write the string.
+  UARTwrite(pcBuf, ulPos);
 }
 
 void printf(const char *pcString, ...)
 {
-	unsigned long ulValue, ulIdx, ulCount, ulDecCount;
+  unsigned long ulValue, ulIdx, ulCount, ulDecCount;
   char *pcStr, cNeg, cDec, cFill;
-	const char *pcHex;
+  const char *pcHex;
   va_list vaArgP;
 
     // Check the arguments.
@@ -186,14 +186,14 @@ void printf(const char *pcString, ...)
 
             // Set the digit count to zero, and the fill character to space
             // (i.e. to the defaults).
-						ulCount = 0;
-						ulDecCount = 6;
-						cDec = 0;
+            ulCount = 0;
+            ulDecCount = 6;
+            cDec = 0;
             cFill = ' ';
-					
-						// Presets the template string to lowercase
-						pcHex = g_pcHex_L;
-					
+          
+            // Presets the template string to lowercase
+            pcHex = g_pcHex_L;
+          
 again:
 
             // Determine how to handle the next character.
@@ -218,31 +218,31 @@ again:
                         cFill = '0';
                     }
 
-										//See if we're after the decimal point
-										if(cDec)
-										{
-											// Update the digit count
-											// Can only print one decimal digit worth of precision
-											ulDecCount = pcString[-1] - '0';
-										}
-										else
-										{
-											// Update the digit count.
-											ulCount *= 10;
-											ulCount += pcString[-1] - '0';
-										}
+                    //See if we're after the decimal point
+                    if(cDec)
+                    {
+                      // Update the digit count
+                      // Can only print one decimal digit worth of precision
+                      ulDecCount = pcString[-1] - '0';
+                    }
+                    else
+                    {
+                      // Update the digit count.
+                      ulCount *= 10;
+                      ulCount += pcString[-1] - '0';
+                    }
 
                     // Get the next character.
                     goto again;
                 }
-								
-								//Handle the . character
-								case '.' :
-								{
-										cDec = 1;
+                
+                //Handle the . character
+                case '.' :
+                {
+                    cDec = 1;
                     // Get the next character.
                     goto again;
-								}
+                }
 
                 // Handle the %c command.
                 case 'c':
@@ -263,7 +263,7 @@ again:
                 {
                     // Get the value from the varargs.
                     ulValue = va_arg(vaArgP, unsigned long);
-									
+                  
                     // If the value is negative, make it positive and indicate
                     // that a minus sign is needed.
                     if((long)ulValue < 0)
@@ -283,12 +283,12 @@ again:
 
                     // Convert the value to ASCII.
                     convert(ulValue, ulCount, pcHex, cNeg, cFill, 10);
-										break;
+                    break;
                 }
-								
-								// Handle the %o command.
-								case 'o':
-								{
+                
+                // Handle the %o command.
+                case 'o':
+                {
                     // Get the value from the varargs.
                     ulValue = va_arg(vaArgP, unsigned long);
 
@@ -311,8 +311,8 @@ again:
 
                     // Convert the value to ASCII.
                     convert(ulValue, ulCount, pcHex, cNeg, cFill, 8);
-										break;
-								}
+                    break;
+                }
                 // Handle the %s command.
                 case 's':
                 {
@@ -352,13 +352,13 @@ again:
 
                     // Convert the value to ASCII.
                     convert(ulValue, ulCount, pcHex, cNeg, cFill, 10);
-										break;
+                    break;
                 }
 
                 // Handle the %x and %X commands.  We alias %p to %x.
                 case 'X':
-									//Make the template string uppercase
-									pcHex = g_pcHex_U;
+                  //Make the template string uppercase
+                  pcHex = g_pcHex_U;
                 case 'x':
                 case 'p':
                 {
@@ -368,73 +368,73 @@ again:
                     // Indicate that the value is positive so that a minus sign
                     // isn't inserted.
                     cNeg = 0;
-									
+                  
                     // Convert the value to ASCII.
                     convert(ulValue, ulCount, pcHex, cNeg, cFill, 16);
-										break;
+                    break;
                 }
 
-								// Handle the %f and %F commands.
-								case 'F': // Not different
+                // Handle the %f and %F commands.
+                case 'F': // Not different
                 case 'f':
                 {
-										//Declare and read a double
-										double dValue;
-										dValue = va_arg(vaArgP, double);
-									
-										//Check if the value is negative
-										if(dValue < 0)
-										{
-												cNeg = 1;
-												dValue = 0 - dValue;
-										}
-										else
-										{
-												cNeg = 0;
-										}
-									
+                    //Declare and read a double
+                    double dValue;
+                    dValue = va_arg(vaArgP, double);
+                  
+                    //Check if the value is negative
+                    if(dValue < 0)
+                    {
+                        cNeg = 1;
+                        dValue = 0 - dValue;
+                    }
+                    else
+                    {
+                        cNeg = 0;
+                    }
+                  
                     // Convert the integer value to ASCII.
-										convert((long)dValue, ulCount, pcHex, cNeg, cFill, 10);
-										//Remove the original integer value and multiply to move decimal places forward
-										dValue = (dValue - (float)((long)dValue));
-										//This loop clobbers ulCount, but it gets reset before we need it again
-										for(ulCount = 0; ulCount < ulDecCount; ulCount++)
-										{
-											dValue *= 10;
-										}
-										UARTwrite(".", 1);
-										convert((long)dValue, ulDecCount, pcHex, 0, cFill, 10);
-										break;
-								}
-								
-								// Placeholder for remaining floating point flags
-								case 'E':
-								case 'A':
-									//Make the template string uppercase
-									pcHex = g_pcHex_U;
+                    convert((long)dValue, ulCount, pcHex, cNeg, cFill, 10);
+                    //Remove the original integer value and multiply to move decimal places forward
+                    dValue = (dValue - (float)((long)dValue));
+                    //This loop clobbers ulCount, but it gets reset before we need it again
+                    for(ulCount = 0; ulCount < ulDecCount; ulCount++)
+                    {
+                      dValue *= 10;
+                    }
+                    UARTwrite(".", 1);
+                    convert((long)dValue, ulDecCount, pcHex, 0, cFill, 10);
+                    break;
+                }
+                
+                // Placeholder for remaining floating point flags
+                case 'E':
+                case 'A':
+                  //Make the template string uppercase
+                  pcHex = g_pcHex_U;
                 case 'a':
-								case 'e':
+                case 'e':
                 {
-										//This union is needed to get at the bits of the double
-										union dl {
-												double d;
-												long l[2];
-										} dlValue;
-										
-										//Declare and read a double, and load it into the union for now
-										double dValue;
-										dValue = va_arg(vaArgP, double);
-										dlValue.d = dValue;
+                    //This union is needed to get at the bits of the double
+                    union dl {
+                        double d;
+                        long l[2];
+                    } dlValue;
+                    
+                    //Declare and read a double, and load it into the union for now
+                    double dValue;
+                    dValue = va_arg(vaArgP, double);
+                    dlValue.d = dValue;
 
                     // This formatting shows raw hex value
                     cNeg = 0;
-										cFill = '0';
-										ulCount = 8;
-										convert(dlValue.l[1], ulCount, pcHex, cNeg, cFill, 16);
-										convert(dlValue.l[0], ulCount, pcHex, cNeg, cFill, 16);
-										break;
-								}
-								
+                    cFill = '0';
+                    ulCount = 8;
+                    convert(dlValue.l[1], ulCount, pcHex, cNeg, cFill, 16);
+                    convert(dlValue.l[0], ulCount, pcHex, cNeg, cFill, 16);
+                    break;
+                }
+                
                 // Handle the %% command.
                 case '%':
                 {
@@ -456,10 +456,10 @@ again:
                 }
             }
         }
-			}
+      }
 }
 
 int write(const char *pcBuf, unsigned long ulLen)
 {
-	return UARTwrite(pcBuf, ulLen);
+  return UARTwrite(pcBuf, ulLen);
 }
