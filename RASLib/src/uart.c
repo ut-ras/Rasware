@@ -152,8 +152,8 @@ void convert(unsigned long ulValue, unsigned long ulCount, const char *pcHex, ch
 
 void printf(const char *pcString, ...)
 {
-	unsigned long ulValue, ulIdx, ulCount;
-  char *pcStr, cNeg, cFill;
+	unsigned long ulValue, ulIdx, ulCount, ulDecCount;
+  char *pcStr, cNeg, cDec, cFill;
 	const char *pcHex;
   va_list vaArgP;
 
@@ -187,6 +187,8 @@ void printf(const char *pcString, ...)
             // Set the digit count to zero, and the fill character to space
             // (i.e. to the defaults).
 						ulCount = 0;
+						ulDecCount = 6;
+						cDec = 0;
             cFill = ' ';
 					
 						// Presets the template string to lowercase
@@ -216,13 +218,31 @@ again:
                         cFill = '0';
                     }
 
-                    // Update the digit count.
-                    ulCount *= 10;
-                    ulCount += pcString[-1] - '0';
+										//See if we're after the decimal point
+										if(cDec)
+										{
+											// Update the digit count
+											// Can only print one decimal digit worth of precision
+											ulDecCount = pcString[-1] - '0';
+										}
+										else
+										{
+											// Update the digit count.
+											ulCount *= 10;
+											ulCount += pcString[-1] - '0';
+										}
 
                     // Get the next character.
                     goto again;
                 }
+								
+								//Handle the . character
+								case '.' :
+								{
+										cDec = 1;
+                    // Get the next character.
+                    goto again;
+								}
 
                 // Handle the %c command.
                 case 'c':
@@ -358,15 +378,15 @@ again:
 								case 'F': // Not different
                 case 'f':
                 {
-										//Declare and read a float, ignoring what the warning says
-										float fValue;
-										fValue = va_arg(vaArgP, float);
+										//Declare and read a double
+										double dValue;
+										dValue = va_arg(vaArgP, double);
 									
 										//Check if the value is negative
-										if(fValue < 0)
+										if(dValue < 0)
 										{
 												cNeg = 1;
-												fValue = 0 - fValue;
+												dValue = 0 - dValue;
 										}
 										else
 										{
@@ -374,11 +394,16 @@ again:
 										}
 									
                     // Convert the integer value to ASCII.
-										convert((long)fValue, ulCount, pcHex, cNeg, cFill, 10);
+										convert((long)dValue, ulCount, pcHex, cNeg, cFill, 10);
 										//Remove the original integer value and multiply to move decimal places forward
-										fValue= 1000000 * (fValue - (float)((long)fValue));
+										dValue = (dValue - (float)((long)dValue));
+										//This loop clobbers ulCount, but it gets reset before we need it again
+										for(ulCount = 0; ulCount < ulDecCount; ulCount++)
+										{
+											dValue *= 10;
+										}
 										UARTwrite(".", 1);
-										convert((long)fValue, ulCount, pcHex, 0, cFill, 10);
+										convert((long)dValue, ulDecCount, pcHex, 0, cFill, 10);
 										break;
 								}
 								
@@ -390,24 +415,23 @@ again:
                 case 'a':
 								case 'e':
                 {
-										//This union is needed to get at the bits of the float
-										union fl {
-												float f;
-												long l;
-										} flValue;
+										//This union is needed to get at the bits of the double
+										union dl {
+												double d;
+												long l[2];
+										} dlValue;
 										
-										//Declare and read a float, ignoring what the warning says
-										float fValue;
-										fValue = va_arg(vaArgP, float);
-										
-										flValue.f = fValue;
+										//Declare and read a double, and load it into the union for now
+										double dValue;
+										dValue = va_arg(vaArgP, double);
+										dlValue.d = dValue;
 
-                    // Indicate that the value is positive so that a minus sign
-                    // isn't inserted.
+                    // This formatting shows raw hex value
                     cNeg = 0;
-									
-                    // Currently prints raw value.
-										convert(flValue.l, ulCount, pcHex, cNeg, cFill, 16);
+										cFill = '0';
+										ulCount = 8;
+										convert(dlValue.l[1], ulCount, pcHex, cNeg, cFill, 16);
+										convert(dlValue.l[0], ulCount, pcHex, cNeg, cFill, 16);
 										break;
 								}
 								
