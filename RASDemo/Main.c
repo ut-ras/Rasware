@@ -4,8 +4,6 @@
 #include <RASLib/inc/init.h> 
 #include <RASLib/inc/time.h>
 
-#include <RASLib/inc/sonar.h>
-
 int main(void)
 {	
 	char ch;	  	 
@@ -15,7 +13,7 @@ int main(void)
 
 	while(1) {
 		printf("\nRAS Demo for Robotathon 2013\n");
-		printf("  0= Demo\n  1=Motor Demo\n");
+		printf("  0=UART Demo\n  1=Motor Demo\n");
 		printf("  2=Servo Demo\n  3=Line Sensor\n");
 		printf("  4=IR Sensor Demo\n  5=Encoders Demo\n");
 		
@@ -25,8 +23,8 @@ int main(void)
 		printf("\n");
 
 		if (ch == '0') {
-			printf("\n Demo\n");
-			//uartDemo();	 
+			printf("\n UART Demo\n");
+			uartDemo();	 
 		}
 		else if (ch == '1') {
 			printf("\nMotor Demo\n");

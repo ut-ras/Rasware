@@ -20,3 +20,6 @@ void IRSensorDemo(void);
 // Functions in EncoderDemo
 void initEncoders(void);
 void encoderDemo(void);
+
+// Function for UARTDemo
+void uartDemo(void);
