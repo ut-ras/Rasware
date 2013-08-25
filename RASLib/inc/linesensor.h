@@ -1,3 +1,6 @@
-void InitializeLineSensor(void);
+void initLineSensor( void );
 
-unsigned char ReadLineSensor(void);
+void clearI2CBuffer( void );
+
+int readLineSensor(unsigned char *data );
+
