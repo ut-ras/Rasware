@@ -54,6 +54,24 @@ void I2CBackgroundReceive(tI2C *i2c, unsigned char addr,
 // Returns true if successful
 tBoolean I2CReceive(tI2C *i2c, unsigned char addr, 
                                unsigned char* data, unsigned int len);
+                               
+// This function requests data from an I2C address.
+// A callback can be passed and will be called when 
+// all of the data is loaded into the passed array.
+void I2CBackgroundRequest(tI2C *i2c, unsigned char addr, 
+                                     unsigned char *sendData, unsigned int sendLen,
+                                     unsigned char *recData, unsigned int recLen,
+                                     tCallback callback, void *cbdata);
+    
+// This function requests data from an I2C address.
+// Takes two pointers to arrays. The first is the data to send
+// and the second is to hold the data recieved. 
+// This is the same as two sequential send and recieve calls
+// but takes place in the internal state machine.
+// Returns true if successful
+tBoolean I2CRequest(tI2C *i2c, unsigned char addr, 
+                               unsigned char *sendData, unsigned int sendLen,
+                               unsigned char *recData, unsigned int recLen);
 
 //*****************************************************************************
 //

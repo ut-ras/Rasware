@@ -36,6 +36,18 @@ struct I2C {
         RECEIVING,
         DONE
     } state;
+    
+    // Information for requests
+    struct {
+        // Receiving data
+        unsigned char addr;
+        unsigned char *data;
+        unsigned int len;
+        
+        // Callback data
+        tCallback callback;
+        void *cbdata;
+    } request;
 };
 
 // Buffer of I2C structs to use
@@ -149,8 +161,10 @@ void I2CBackgroundSend(tI2C *i2c, unsigned char addr,
                                   unsigned char *data, unsigned int len,
                                   tCallback callback, void *cbdata) {
 	// Make sure data is actually being sent
-    if (len < 1)
+    if (len < 1) {
+        callback(cbdata);
         return;
+    }
     
     // We loop here while the bus is busy
     // correct sending behaviour should be implemented
@@ -199,8 +213,10 @@ void I2CBackgroundReceive(tI2C *i2c, unsigned char addr,
                                      unsigned char *data, unsigned int len,
                                      tCallback callback, void *cbdata) {
 	// Make sure data is actually being retrieve
-    if (len < 1)
+    if (len < 1) {
+        callback(cbdata);
         return;
+    }
     
     // We loop here while the bus is busy
     // correct recieving behaviour should be implemented
@@ -232,6 +248,57 @@ void I2CBackgroundReceive(tI2C *i2c, unsigned char addr,
 tBoolean I2CReceive(tI2C *i2c, unsigned char addr, 
                                unsigned char* data, unsigned int len) {
     I2CBackgroundReceive(i2c, addr, data, len, 0, 0);
+    while (i2c->state != DONE);
+    return I2CSuccess(i2c);
+}
+
+
+// Internally used function to handle transitioning
+// to reading responses in the request state machine.
+static void I2CRequestHandler(tI2C *i2c) {
+    // Simply start receiving
+    I2CBackgroundReceive(i2c, i2c->request.addr,
+                              i2c->request.data, i2c->request.len,
+                              i2c->request.callback, i2c->request.cbdata);
+}
+    
+
+// This function requests data from an I2C address.
+// A callback can be passed and will be called when 
+// all of the data is loaded into the passed array.
+void I2CBackgroundRequest(tI2C *i2c, unsigned char addr, 
+                                     unsigned char *sendData, unsigned int sendLen,
+                                     unsigned char *recData, unsigned int recLen,
+                                     tCallback callback, void *cbdata) {
+    // We loop here while the bus is busy
+    // correct requesting behaviour should be implemented
+    // at a higher level
+    while (i2c->state != DONE);
+
+    // First fill out request information to keep track of
+    i2c->request.addr = addr;
+    i2c->request.data = recData;
+    i2c->request.len = recLen;
+
+    i2c->request.callback = callback;
+    i2c->request.cbdata = cbdata;
+
+    // Start by sending the data, the handler will transition
+    // to receiving data in the interrupt handler
+    I2CBackgroundSend(i2c, addr, sendData, sendLen, I2CRequestHandler, i2c);
+}
+
+
+// This function requests data from an I2C address.
+// Takes two pointers to arrays. The first is the data to send
+// and the second is to hold the data recieved. 
+// This is the same as two sequential send and recieve calls
+// but takes place in the internal state machine.
+// Returns true if successful
+tBoolean I2CRequest(tI2C *i2c, unsigned char addr, 
+                               unsigned char *sendData, unsigned int sendLen,
+                               unsigned char *recData, unsigned int recLen) {
+    I2CBackgroundRequest(i2c, addr, sendData, sendLen, recData, recLen, 0, 0);
     while (i2c->state != DONE);
     return I2CSuccess(i2c);
 }
