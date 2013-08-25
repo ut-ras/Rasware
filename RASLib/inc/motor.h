@@ -36,7 +36,7 @@ typedef struct Motor tMotor;
 
 // Function to initialize a motor on a pair of pins
 // The returned pointer can be used by the SetMotor function
-tMotor *InitializeMotor(tPin a, tPin b, tBoolean brake);
+tMotor *InitializeMotor(tPin a, tPin b, tBoolean brake, tBoolean invert);
 
 // This function sets a motor speed
 void SetMotor(tMotor *mtr, float speed);

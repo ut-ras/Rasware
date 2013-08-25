@@ -36,6 +36,9 @@ struct Motor {
 
     // True if braking is applied
     tBoolean brake;
+
+    // Set to switch motor direction
+    tBoolean invert;
 };
 
 // Buffer of motor structs to use
@@ -48,7 +51,7 @@ int motorCount = 0;
 
 // Function to initialize a motor on a pair of pins
 // The returned pointer can be used by the SetMotor function
-tMotor *InitializeMotor(tPin a, tPin b, tBoolean brake) {
+tMotor *InitializeMotor(tPin a, tPin b, tBoolean brake, tBoolean invert) {
     // Grab the next motor
     tMotor *mtr = &motorBuffer[motorCount++];
     
@@ -56,8 +59,8 @@ tMotor *InitializeMotor(tPin a, tPin b, tBoolean brake) {
     mtr->brake = brake;
     
     // Initialize pwm on both pins
-    mtr->pwm0 = InitializePWM(a, 20.0f);
-    mtr->pwm1 = InitializePWM(b, 20.0f);
+    mtr->pwm0 = InitializePWM(a, 100.0f);
+    mtr->pwm1 = InitializePWM(b, 100.0f);
     
     // Return the new motor
     return mtr;
@@ -69,6 +72,11 @@ void SetMotor(tMotor *mtr, float input) {
     if(input > 1 || input < -1)
         return;
     
+    // invert if set
+    if (mtr->invert) {
+        input *= -1;
+    }
+
     // Operate the motor controller
     // Motor controller operation is specific 
     // to the TLE5205-2

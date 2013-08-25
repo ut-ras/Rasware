@@ -11,8 +11,8 @@
 tEncoder *demoEncoder[2];
 
 void initEncoders(void) {
-    demoEncoder[0] = InitializeEncoder(PIN_B0, PIN_B1, 0);
-    demoEncoder[1] = InitializeEncoder(PIN_B2, PIN_B3, 0);
+    demoEncoder[0] = InitializeEncoder(PIN_B0, PIN_B1, false);
+    demoEncoder[1] = InitializeEncoder(PIN_B2, PIN_B3, false);
 }
 
 void encoderDemo(void) {
