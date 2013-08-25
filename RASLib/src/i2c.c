@@ -21,6 +21,21 @@ struct I2C {
     // specific to each module
     const unsigned long BASE;
     const unsigned long PERIPH;
+    
+    // Sending and recieving data
+    unsigned char *data;
+    unsigned int len;
+    
+    // Callback data
+    tCallback callback;
+    void *cbdata;
+    
+    // State machine
+    volatile enum {
+        SENDING,
+        RECEIVING,
+        DONE
+    } state;
 };
 
 // Buffer of I2C structs to use
@@ -35,6 +50,7 @@ tI2C i2cBuffer[] = {
 };
 
 int i2cCount = 0;
+
 
 // Function to initialize an I2C module on a pair of pins
 // The returned pointer can be used by the Send and Recieve functions
@@ -59,89 +75,160 @@ tI2C *InitializeI2C(tPin sda, tPin scl) {
     return i2c;
 }
 
+
+// Interrupt handlers for i2c
+// Depending on the state of the state machine,
+// executes the next action.
+#define I2C_HANDLER(MOD)                                                \
+void I2C##MOD##Handler(void) {                                          \
+    tI2C *i2c = &i2cBuffer[MOD];                                        \
+                                                                        \
+    I2CMasterIntClear(I2C##MOD##_MASTER_BASE);                          \
+                                                                        \
+    switch(i2c->state) {                                                \
+        case SENDING:                                                   \
+            if (i2c->len == 0) {                                        \
+                i2c->state = DONE;                                      \
+                i2c->callback(i2c->cbdata);                             \
+                return;                                                 \
+            }                                                           \
+                                                                        \
+            I2CMasterDataPut(I2C##MOD##_MASTER_BASE, *i2c->data);       \
+            i2c->data++;                                                \
+            i2c->len--;                                                 \
+                                                                        \
+            if (i2c->len > 0)                                           \
+                I2CMasterControl(I2C##MOD##_MASTER_BASE,                \
+                                 I2C_MASTER_CMD_BURST_SEND_CONT);       \
+            else                                                        \
+                I2CMasterControl(I2C##MOD##_MASTER_BASE,                \
+                                 I2C_MASTER_CMD_BURST_SEND_FINISH);     \
+                                                                        \
+            break;                                                      \
+                                                                        \
+        case RECEIVING:                                                 \
+            *i2c->data = I2CMasterDataGet(I2C##MOD##_MASTER_BASE);      \
+            i2c->data++;                                                \
+            i2c->len--;                                                 \
+                                                                        \
+            if (i2c->len == 0) {                                        \
+                i2c->state = DONE;                                      \
+                i2c->callback(i2c->cbdata);                             \
+                return;                                                 \
+            }                                                           \
+                                                                        \
+            if (i2c->len > 1)                                           \
+                I2CMasterControl(I2C##MOD##_MASTER_BASE,                \
+                                 I2C_MASTER_CMD_BURST_RECEIVE_CONT);    \
+            else                                                        \
+                I2CMasterControl(I2C##MOD##_MASTER_BASE,                \
+                                 I2C_MASTER_CMD_BURST_RECEIVE_FINISH);  \
+                                                                        \
+            break;                                                      \
+    }                                                                   \
+}
+
+I2C_HANDLER(0);
+I2C_HANDLER(1);
+I2C_HANDLER(2);
+I2C_HANDLER(3);
+I2C_HANDLER(4);
+I2C_HANDLER(5);
+
+
+// This function sends data to an I2C address.
+// A callback can be passed and will be called when 
+// all of the data in the passed array is sent.
+void I2CBackgroundSend(tI2C *i2c, unsigned char addr, 
+                                  unsigned char *data, unsigned int len,
+                                  tCallback callback, void *cbdata) {
+	// Make sure data is actually being sent
+    if (len < 1)
+        return;
+    
+    // We loop here while the bus is busy
+    // correct sending behaviour should be implemented
+    // at a higher level
+    while (i2c->state != DONE);
+    i2c->state = SENDING;
+    
+    // Assign the address
+    I2CMasterSlaveAddrSet(i2c->BASE, addr, false);
+    
+    // Initialize callback information
+    i2c->callback = callback ? callback : Dummy;
+    i2c->cbdata = cbdata;
+    
+    // Start sending data
+    I2CMasterDataPut(i2c->BASE, *data);
+    i2c->data = data + 1;
+    i2c->len = len - 1;
+    
+    // Either send a single command or start sending multiple
+    if (len == 1)
+        I2CMasterControl(i2c->BASE, I2C_MASTER_CMD_SINGLE_SEND);
+    else
+        I2CMasterControl(i2c->BASE, I2C_MASTER_CMD_BURST_SEND_START);
+    
+    // The finite state machine implemented in the interrupt
+    // handler will take over from here
+}
+
+
 // Summary:	Sends 'len' number of characters to specified address
 // Parameters:
 //		addr:	address to send data to
 //      data:   pointer to memory location to read data
 //		len:	number of characters being sent
 // Note:	Number of characters must be equal to 'len'
-void I2CSend(tI2C *i2c, unsigned short addr, unsigned char *data, int len) {
-	// Make sure data is actually being sent
-	if (len > 0) {	
-		I2CMasterSlaveAddrSet(i2c->BASE, addr >> 1, false);
-		I2CMasterDataPut(i2c->BASE, *data);
-		if (len == 1){
-		    I2CMasterControl(i2c->BASE, I2C_MASTER_CMD_SINGLE_SEND);
-			while(I2CMasterBusy(i2c->BASE));
-			return;
-		}
-		
-		// Start sending consecutive data
-		I2CMasterControl(i2c->BASE, I2C_MASTER_CMD_BURST_SEND_START);
-		while(I2CMasterBusy(i2c->BASE));
-		len--;
-		data++;
-		
-		// Continue sending consecutive data
-		while(len > 1){
-			I2CMasterDataPut(i2c->BASE, *data);
-			I2CMasterControl(i2c->BASE, I2C_MASTER_CMD_BURST_SEND_CONT);
-			while(I2CMasterBusy(i2c->BASE));
-			len--;
-			data++;
-		}
-		
-		// Send last piece of data
-		I2CMasterDataPut(i2c->BASE, *data);
-		I2CMasterControl(i2c->BASE, I2C_MASTER_CMD_BURST_SEND_FINISH);
-		while(I2CMasterBusy(i2c->BASE));
-	}
+void I2CSend(tI2C *i2c, unsigned char addr, 
+                        unsigned char *data, unsigned int len) {
+    I2CBackgroundSend(i2c, addr, data, len, 0, 0);
+    while (i2c->state != DONE);
 }
+
+
+// This function receives data from an I2C address.
+// A callback can be passed and will be called when 
+// all of the data is loaded into the passed array.
+void I2CBackgroundReceive(tI2C *i2c, unsigned char addr, 
+                                     unsigned char *data, unsigned int len,
+                                     tCallback callback, void *cbdata) {
+	// Make sure data is actually being retrieve
+    if (len < 1)
+        return;
+    
+    // We loop here while the bus is busy
+    // correct recieving behaviour should be implemented
+    // at a higher level
+    while (i2c->state != DONE);
+    i2c->state = RECEIVING;
+    
+    // Assign the address
+    I2CMasterSlaveAddrSet(i2c->BASE, addr, true);
+    
+    // Initialize callback information
+    i2c->callback = callback ? callback : Dummy;
+    i2c->cbdata = cbdata;
+    
+    // Either read single byte of data or multiple
+    if (len == 1)
+        I2CMasterControl(i2c->BASE, I2C_MASTER_CMD_SINGLE_RECEIVE);
+    else
+        I2CMasterControl(i2c->BASE, I2C_MASTER_CMD_BURST_RECEIVE_START);
+    
+    // The finite state machine implemented in the interrupt
+    // handler will take over from here
+}
+
 
 // Summary:	Recieve/Fetch data from specified address
 // Parameters:
 //		addr:	address to recieve data from
 //		data:	pointer to memory location to save data
 //		len:	number of cahracers that will be recieved
-void I2CRecieve(tI2C *i2c, unsigned short addr, unsigned char *data, int len)
-{
-    if (len < 1)	// Assume I2C Recieving will always return data
-        return;
-	
-	// Set address to read from
-	I2CMasterSlaveAddrSet(i2c->BASE, addr >> 1, true);
-	
-	// Check to see if pointer is to an array
-	if (len == 1){
-		I2CMasterControl(i2c->BASE, I2C_MASTER_CMD_SINGLE_RECEIVE);
-		while(I2CMasterBusy(i2c->BASE));
-		*data = I2CMasterDataGet(i2c->BASE);
-		return;
-	}
-	
-	// Begin reading consecutive data
-	I2CMasterControl(i2c->BASE, I2C_MASTER_CMD_BURST_RECEIVE_START);
-    while(I2CMasterBusy(i2c->BASE));
-	*data = I2CMasterDataGet(i2c->BASE);
-	len--;
-	data++;
-	
-	// Continue reading consecutive data
-	while(len > 1){
-		I2CMasterControl(i2c->BASE, I2C_MASTER_CMD_BURST_RECEIVE_CONT);
-    	while(I2CMasterBusy(i2c->BASE));
-		*data = I2CMasterDataGet(i2c->BASE);
-		len--;
-		data++;
-	}
-	
-	// Read last character of data	
-    I2CMasterControl(i2c->BASE, I2C_MASTER_CMD_BURST_RECEIVE_FINISH);
-    while(I2CMasterBusy(i2c->BASE));
-	*data = I2CMasterDataGet(i2c->BASE);
+extern void I2CRecieve(tI2C *i2c, unsigned char addr, 
+                                  unsigned char* data, unsigned int len) {
+    I2CBackgroundReceive(i2c, addr, data, len, 0, 0);
+    while (i2c->state != DONE);
 }
-
-
-
-
-
