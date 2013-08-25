@@ -1,9 +1,9 @@
 #include <inc/hw_types.h>		// tBoolean
 #include <inc/hw_memmap.h>
-#include <utils/uartstdio.h>	// input/output over UART
+#include <utils/uartstdio.h>	// input/output over 
 #include <driverlib/gpio.h>
 #include <driverlib/sysctl.h>
-
+#include <RASLib/inc/uart.h>
 #include <RASLib/inc/motor.h>
 
 #include "RASDemo.h"
@@ -17,8 +17,8 @@ void initMotors(void) {
 
 void motorDemo(void) {
 	// 2012 Motor Demo
-	UARTprintf("Press:\n  w-forward\n  s-backward\n  a-left\n  ");
-	UARTprintf("d-right\n  space-stop\n  enter-quit\n");
+	printf("Press:\n  w-forward\n  s-backward\n  a-left\n  ");
+	printf("d-right\n  space-stop\n  enter-quit\n");
 	
 	{
 		// max speed is 1.0 but 0.75 lets us check for working pwm
@@ -27,7 +27,7 @@ void motorDemo(void) {
 		char ch = getc();
 		while(ch != newline) {
 			ch = getc();
-			putc(ch);
+			printf("%c", ch);
 			if (ch == 'w') {
 				left = speed;
 				right = speed;
@@ -46,11 +46,11 @@ void motorDemo(void) {
 			}
 			SetMotor(motors[0], left);
 			SetMotor(motors[1], right);
-			UARTprintf(" Set Motor to %d %d  \r", (int)(left*100), (int)(right*100));
+			printf(" Set Motor to %d %d  \r", (int)(left*100), (int)(right*100));
 		}
 	}
 	
 	SetMotor(motors[0], 0.0f);
 	SetMotor(motors[1], 0.0f);
-	UARTprintf("\n");
+	printf("\n");
 }

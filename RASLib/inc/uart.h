@@ -21,7 +21,12 @@
 //
 //*****************************************************************************
 
-
-#include "utils/uartstdio.h"
-
 void InitializeUART(void);
+void StdioConfig(unsigned long ulPort, unsigned long ulBaud, unsigned long ulSrcClock);
+void StdioInit(unsigned long ulPort);
+void StdioInitExpClk(unsigned long ulPort, unsigned long ulBaud);
+int gets(char *pcBuf, unsigned long ulLen);
+unsigned char getc(void);
+int keyWasPressed(void);
+void printf(const char *pcString, ...);
+int write(const char *pcBuf, unsigned long ulLen);
