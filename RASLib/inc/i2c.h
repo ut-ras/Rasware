@@ -24,20 +24,20 @@ typedef struct I2C tI2C;
 // The returned pointer can be used by the Send and Recieve functions
 tI2C *InitializeI2C(tPin sda, tPin scl);
 
-// Summary:	Sends 'num' number of characters to specified address
+// Summary:	Sends 'len' number of characters to specified address
 // Parameters:
 //		addr:	address to send data to
-//		num:	number of characters being sent
-//		...:	characters to send, separated by commas
-// Note:	Number of characters must be equal to 'num'
-extern void I2CSend(tI2C *i2c, unsigned short addr, int num, ...);
+//      data:   pointer to memory location to read data
+//		len:	number of characters being sent
+// Note:	Number of characters must be equal to 'len'
+extern void I2CSend(tI2C *i2c, unsigned short addr, unsigned char *data, int len);
 
 // Summary:	Recieve/Fetch data from specified address
 // Parameters:
 //		addr:	address to recieve data from
 //		data:	pointer to memory location to save data
 //		len:	number of cahracers that will be recieved
-extern void I2CRecieve(tI2C *i2c, unsigned short addr, unsigned char* data, unsigned int len);
+extern void I2CRecieve(tI2C *i2c, unsigned short addr, unsigned char* data, int len);
 
 //*****************************************************************************
 //

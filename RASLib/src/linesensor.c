@@ -12,13 +12,14 @@
 #include <driverlib/sysctl.h>
 #include <inc/hw_i2c.h>
 
-static unsigned short i2c_address;
+#define ADS7830 0x48
+#define ADS7830_REQ 0x84
+
 static tI2C *i2c;
 
 void initLineSensor()
 {
-	i2c = InitializeI2C(PIN_B3, PIN_B2);
-	i2c_address = 0x48 << 1;	
+	i2c = InitializeI2C(PIN_B3, PIN_B2);	
 }
 
 // Grabs line sensor data using i2c and dumps into LineSensor array. 
@@ -28,17 +29,17 @@ int readLineSensor(unsigned char *data)
 {
 	int i;
 	int err; 
-	char cmd = 0x84; //1 CH# 01 XX for request conversion. e.g 1 000 01 00 is for channel 2
+	unsigned char cmd = ADS7830_REQ; //1 CH# 01 XX for request conversion. e.g 1 000 01 00 is for channel 2
 
 	for(i=0; i<8; i++)
 	{
-		I2CSend(i2c, i2c_address,1,cmd); 
+		I2CSend(i2c, ADS7830, &cmd, 1); 
 		err = I2CMasterErr(I2C0_MASTER_BASE);
 		if(err != 0) 
           {
             UARTprintf("Error:%d in i2c send",err); 
           }
-		I2CRecieve(i2c, i2c_address,&data[i],1);
+		I2CRecieve(i2c, ADS7830,&data[i],1);
 		err = I2CMasterErr(I2C0_MASTER_BASE);
 		if(err != 0)
 		{ UARTprintf("Error:%d in i2c recieve",err); }

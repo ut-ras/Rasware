@@ -14,8 +14,6 @@
 #include <driverlib/sysctl.h>
 #include <inc/hw_i2c.h>
 
-static unsigned char i2c_buffer[32];
-
 // Definition of struct I2C
 // Defined to tI2C in i2c.h
 struct I2C {
@@ -38,6 +36,8 @@ tI2C i2cBuffer[] = {
 
 int i2cCount = 0;
 
+// Function to initialize an I2C module on a pair of pins
+// The returned pointer can be used by the Send and Recieve functions
 tI2C *InitializeI2C(tPin sda, tPin scl) {
     // Grab the next module
     tI2C *i2c = &i2cBuffer[i2cCount++];
@@ -59,30 +59,18 @@ tI2C *InitializeI2C(tPin sda, tPin scl) {
     return i2c;
 }
 
-// Summary:	Sends 'num' number of characters to specified address
+// Summary:	Sends 'len' number of characters to specified address
 // Parameters:
 //		addr:	address to send data to
-//		num:	number of characters being sent
-//		...:	characters to send, separated by commas
-// Note:	Number of characters must be equal to 'num'
-void I2CSend(tI2C *i2c, unsigned short addr, int num, ...)
-{
+//      data:   pointer to memory location to read data
+//		len:	number of characters being sent
+// Note:	Number of characters must be equal to 'len'
+void I2CSend(tI2C *i2c, unsigned short addr, unsigned char *data, int len) {
 	// Make sure data is actually being sent
-	if (num > 0 && num < 32){   // Max size of buffer
-		// Allocate memory for data
-		unsigned char *data = i2c_buffer;
-		va_list args;
-		int i=0;
-		
-		// Put characters to send in array
-		va_start(args, num);
-		for(; i<num; i++)
-			data[i] = (unsigned char) va_arg(args, int);
-		va_end(args);
-	
+	if (len > 0) {	
 		I2CMasterSlaveAddrSet(i2c->BASE, addr >> 1, false);
 		I2CMasterDataPut(i2c->BASE, *data);
-		if (num == 1){
+		if (len == 1){
 		    I2CMasterControl(i2c->BASE, I2C_MASTER_CMD_SINGLE_SEND);
 			while(I2CMasterBusy(i2c->BASE));
 			return;
@@ -91,15 +79,15 @@ void I2CSend(tI2C *i2c, unsigned short addr, int num, ...)
 		// Start sending consecutive data
 		I2CMasterControl(i2c->BASE, I2C_MASTER_CMD_BURST_SEND_START);
 		while(I2CMasterBusy(i2c->BASE));
-		num--;
+		len--;
 		data++;
 		
 		// Continue sending consecutive data
-		while(num > 1){
+		while(len > 1){
 			I2CMasterDataPut(i2c->BASE, *data);
 			I2CMasterControl(i2c->BASE, I2C_MASTER_CMD_BURST_SEND_CONT);
 			while(I2CMasterBusy(i2c->BASE));
-			num--;
+			len--;
 			data++;
 		}
 		
@@ -115,7 +103,7 @@ void I2CSend(tI2C *i2c, unsigned short addr, int num, ...)
 //		addr:	address to recieve data from
 //		data:	pointer to memory location to save data
 //		len:	number of cahracers that will be recieved
-void I2CRecieve(tI2C *i2c, unsigned short addr, unsigned char* data, unsigned int len)
+void I2CRecieve(tI2C *i2c, unsigned short addr, unsigned char *data, int len)
 {
     if (len < 1)	// Assume I2C Recieving will always return data
         return;
