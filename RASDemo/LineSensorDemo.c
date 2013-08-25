@@ -5,34 +5,35 @@
 #include <driverlib/gpio.h>
 #include <driverlib/sysctl.h>
 
-#include <RASLib/inc/linesensor.h>
+#include <RASLib/inc/linesensorI2C.h>
 
 #include "RASDemo.h"
 
-void initLineSensor(void) {
-	//InitializeLineSensor();
-	UARTprintf("init Line not working.\n");
+void InitializeLineSensor(void) {
+	initLineSensor();
 }
 
 void lineSensorDemo(void) {
-	/* 2012 Line Sensor Demo
+	// 2012 Line Sensor Demo
+	char lineSensorArray[8];
+	char filteredArray[8]; 
+	int i; 
+	
 	UARTprintf("Press:\nany key-read line sensor\n");
 	UARTprintf("any key after read begins-quit\n");
 	while(!keyWasPressed()) {
-		unsigned char lineSensorByte = ReadLineSensor();
-	 	int lineSensorArray[8];
-		int i;
-		for(i = 0; i < 8; i++) {
-			lineSensorArray[i] = lineSensorByte & 0x01;
-			lineSensorByte = lineSensorByte >> 1;
-		}
+		readLineSensor(lineSensorArray);
+		UARTprintf("Line Sensor: ");
+		for(i = 0; i < 8; i++)
+    {	
+			if(lineSensorArray[i]>100) {
+				filteredArray[i] = 1; 
+			}
+			else filteredArray[i] = 0; 
+			UARTprintf("%u      ",lineSensorArray[i]);
+	  }
+		UARTprintf("\r"); 
 		
- 		//black is 1, white is 0
-		for(i = 0; i < 8; i++) 
-			UARTprintf("%u",lineSensorArray[i]);
-		UARTprintf("\r");  
 	}
-	UARTprintf("\n");*/
-	
-	UARTprintf("Line Sensor Demo not working.\n");
+	UARTprintf("\n"); 
 }

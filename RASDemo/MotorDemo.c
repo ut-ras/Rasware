@@ -11,12 +11,12 @@
 tMotor *motors[12];
 
 void initMotors(void) {
-    motors[0] = InitializeMotor(PIN_E3, PIN_E2, true);
+    motors[0] = InitializeMotor(PIN_B6, PIN_B7, true);
     motors[1] = InitializeMotor(PIN_E5, PIN_E4, true);
 }
 
 void motorDemo(void) {
-	// 2012 Motor Demo
+	// 2012 Motor Demob
 	UARTprintf("Press:\n  w-forward\n  s-backward\n  a-left\n  ");
 	UARTprintf("d-right\n  space-stop\n  enter-quit\n");
 	
