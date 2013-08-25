@@ -158,7 +158,7 @@ I2C_HANDLER(5);
 // A callback can be passed and will be called when 
 // all of the data in the passed array is sent.
 void I2CBackgroundSend(tI2C *i2c, unsigned char addr, 
-                                  unsigned char *data, unsigned int len,
+                                  const unsigned char *data, unsigned int len,
                                   tCallback callback, void *cbdata) {
 	// Make sure data is actually being sent
     if (len < 1) {
@@ -181,7 +181,7 @@ void I2CBackgroundSend(tI2C *i2c, unsigned char addr,
     
     // Start sending data
     I2CMasterDataPut(i2c->BASE, *data);
-    i2c->data = data + 1;
+    i2c->data = (unsigned char *)(data + 1);
     i2c->len = len - 1;
     
     // Either send a single command or start sending multiple
@@ -199,7 +199,7 @@ void I2CBackgroundSend(tI2C *i2c, unsigned char addr,
 // Takes a pointer to an array to send from
 // Returns true if successful
 tBoolean I2CSend(tI2C *i2c, unsigned char addr, 
-                            unsigned char *data, unsigned int len) {
+                            const unsigned char *data, unsigned int len) {
     I2CBackgroundSend(i2c, addr, data, len, 0, 0);
     while (i2c->state != DONE);
     return I2CSuccess(i2c);
@@ -267,7 +267,7 @@ static void I2CRequestHandler(tI2C *i2c) {
 // A callback can be passed and will be called when 
 // all of the data is loaded into the passed array.
 void I2CBackgroundRequest(tI2C *i2c, unsigned char addr, 
-                                     unsigned char *sendData, unsigned int sendLen,
+                                     const unsigned char *sendData, unsigned int sendLen,
                                      unsigned char *recData, unsigned int recLen,
                                      tCallback callback, void *cbdata) {
     // We loop here while the bus is busy
@@ -296,7 +296,7 @@ void I2CBackgroundRequest(tI2C *i2c, unsigned char addr,
 // but takes place in the internal state machine.
 // Returns true if successful
 tBoolean I2CRequest(tI2C *i2c, unsigned char addr, 
-                               unsigned char *sendData, unsigned int sendLen,
+                               const unsigned char *sendData, unsigned int sendLen,
                                unsigned char *recData, unsigned int recLen) {
     I2CBackgroundRequest(i2c, addr, sendData, sendLen, recData, recLen, 0, 0);
     while (i2c->state != DONE);

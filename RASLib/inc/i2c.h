@@ -33,14 +33,14 @@ tBoolean I2CSuccess(tI2C *i2c);
 // A callback can be passed and will be called when 
 // all of the data in the passed array is sent.
 void I2CBackgroundSend(tI2C *i2c, unsigned char addr, 
-                                  unsigned char *data, unsigned int len,
+                                  const unsigned char *data, unsigned int len,
                                   tCallback callback, void *cbdata);
 
 // This function sends data to an I2C addresss
 // Takes a pointer to an array to send from
 // Returns true if successful
 tBoolean I2CSend(tI2C *i2c, unsigned char addr, 
-                            unsigned char *data, unsigned int len);
+                            const unsigned char *data, unsigned int len);
 
 // This function receives data from an I2C address.
 // A callback can be passed and will be called when 
@@ -59,7 +59,7 @@ tBoolean I2CReceive(tI2C *i2c, unsigned char addr,
 // A callback can be passed and will be called when 
 // all of the data is loaded into the passed array.
 void I2CBackgroundRequest(tI2C *i2c, unsigned char addr, 
-                                     unsigned char *sendData, unsigned int sendLen,
+                                     const unsigned char *sendData, unsigned int sendLen,
                                      unsigned char *recData, unsigned int recLen,
                                      tCallback callback, void *cbdata);
     
@@ -70,7 +70,7 @@ void I2CBackgroundRequest(tI2C *i2c, unsigned char addr,
 // but takes place in the internal state machine.
 // Returns true if successful
 tBoolean I2CRequest(tI2C *i2c, unsigned char addr, 
-                               unsigned char *sendData, unsigned int sendLen,
+                               const unsigned char *sendData, unsigned int sendLen,
                                unsigned char *recData, unsigned int recLen);
 
 //*****************************************************************************
