@@ -13,10 +13,11 @@
 #include <inc/hw_i2c.h>
 
 static unsigned short i2c_address;
+static tI2C *i2c;
 
 void initLineSensor()
 {
-	I2CInit();
+	i2c = InitializeI2C(PIN_B3, PIN_B2);
 	i2c_address = 0x48 << 1;	
 }
 
@@ -31,11 +32,13 @@ int readLineSensor(unsigned char *data)
 
 	for(i=0; i<8; i++)
 	{
-		I2CSend(i2c_address,1,cmd); 
+		I2CSend(i2c, i2c_address,1,cmd); 
 		err = I2CMasterErr(I2C0_MASTER_BASE);
-		if(err != 0)
-		{ UARTprintf("Error:%d in i2c send",err); }
-		I2CRecieve(i2c_address,&data[i],1);
+		if(err != 0) 
+          {
+            UARTprintf("Error:%d in i2c send",err); 
+          }
+		I2CRecieve(i2c, i2c_address,&data[i],1);
 		err = I2CMasterErr(I2C0_MASTER_BASE);
 		if(err != 0)
 		{ UARTprintf("Error:%d in i2c recieve",err); }
