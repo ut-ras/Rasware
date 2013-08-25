@@ -75,6 +75,12 @@ tI2C *InitializeI2C(tPin sda, tPin scl) {
     return i2c;
 }
 
+// This function returns true if the 
+// previous transaction was successful
+tBoolean I2CSuccess(tI2C *i2c) {
+    return (I2CMasterErr(i2c->BASE) == I2C_MASTER_ERR_NONE);
+}
+
 
 // Interrupt handlers for i2c
 // Depending on the state of the state machine,
@@ -175,16 +181,14 @@ void I2CBackgroundSend(tI2C *i2c, unsigned char addr,
 }
 
 
-// Summary:	Sends 'len' number of characters to specified address
-// Parameters:
-//		addr:	address to send data to
-//      data:   pointer to memory location to read data
-//		len:	number of characters being sent
-// Note:	Number of characters must be equal to 'len'
-void I2CSend(tI2C *i2c, unsigned char addr, 
-                        unsigned char *data, unsigned int len) {
+// This function sends data to an I2C addresss
+// Takes a pointer to an array to send from
+// Returns true if successful
+tBoolean I2CSend(tI2C *i2c, unsigned char addr, 
+                            unsigned char *data, unsigned int len) {
     I2CBackgroundSend(i2c, addr, data, len, 0, 0);
     while (i2c->state != DONE);
+    return I2CSuccess(i2c);
 }
 
 
@@ -222,13 +226,12 @@ void I2CBackgroundReceive(tI2C *i2c, unsigned char addr,
 }
 
 
-// Summary:	Recieve/Fetch data from specified address
-// Parameters:
-//		addr:	address to recieve data from
-//		data:	pointer to memory location to save data
-//		len:	number of cahracers that will be recieved
-extern void I2CRecieve(tI2C *i2c, unsigned char addr, 
-                                  unsigned char* data, unsigned int len) {
+// This function sends data to an I2C addresss
+// Takes a pointer to an array to receive to
+// Returns true if successful
+tBoolean I2CReceive(tI2C *i2c, unsigned char addr, 
+                               unsigned char* data, unsigned int len) {
     I2CBackgroundReceive(i2c, addr, data, len, 0, 0);
     while (i2c->state != DONE);
+    return I2CSuccess(i2c);
 }

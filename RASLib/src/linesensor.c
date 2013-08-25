@@ -39,7 +39,7 @@ int readLineSensor(unsigned char *data)
           {
             UARTprintf("Error:%d in i2c send",err); 
           }
-		I2CRecieve(i2c, ADS7830,&data[i],1);
+		I2CReceive(i2c, ADS7830,&data[i],1);
 		err = I2CMasterErr(I2C0_MASTER_BASE);
 		if(err != 0)
 		{ UARTprintf("Error:%d in i2c recieve",err); }
