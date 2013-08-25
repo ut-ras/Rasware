@@ -11,8 +11,8 @@
 tMotor *motors[12];
 
 void initMotors(void) {
-    motors[0] = InitializeMotor(PIN_E3, PIN_E2, true);
-    motors[1] = InitializeMotor(PIN_E5, PIN_E4, true);
+    motors[0] = InitializeMotor(PIN_E3, PIN_E2, true, false);
+    motors[1] = InitializeMotor(PIN_E5, PIN_E4, true, false);
 }
 
 void motorDemo(void) {

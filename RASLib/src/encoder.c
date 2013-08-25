@@ -51,7 +51,7 @@ struct Encoder {
     signed long ticks;
 
     // Set to switch direction encoder is incremented
-    unsigned char invert;
+    tBoolean invert;
 };
 
 // Buffer of encoder structs to use
@@ -85,7 +85,7 @@ static void EncoderHandler(void *data) {
 
 // Function to initialize an encoder on a pair of pins
 // The returned pointer can be used by the GetEncoder function
-tEncoder *InitializeEncoder(tPin a, tPin b, unsigned char invert) {
+tEncoder *InitializeEncoder(tPin a, tPin b, tBoolean invert) {
     // Grab the next encoder
     tEncoder *enc = &encoderBuffer[encoderCount++];
     
