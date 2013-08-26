@@ -396,6 +396,11 @@
               <FilePath>.\src\Startup.s</FilePath>
             </File>
             <File>
+              <FileName>rasmath.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\rasmath.c</FilePath>
+            </File>
+            <File>
               <FileName>init.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\init.c</FilePath>
