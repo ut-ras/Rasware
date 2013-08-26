@@ -21,7 +21,7 @@ void initIRSensor(void) {
     adc[1] = InitializeADC(PIN_E3);
     adc[2] = InitializeADC(PIN_E4);
     adc[3] = InitializeADC(PIN_E5);
-	//printf("init IRSensor not working.\n");
+	//Printf("init IRSensor not working.\n");
 }
 
 /*long getADCValue(void) {
@@ -34,24 +34,24 @@ void initIRSensor(void) {
 
 void IRSensorDemo(void) {
 	// 2012 IRSensor Demo
-	printf("press any key to quit\n");
+	Printf("press any key to quit\n");
     
     ADCReadContinuouslyUS(adc[0], 0);
     ADCReadContinuouslyUS(adc[1], 0);
     ADCReadContinuouslyUS(adc[2], 0);
     ADCReadContinuouslyUS(adc[3], 0);
 	
-	while(!keyWasPressed()) {
+	while(!KeyWasPressed()) {
 		float ADCValue = ADCRead(adc[0]);
-	 	printf("IR value: %d\t", (int)(1000 * ADCValue));
+	 	Printf("IR value: %d\t", (int)(1000 * ADCValue));
         ADCValue = ADCRead(adc[1]);
-	 	printf(" %d\t", (int)(1000 * ADCValue));
+	 	Printf(" %d\t", (int)(1000 * ADCValue));
         ADCValue = ADCRead(adc[2]);
-	 	printf(" %d\t", (int)(1000 * ADCValue));
+	 	Printf(" %d\t", (int)(1000 * ADCValue));
         ADCValue = ADCRead(adc[3]);
-	 	printf(" %d\r", (int)(1000 * ADCValue));
+	 	Printf(" %d\r", (int)(1000 * ADCValue));
 	}	
-	printf("\n");
+	Printf("\n");
 	
-	//printf("IRSensor Demo not working.\n");
+	//Printf("IRSensor Demo not working.\n");
 }

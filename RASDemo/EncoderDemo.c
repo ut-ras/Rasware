@@ -17,19 +17,19 @@ void initEncoders(void) {
 
 void encoderDemo(void) {
 	// 2012 Encoder Demo Code
-	printf("Press:\nany key-read encoder values\n");
-	printf("any key after read begins-quit\n");
+	Printf("Press:\nany key-read encoder values\n");
+	Printf("any key after read begins-quit\n");
     
     ResetEncoder(demoEncoder[0]);
     ResetEncoder(demoEncoder[1]);
 
-    while(!keyWasPressed()) {
-        printf("enc0:%d  enc1:%d      \r",
+    while(!KeyWasPressed()) {
+        Printf("enc0:%d  enc1:%d      \r",
                    GetEncoder(demoEncoder[0]),
                    GetEncoder(demoEncoder[1]) );
 	}
     
-	printf("\n");
+	Printf("\n");
 	
-	printf("Encoder Demo not working.\n");
+	Printf("Encoder Demo not working.\n");
 }

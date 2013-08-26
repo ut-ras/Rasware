@@ -8,21 +8,21 @@
 #include <RASLib/inc/uart.h>
 
 void uartDemo(void) {
-	printf("tell me something!\n-> ");
+	Printf("tell me something!\n-> ");
 	
 	{
 		char charArray[100];
-		gets(charArray, 100);
-		printf("you said, \"%s\"\n", charArray);
-		printf("thanks for the input!\n");
+		Gets(charArray, 100);
+		Printf("you said, \"%s\"\n", charArray);
+		Printf("thanks for the input!\n");
 	}
 	
 	{
 		char newline = 13;
-		char ch = getc();
+		char ch = Getc();
 		while(ch != newline) {
-			ch = getc();
-			printf("%c",ch);
+			ch = Getc();
+			Putc(ch);
 		}
 	}
 }

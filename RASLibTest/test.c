@@ -12,36 +12,36 @@ int main(void){
 	InitializeMCU();
 	InitializeUART();
 	
-	printf("\nLoaded, starting tests:\n");
+	Printf("\nLoaded, starting tests:\n");
 	
 	// UART test
-	//printf(" %% ", (int)ulTest);
-	//printf(" %c ", 'c');
-	//printf(" %s ", "string");
-	//printf(" %d ", sizeof(double));
-	//printf(" %i\n", ulTest);
-	printf(" %F ", dTest);
-	printf(" %A \n", dTest);
-	printf(" %3F ", dTest);
-	printf(" %8F ", dTest);
-	printf(" %08F \n", dTest);
-	printf(" %3.1F ", dTest);
-	printf(" %8.2F ", dTest);
-	printf(" %08.3F \n", dTest);
-	printf(" %F ", fTest);
-	printf(" %A \n", fTest);
-	printf(" %3F ", fTest);
-	printf(" %8F ", fTest);
-	printf(" %08F \n", fTest);
-	printf(" %3.1F ", fTest);
-	printf(" %8.2F ", fTest);
-	printf(" %08.3F \n", fTest);
-	printf("%f ", 1.0/0.0);
-	printf("%f ", 0.0/0.0);
-	printf("%f\n", -1.0/0.0);
-	printf("%E\n", 1e30f);
-	printf("%.2e ", .00000123);
-	printf("%f\n", .00000123);
+	//Printf(" %% ", (int)ulTest);
+	//Printf(" %c ", 'c');
+	//Printf(" %s ", "string");
+	//Printf(" %d ", sizeof(double));
+	//Printf(" %i\n", ulTest);
+	Printf(" %F ", dTest);
+	Printf(" %A \n", dTest);
+	Printf(" %3F ", dTest);
+	Printf(" %8F ", dTest);
+	Printf(" %08F \n", dTest);
+	Printf(" %3.1F ", dTest);
+	Printf(" %8.2F ", dTest);
+	Printf(" %08.3F \n", dTest);
+	Printf(" %F ", fTest);
+	Printf(" %A \n", fTest);
+	Printf(" %3F ", fTest);
+	Printf(" %8F ", fTest);
+	Printf(" %08F \n", fTest);
+	Printf(" %3.1F ", fTest);
+	Printf(" %8.2F ", fTest);
+	Printf(" %08.3F \n", fTest);
+	Printf("%f ", 1.0/0.0);
+	Printf("%f ", 0.0/0.0);
+	Printf("%f\n", -1.0/0.0);
+	Printf("%E\n", 1e30f);
+	Printf("%.2e ", .00000123);
+	Printf("%f\n", .00000123);
 	
 	while(1)
 	{

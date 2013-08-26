@@ -74,23 +74,18 @@ void StdioInitExpClk(unsigned long ulPort, unsigned long ulBaud)
   UARTStdioInitExpClk(ulPort, ulBaud);
 }
 
-int gets(char *pcBuf, unsigned long ulLen)
+int Gets(char *pcBuf, unsigned long ulLen)
 {
   return UARTgets(pcBuf, ulLen);
 }
 
-unsigned char getc(void)
+unsigned char Getc(void)
 {
   return UARTgetc();
 }
 
-int write(const char *pcBuf, unsigned long ulLen)
-{
-  return UARTwrite(pcBuf, ulLen);
-}
-
 // Pulled out of RASDemo Code
-int keyWasPressed(void) {
+int KeyWasPressed(void) {
   if (UARTCharsAvail(UART0_BASE))  
     return 1;
   else
@@ -98,7 +93,7 @@ int keyWasPressed(void) {
 }
 
 // Function to print the value of a unsigned long using the formatting gathered by printf
-void convert(unsigned long ulValue, unsigned long ulCount, const char *pcHex, char cNeg, char cFill, unsigned long ulBase)
+static void convert(unsigned long ulValue, unsigned long ulCount, const char *pcHex, char cNeg, char cFill, unsigned long ulBase)
 {
   char pcBuf[16];
   unsigned long ulIdx, ulPos = 0;
@@ -158,7 +153,7 @@ void convert(unsigned long ulValue, unsigned long ulCount, const char *pcHex, ch
 }
 
 // printf taken from StellarisWare with additional flag support
-void printf(const char *pcString, ...)
+void Printf(const char *pcString, ...)
 {
   unsigned long ulValue, ulIdx, ulCount, ulDecCount;
   char *pcStr, cNeg, cDec, cFill;
@@ -522,3 +517,19 @@ again:
   }
 }
 
+void Putc(char ch)
+{
+  UARTwrite(&ch, 1);
+}
+
+void Puts(const char *pcString)
+{
+  unsigned long ulIdx;
+  
+  // Count the length of the string
+  for(ulIdx = 0; pcString[ulIdx] != '\0'; ulIdx++)
+  {
+  }
+  
+  UARTwrite(pcString, ulIdx);
+}

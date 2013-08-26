@@ -10,13 +10,13 @@
 
 void initLineSensor(void) {
 	//InitializeLineSensor();
-	printf("init Line not working.\n");
+	Printf("init Line not working.\n");
 }
 
 void lineSensorDemo(void) {
 	/* 2012 Line Sensor Demo
-	printf("Press:\nany key-read line sensor\n");
-	printf("any key after read begins-quit\n");
+	Printf("Press:\nany key-read line sensor\n");
+	Printf("any key after read begins-quit\n");
 	while(!keyWasPressed()) {
 		unsigned char lineSensorByte = ReadLineSensor();
 	 	int lineSensorArray[8];
@@ -28,10 +28,10 @@ void lineSensorDemo(void) {
 		
  		//black is 1, white is 0
 		for(i = 0; i < 8; i++) 
-			printf("%u",lineSensorArray[i]);
-		printf("\r");  
+			Printf("%u",lineSensorArray[i]);
+		Printf("\r");  
 	}
-	printf("\n");*/
+	Printf("\n");*/
 	
-	printf("Line Sensor Demo not working.\n");
+	Printf("Line Sensor Demo not working.\n");
 }

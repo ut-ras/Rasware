@@ -12,15 +12,15 @@ void initServo(void) {
 
 void servoDemo(void) {
 	// 2012 Servo Demo code
-	printf("Press:\n  a-'up' 0.10\n  w-'up' 0.01\n  s-'down' 0.01\n");
-	printf("  d-'down' 0.10\n  enter-quit\n");
+	Printf("Press:\n  a-'up' 0.10\n  w-'up' 0.01\n  s-'down' 0.01\n");
+	Printf("  d-'down' 0.10\n  enter-quit\n");
 	
 	{   float position = 0;
 		char newline = 13;
 		char ch;
 		
-		printf("position: 0x%x%x  ", position);
-		ch = getc();
+		Printf("position: 0x%x%x  ", position);
+		ch = Getc();
         
 		while(ch != newline) {
 			if (ch == 'w')
@@ -34,10 +34,10 @@ void servoDemo(void) {
             
 			SetServo(servo, position);
             
-			printf("\rposition: 0x%x%x  ",position);	 
-			ch = getc();
+			Printf("\rposition: 0x%x%x  ",position);	 
+			ch = Getc();
 		}
 				 
-		printf("\n");
+		Printf("\n");
 	}
 }
