@@ -6,12 +6,14 @@
 #include <stdarg.h>
 #include <inc/hw_types.h>
 #include <inc/hw_memmap.h>
+#include <inc/hw_ints.h>
 #include <driverlib/i2c.h>
 #include "i2c.h"
 #include "gpio.h"
 #include <driverlib/gpio.h>
 #include <driverlib/pin_map.h>
 #include <driverlib/sysctl.h>
+#include <driverlib/interrupt.h>
 #include <inc/hw_i2c.h>
 
 // Definition of struct I2C
@@ -21,6 +23,7 @@ struct I2C {
     // specific to each module
     const unsigned long BASE;
     const unsigned long PERIPH;
+    const unsigned long INT;
     
     // Sending and recieving data
     unsigned char *data;
@@ -53,12 +56,12 @@ struct I2C {
 // Buffer of I2C structs to use
 // Limited to the available modules
 tI2C i2cBuffer[] = {
-    {I2C0_MASTER_BASE, SYSCTL_PERIPH_I2C0},
-    {I2C1_MASTER_BASE, SYSCTL_PERIPH_I2C1},
-    {I2C2_MASTER_BASE, SYSCTL_PERIPH_I2C2},
-    {I2C3_MASTER_BASE, SYSCTL_PERIPH_I2C3},
-    {I2C4_MASTER_BASE, SYSCTL_PERIPH_I2C4},
-    {I2C5_MASTER_BASE, SYSCTL_PERIPH_I2C5},
+    {I2C0_MASTER_BASE, SYSCTL_PERIPH_I2C0, INT_I2C0},
+    {I2C1_MASTER_BASE, SYSCTL_PERIPH_I2C1, INT_I2C1},
+    {I2C2_MASTER_BASE, SYSCTL_PERIPH_I2C2, INT_I2C2},
+    {I2C3_MASTER_BASE, SYSCTL_PERIPH_I2C3, INT_I2C3},
+    {I2C4_MASTER_BASE, SYSCTL_PERIPH_I2C4, INT_I2C4},
+    {I2C5_MASTER_BASE, SYSCTL_PERIPH_I2C5, INT_I2C5},
 };
 
 int i2cCount = 0;
@@ -69,6 +72,9 @@ int i2cCount = 0;
 tI2C *InitializeI2C(tPin sda, tPin scl) {
     // Grab the next module
     tI2C *i2c = &i2cBuffer[i2cCount++];
+    
+    // Reset the state machine
+    i2c->state = DONE;
     
     // Enable the peripheral
     SysCtlPeripheralEnable(i2c->PERIPH);
@@ -82,6 +88,10 @@ tI2C *InitializeI2C(tPin sda, tPin scl) {
     
     // Enable the I2C module
     I2CMasterEnable(i2c->BASE);
+    
+    // Enable the I2C interrupt
+    I2CMasterIntEnable(i2c->BASE);
+	IntEnable(i2c->INT);
     
     // Return the initialized module
     return i2c;
