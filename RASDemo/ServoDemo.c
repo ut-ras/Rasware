@@ -1,4 +1,4 @@
-#include <utils/uartstdio.h>	// input/output over UART
+#include <RASLib/inc/uart.h>
 #include <RASLib/inc/servo.h>
 #include "RASDemo.h"
 #include "time.h"
@@ -12,15 +12,15 @@ void initServo(void) {
 
 void servoDemo(void) {
 	// 2012 Servo Demo code
-	UARTprintf("Press:\n  a-'up' 0.10\n  w-'up' 0.01\n  s-'down' 0.01\n");
-	UARTprintf("  d-'down' 0.10\n  enter-quit\n");
+	Printf("Press:\n  a-'up' 0.10\n  w-'up' 0.01\n  s-'down' 0.01\n");
+	Printf("  d-'down' 0.10\n  enter-quit\n");
 	
 	{   float position = 0;
 		char newline = 13;
 		char ch;
 		
-		UARTprintf("position: 0x%x%x  ", position);
-		ch = getc();
+		Printf("position: %f ", position);
+		ch = Getc();
         
 		while(ch != newline) {
 			if (ch == 'w')
@@ -34,10 +34,10 @@ void servoDemo(void) {
             
 			SetServo(servo, position);
             
-			UARTprintf("\rposition: 0x%x%x  ",position);	 
-			ch = getc();
+			Printf("\rposition: %f ",position);	 
+			ch = Getc();
 		}
 				 
-		UARTprintf("\n");
+		Printf("\n");
 	}
 }

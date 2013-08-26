@@ -1,6 +1,6 @@
 #include "linesensor.h"
 #include "i2c.h"
-#include "UART.h"
+#include "uart.h"
 #include <stdlib.h>
 #include <stdarg.h>
 #include <inc/hw_types.h>
@@ -14,16 +14,13 @@
 
 static unsigned short i2c_address;
 
-void initLineSensor()
+void InitializeLineSensor()
 {
 	I2CInit();
 	i2c_address = 0x48 << 1;	
 }
 
-// Grabs line sensor data using i2c and dumps into LineSensor array. 
-// Returns 1 if successful, 0 if encountered a timeout error 
-//	(timeout probably means the line sensor isn't connected correctly)
-int readLineSensor(unsigned char *data)
+int ReadLineSensorArray(unsigned char *data)
 {
 	int i;
 	int err; 
@@ -34,11 +31,11 @@ int readLineSensor(unsigned char *data)
 		I2CSend(i2c_address,1,cmd); 
 		err = I2CMasterErr(I2C0_MASTER_BASE);
 		if(err != 0)
-		{ UARTprintf("Error:%d in i2c send",err); }
+		{ Printf("Error:%d in i2c send",err); }
 		I2CRecieve(i2c_address,&data[i],1);
 		err = I2CMasterErr(I2C0_MASTER_BASE);
 		if(err != 0)
-		{ UARTprintf("Error:%d in i2c recieve",err); }
+		{ Printf("Error:%d in i2c recieve",err); }
 		cmd += 0x10; 
 	} 
 

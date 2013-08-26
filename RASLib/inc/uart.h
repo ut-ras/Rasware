@@ -21,7 +21,20 @@
 //
 //*****************************************************************************
 
-
-#include "utils/uartstdio.h"
-
+// Must be called before using other UART commands
 void InitializeUART(void);
+
+// These are functions for getting UART input
+int KeyWasPressed(void);
+int Gets(char *pcBuf, unsigned long ulLen);
+unsigned char Getc(void);
+
+// These are functions for generating UART output
+void Printf(const char *pcString, ...);
+void Putc(char ch);
+void Puts(const char *pcString);
+
+// These functions configure UART but aren't a part of standard use
+void StdioConfig(unsigned long ulPort, unsigned long ulBaud, unsigned long ulSrcClock);
+void StdioInit(unsigned long ulPort);
+void StdioInitExpClk(unsigned long ulPort, unsigned long ulBaud);
