@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>RASLib</TargetName>
+      <TargetName>RASLibTest</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
@@ -43,10 +43,10 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>.\output\</OutputDirectory>
-          <OutputName>RASLib</OutputName>
-          <CreateExecutable>0</CreateExecutable>
-          <CreateLib>1</CreateLib>
+          <OutputDirectory>.\</OutputDirectory>
+          <OutputName>RASLibTest</OutputName>
+          <CreateExecutable>1</CreateExecutable>
+          <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
@@ -138,7 +138,7 @@
             <RestoreToolbox>1</RestoreToolbox>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>0</TargetSelection>
+          <TargetSelection>1</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -161,11 +161,11 @@
             <UseExternalTool>0</UseExternalTool>
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
-            <Capability>0</Capability>
-            <DriverSelection>-1</DriverSelection>
+            <Capability>1</Capability>
+            <DriverSelection>4097</DriverSelection>
           </Flash1>
-          <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash2>BIN\lmidk-agdi.dll</Flash2>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
         </Utilities>
         <TargetArmAds>
@@ -182,8 +182,8 @@
             <ldmm>1</ldmm>
             <ldXref>1</ldXref>
             <BigEnd>0</BigEnd>
-            <AdsALst>0</AdsALst>
-            <AdsACrf>0</AdsACrf>
+            <AdsALst>1</AdsALst>
+            <AdsACrf>1</AdsACrf>
             <AdsANop>0</AdsANop>
             <AdsANot>0</AdsANot>
             <AdsLLst>1</AdsLLst>
@@ -210,7 +210,7 @@
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
-            <useUlib>1</useUlib>
+            <useUlib>0</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
             <RoSelD>3</RoSelD>
@@ -333,7 +333,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>0</Optim>
+            <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>0</OneElfS>
@@ -347,9 +347,9 @@
             <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>rvmdk PART_LM4F120H5QR TARGET_IS_BLIZZARD_RA1</Define>
+              <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\StellarisWare;inc;C:\Stellarisware</IncludePath>
+              <IncludePath>..;..\;..\RASLib\inc;C:\Stellarisware;..\Stellarisware</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -388,97 +388,27 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Source</GroupName>
+          <GroupName>Sources</GroupName>
           <Files>
+            <File>
+              <FileName>RASLib.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>..\RASLib\output\RASLib.lib</FilePath>
+            </File>
+            <File>
+              <FileName>test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\test.c</FilePath>
+            </File>
             <File>
               <FileName>Startup.s</FileName>
               <FileType>2</FileType>
-              <FilePath>.\src\Startup.s</FilePath>
+              <FilePath>..\RASLib\src\Startup.s</FilePath>
             </File>
             <File>
-              <FileName>sonar.c</FileName>
+              <FileName>uartstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\sonar.c</FilePath>
-            </File>
-            <File>
-              <FileName>init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\init.c</FilePath>
-            </File>
-            <File>
-              <FileName>motor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\motor.c</FilePath>
-            </File>
-            <File>
-              <FileName>servo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\servo.c</FilePath>
-            </File>
-            <File>
-              <FileName>adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\adc.c</FilePath>
-            </File>
-            <File>
-              <FileName>time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\time.c</FilePath>
-            </File>
-            <File>
-              <FileName>uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>encoder.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\encoder.c</FilePath>
-            </File>
-            <File>
-              <FileName>internal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\internal.c</FilePath>
-            </File>
-            <File>
-              <FileName>gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\pwm.c</FilePath>
-            </File>
-            <File>
-              <FileName>jsmn.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\jsmn.c</FilePath>
-            </File>
-            <File>
-              <FileName>json_protocol.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\json_protocol.c</FilePath>
-            </File>
-            <File>
-              <FileName>linesensorI2C.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\linesensorI2C.c</FilePath>
-            </File>
-            <File>
-              <FileName>I2C.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\I2C.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Libraries</GroupName>
-          <Files>
-            <File>
-              <FileName>driverlib-cm4f.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>C:\StellarisWare\driverlib\rvmdk-cm4f\driverlib-cm4f.lib</FilePath>
+              <FilePath>C:\StellarisWare\utils\uartstdio.c</FilePath>
             </File>
           </Files>
         </Group>
