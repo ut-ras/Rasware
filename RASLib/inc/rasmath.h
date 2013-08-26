@@ -3,7 +3,7 @@
 
 #define PI 3.14159265358979323846
 
-float rsin(float input);
-float rcos(float input);
+float Sin(float input);
+float Cos(float input);
 
 #endif // __RASMATH_H__
