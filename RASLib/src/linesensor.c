@@ -14,7 +14,6 @@
 #include <math.h>
 
 #define ADS7830 0x48
-
 static const unsigned char REQUEST_CMD = 0x84;
 
 // Definition of struct LineSensor
@@ -22,6 +21,9 @@ static const unsigned char REQUEST_CMD = 0x84;
 struct LineSensor {
     // Internally used I2C module
     tI2C *i2c;
+    
+    // Full i2c address 
+    unsigned int address;
     
     // Array of values and index in current read
     unsigned char values[8];
@@ -47,12 +49,15 @@ int lineSensorCount = 0;
 
 // Function to initialize a line sensor on a pair of pins
 // The returned pointer can be used by the LineSensorRead functions
-tLineSensor *InitializeLineSensor(tPin sda, tPin scl) {
+tLineSensor *InitializeLineSensor(tPin sda, tPin scl, unsigned int address) {
     // Grab the next line sensor
     tLineSensor *ls = &lineSensorBuffer[lineSensorCount++];
     
     // Initialize the I2C module
     ls->i2c = InitializeI2C(sda, scl);
+    
+    // Create the actual address
+    ls->i2c = ADS7830 | address;
     
     // Return the initialized line sensor
     return ls;
@@ -74,7 +79,7 @@ void LineSensorHandler(tLineSensor *ls) {
         // Otherwise we move on to the next sensor
         ls->index++;
         
-        I2CBackgroundRequest(ls->i2c, ADS7830,
+        I2CBackgroundRequest(ls->i2c, ls->address,
                              &REQUEST_CMD, 1,
                              &ls->values[ls->index], 1,
                              LineSensorHandler, ls);

@@ -31,8 +31,9 @@
 typedef struct LineSensor tLineSensor;
 
 // Function to initialize a line sensor on a pair of pins
+// Address is be a 2-bit value determined by the solder jumpers on the board
 // The returned pointer can be used by the LineSensorRead functions
-tLineSensor *InitializeLineSensor(tPin sda, tPin scl);
+tLineSensor *InitializeLineSensor(tPin sda, tPin scl, unsigned int address);
 
 // This function returns the values measured as a bit-packed byte
 // each bit is matched against a threshold that is passed.
