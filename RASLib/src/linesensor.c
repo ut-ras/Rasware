@@ -57,7 +57,7 @@ tLineSensor *InitializeLineSensor(tPin sda, tPin scl, unsigned int address) {
     ls->i2c = InitializeI2C(sda, scl);
     
     // Create the actual address
-    ls->i2c = ADS7830 | address;
+    ls->address = ADS7830 | address;
     
     // Return the initialized line sensor
     return ls;

@@ -89,8 +89,9 @@ tI2C *InitializeI2C(tPin sda, tPin scl) {
     // Enable the I2C module
     I2CMasterEnable(i2c->BASE);
     
-    // Enable the I2C interrupt
-    I2CMasterIntEnable(i2c->BASE);
+    // Enable both timeout and normal I2C interrupts
+    I2CMasterIntEnableEx(i2c->BASE, I2C_MASTER_INT_TIMEOUT | 
+                                    I2C_MASTER_INT_DATA);
 	IntEnable(i2c->INT);
     
     // Return the initialized module
