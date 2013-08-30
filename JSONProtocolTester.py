@@ -8,14 +8,12 @@ BAUD_RATE = 115200
 def printError(s):
     print "ERROR: ", s
 
-def onKill():
-    print "closing connection"
+def onClose():
     connection.close()
 
-atexit.register(onKill)
+atexit.register(onClose)
 
 # initialize connection
-
 connection = serial.Serial(
     port = SERIAL_LINE, 
     baudrate = BAUD_RATE, 
@@ -23,34 +21,37 @@ connection = serial.Serial(
     writeTimeout = 1
     )
 
-# write to launchpad
-
-connection.flush()
-connection.write('{"right_motor":"200"}\n')
-connection.flushOutput()
-
-# read from launchpad and process data received
-
 def processData(data):
     try:
-        rightTicks = int(data["right_encoder"])
-        leftTicks = int(data["left_encoder"])
+        count = int(data["counter"])
     except:
         printError("couldn't recieve values for expected keys") 
         return
         
-    print "right encoder: %d  left encoder: %d" % (rightTicks, leftTicks)
+    print "counter received: %d" % count
 
 def parseLine(s):
     try :
         data = json.loads(s.strip())
     except:
-        printError("problem while parsing JSON")
+        print "ERROR: problem while parsing JSON: ", s.strip()
         return
 
     processData(data)
 
+counter = 0
+
+connection.flush()
+
 while True:
+    # send message
+    msg = json.dumps({"counter":str(counter)})
+    print "sent: %s" % msg
+    
+    connection.write(msg + '\n')
+    connection.flushOutput()
+
+    # read response
     connection.flushInput()
     line = connection.readline()
 
@@ -58,5 +59,7 @@ while True:
         printError("ERROR: timeout")
     else:
         parseLine(line)
+
+    counter += 1
 
 connection.close()

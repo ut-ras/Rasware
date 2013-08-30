@@ -30,8 +30,12 @@ static const int elemExtra = 6, // for the comma (or beginning bracket), the col
 //
 // Change these two functions to change how messages are sent
 //
-static void printError(char* msg, int error) {
-    Printf("{\"error\":\"%s\",\"code\":%d}\n", msg, error);
+static void printError(char* msg, int error, char* extra) {
+    if (!extra) {
+        Printf("{\"error\":\"%s\",\"code\":%d}\n", msg, error);
+    } else {
+        Printf("{\"error\":\"%s\",\"code\":%d,\"extra:\":'%s'}\n", msg, error, extra);
+    }
 }
 
 static void printMessage(char* msg) {
@@ -43,7 +47,7 @@ static int checkAndCopyKey(char *jsonkey, char *key, unsigned int *keyLenPtr) {
     unsigned int keyLen = Strnlen(jsonkey, MAX_KEY_LEN);
 
     if (keyLen >= MAX_KEY_LEN) {
-        printError("key exceeds max length", 0);
+        printError("key exceeds max length", 0, 0);
         return false;
     }
 
@@ -58,7 +62,7 @@ int InitializePublisher(tPub *pubPtr, char *jsonkey, void *data, char* (*handler
     int success = false;
 
     if (pubCount >= MAX_PUBLISHERS) {
-        printError("publisher limit already reached", 0);
+        printError("publisher limit already reached", 0, 0);
         return false;
     }
 
@@ -85,7 +89,7 @@ int InitializeSubscriber(tSub *subPtr, char *jsonkey, void *data, void (*handler
     int success = false;
  
     if (subCount >= MAX_SUBSCRIBERS) {
-        printError("subscriber limit already reached", 0);
+        printError("subscriber limit already reached", 0, 0);
         return false;
     }
 
@@ -124,12 +128,12 @@ static void createAndPublishMessage(void *data) {
                      len = pubPtrBuff[i]->keylen + valuelen + elemExtra; 
 
         if (valuelen >= MAX_VAL_LEN) {
-            printError("data value string returned by publisher exceeds maximum length", 0);
+            printError("data value string returned by publisher exceeds maximum length", 0, 0);
             return;
         }
 
         if (MAX_OUT_MSG_SIZE < totalLen + len + msgExtra) {
-            printError("message exceeds buffer size", 0);
+            printError("message exceeds buffer size", 0, 0);
             return;
         }
 
@@ -190,10 +194,25 @@ static int walkJSONMsg(int index, int isKey) {
     return total + tokens[index].size;
 }
 
+// we need this because Gets seems to be printing out the characters received, and we don't want that
+static int ReadLine(char *line, int max_len) {
+    int i = 0;
+    char ch = 0;
+    
+    while (i < max_len && ch != '\n') {
+        ch = Getc();
+        line[i] = ch;
+        i += 1;
+    }
+    
+    line[max_len] = 0;
+    return i;
+}
+
 void BeginSubscribing(float secsBetweenReads) {
     while (1) {
-        int numBytes = Gets(inMsgBuff, sizeof(inMsgBuff));
-        inMsgBuff[MAX_IN_MSG_SIZE - 1] = 0; // because gets isn't safe
+        int numBytes = ReadLine(inMsgBuff, sizeof(inMsgBuff));
+        inMsgBuff[MAX_IN_MSG_SIZE - 1] = 0; // just in case Gets doesn't set the null terminator
 
         if (numBytes > 0) {
             int error;
@@ -206,10 +225,10 @@ void BeginSubscribing(float secsBetweenReads) {
                 //  and calling subscriber handlers when finding matching keys
                 walkJSONMsg(0, 0);
             } else {
-                printError("jsmn parse error", error);
+                printError("jsmn parse error", error, inMsgBuff);
             }
         } else {
-            printError("failed to read line properly", 0);
+            printError("failed to read line properly", 0, 0);
         }
 
         Wait(secsBetweenReads);
