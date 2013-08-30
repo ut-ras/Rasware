@@ -1,9 +1,8 @@
-#include <stdio.h>
-#include <string.h>
 #include "jsmn.h"
 #include "time.h"
 #include "json_protocol.h"
 #include "uart.h"
+#include "rasstring.h"
 
 struct {
     char *key;
@@ -50,19 +49,8 @@ static void printMessage(char* msg) {
     Printf("%s", msg);
 }
 
-// Apparentely <string.h> doesn't have strnlen, so we need to implement it here
-static unsigned int strnlen(char *str, unsigned int max_len) {
-    int i = 0;
-
-    while (str[i] && i < max_len) {
-        i++;
-    }
-
-    return i;
-}
-
 static int checkAndCopyKey(char *jsonkey, char **keyPtr, unsigned int *keyLenPtr) {
-    unsigned int keyLen = strnlen(jsonkey, MAX_KEY_LEN); 
+    unsigned int keyLen = Strnlen(jsonkey, MAX_KEY_LEN); 
     char *keyCopy = keyBuff + keyBuffCount;
 
     if (keyLen >= MAX_KEY_LEN) {
@@ -75,7 +63,7 @@ static int checkAndCopyKey(char *jsonkey, char **keyPtr, unsigned int *keyLenPtr
         return 0;
     }
 
-    strcpy(keyCopy, jsonkey);
+    Strcpy(keyCopy, jsonkey);
     keyBuffCount += keyLen + 1; // 1 for the null terminator
 
     *keyPtr = keyCopy;
@@ -147,7 +135,7 @@ static void createAndPublishMessage(void *data) {
     for (i = 0; i < pubCount; i++) {
         char *value = pubBuff[i].handler(pubBuff[i].data);
 
-        unsigned int valuelen = strnlen(value, MAX_VAL_LEN),
+        unsigned int valuelen = Strnlen(value, MAX_VAL_LEN),
                      len = pubBuff[i].keylen + valuelen + elemExtra; 
 
         if (valuelen >= MAX_VAL_LEN) {
@@ -160,7 +148,7 @@ static void createAndPublishMessage(void *data) {
             return;
         }
 
-        sprintf(
+        SPrintf(
             msgPtr,
             format,
             pubBuff[i].key,
@@ -173,9 +161,9 @@ static void createAndPublishMessage(void *data) {
     }
 
     if (pubCount == 0) {
-        sprintf(msgPtr, "{}\n");
+        SPrintf(msgPtr, "{}\n");
     } else {
-        sprintf(msgPtr, "}\n");
+        SPrintf(msgPtr, "}\n");
     }
 
     printMessage(outMsgBuff);
@@ -199,7 +187,7 @@ static int walkJSONMsg(int index, int isKey) {
         inMsgBuff[tokens[index + 1].end] = 0;
 
         for (i = 0; i < subCount; i++) {
-            if (0 == strcmp(subBuff[i].key, &inMsgBuff[tokens[index].start])) {
+            if (0 == Strcmp(subBuff[i].key, &inMsgBuff[tokens[index].start])) {
                 subBuff[i].handler(subBuff[i].data, &inMsgBuff[tokens[index + 1].start]);
             }
         }
@@ -218,10 +206,10 @@ static int walkJSONMsg(int index, int isKey) {
 // Begins parsing messages and calling sub handlers in a blocking loop
 void BeginSubscribing(float secsBetweenReads) {
     while (1) {
-        char *res = gets(inMsgBuff); // TODO: this isn't safe--we need something like gets(char* b, int max_size)
+        int numBytes = Gets(inMsgBuff, sizeof(inMsgBuff));
         inMsgBuff[MAX_IN_MSG_SIZE - 1] = 0; // because gets isn't safe
 
-        if (res) {
+        if (numBytes > 0) {
             int error;
 
             jsmn_init(&parser);
