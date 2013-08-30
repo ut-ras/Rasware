@@ -43,11 +43,11 @@ static const int elemExtra = 6, // for the comma (or beginning bracket), the col
 
 // These are here to make it easy to change how messages are printed
 static void printError(char* msg, int error) {
-    UARTprintf("{\"error\":\"%s\",\"code\":%d}\n", msg, error);
+    Printf("{\"error\":\"%s\",\"code\":%d}\n", msg, error);
 }
 
 static void printMessage(char* msg) {
-    UARTprintf("%s", msg);
+    Printf("%s", msg);
 }
 
 // Apparentely <string.h> doesn't have strnlen, so we need to implement it here
