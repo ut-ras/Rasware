@@ -9,20 +9,23 @@
 //
 // For example, the following code will publish data from two encoders:
 //
-//      char buffer[20];
+//     char msgBuffer[20];
+//         
+//     char* encoderPubHandler(void* data) {
+//         SPrintf(msgBuffer, "%d", GetEncoder((tEncoder*)data));
+//         
+//         return msgBuffer;
+//     }
 //
-//      char* encoderPublisher(void* data) {
-//          sprintf(buffer, "%ld", ((tEncoder*)data)->ticks);
-//          return buffer;
-//      }
+//     tPub rightEncPub, leftEncPub;
 //
-//      tEncoder *rightEncoder = InitializeEncoder(...),
-//               *leftEncoder = InitializeEncoder(...);
-//      
-//      AddPublisher("right_encoder", rightEncoder, encoderPublisher);
-//      AddPublisher("left_encoder", leftEncoder, encoderPublisher);
+//     tEncoder *rightEnc = InitializeEncoder(...),
+//              *leftEnc = InitializeEncoder(...);
 //
-//      BeginPublishing(.1);
+//     InitializePublisher(&rightEncPub, "right_encoder", rightEnc, encoderPubHandler);
+//     InitializePublisher(&leftEncPub, "left_encoder", leftEnc, encoderPubHandler);
+//
+//     BeginPublishing(.1); 
 //
 // BeginPublishing will schedule a timer event to publish the following JSON-encoded data over UART every .1 
 // seconds:
@@ -32,23 +35,27 @@
 // Similarly, the following code will parse messages sent to the microcontroller in order to set motor 
 // powers:
 //
-//      void motorSubscriber(void* data, char* jsonvalue) {
+//      void motorSubHandler(void* data, char* jsonvalue) {
 //          int power = atoi(jsonvalue);
 //
+//          // expecting a power level in the range [-100,100]
 //          if (power < -100 || power > 100) {
-//              return; // expecting a power level in the range [-100,100]
+//              Printf("received unexpected motor power level: %d\n", power);
+//              return; 
 //          }
 //
 //          SetMotor((tMotor*)data, power/100.0);
 //      }
 //
+//      tSub rightMotorSub, leftMotorSub;
+//
 //      tMotor *rightMotor = InitializeMotor(...),
 //             *leftMotor = InitializeMotor(...);
 //
-//      AddSubscriber("right_motor", rightMotor, motorSubscriber);
-//      AddSubscriber("left_motor", leftMotor, motorSubscriber);
+//      InitializeSubscriber(&rightMotorSub, "right_motor", rightMotor, motorSubHandler);
+//      InitializeSubscriber(&leftMotorSub, "left_motor", leftMotor, motorSubHandler);
 //
-//      BeginSubscribing();
+//      BeginSubscribing(.1);
 //
 // BeginSubscribing will read lines from UART in a loop, trying to parse JSON-encoded objects. If it 
 // parses a JSON-encoded message that has either a "motor_right" or "motor_left" field, like this:
