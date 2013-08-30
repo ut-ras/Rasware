@@ -396,6 +396,16 @@
               <FilePath>.\src\Startup.s</FilePath>
             </File>
             <File>
+              <FileName>json_protocol.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\json_protocol.c</FilePath>
+            </File>
+            <File>
+              <FileName>rasstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\rasstring.c</FilePath>
+            </File>
+            <File>
               <FileName>sonar.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\sonar.c</FilePath>
@@ -454,11 +464,6 @@
               <FileName>jsmn.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\jsmn.c</FilePath>
-            </File>
-            <File>
-              <FileName>json_protocol.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\json_protocol.c</FilePath>
             </File>
             <File>
               <FileName>linesensorI2C.c</FileName>

@@ -405,11 +405,6 @@
               <FileType>2</FileType>
               <FilePath>..\RASLib\src\Startup.s</FilePath>
             </File>
-            <File>
-              <FileName>uartstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>C:\StellarisWare\utils\uartstdio.c</FilePath>
-            </File>
           </Files>
         </Group>
       </Groups>
