@@ -40,11 +40,6 @@
 static const char * const g_pcHex_U = "0123456789ABCDEF";
 static const char * const g_pcHex_L = "0123456789abcdef";
 
-void StdioInit(unsigned long ulPort)
-{
-  UARTStdioInit(ulPort);
-}
-
 // Sets up a simple console through UART0
 void InitializeUART(void)
 {
@@ -67,6 +62,11 @@ void InitializeUART(void)
 void StdioConfig(unsigned long ulPort, unsigned long ulBaud, unsigned long ulSrcClock)
 {
   UARTStdioConfig(ulPort, ulBaud, ulSrcClock);
+}
+
+void StdioInit(unsigned long ulPort)
+{
+  UARTStdioInit(ulPort);
 }
 
 void StdioInitExpClk(unsigned long ulPort, unsigned long ulBaud)

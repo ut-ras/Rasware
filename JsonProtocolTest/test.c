@@ -28,7 +28,7 @@ void test(void) {
 
 int main(void) {
     InitializeMCU();
-	InitializeUART();
+    InitializeUART();
     
     test();
     while(1);
