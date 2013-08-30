@@ -53,7 +53,7 @@ int main(void) {
     InitializeMCU();
     InitializeUART();
     
-    // setupPublishing();
+    setupPublishing();
     setupSubscribing();
     
     while(1);
