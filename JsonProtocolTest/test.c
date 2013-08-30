@@ -6,22 +6,22 @@
 #include <RASLib/inc/json_protocol.h> 
 #include <RASLib/inc/rasstring.h>
 
-char buffer[20];
+char msgBuffer[20];
+
+tPub rightEncPub, leftEncPub;
     
 char* encoderPublisher(void* data) {
-    int ticks = GetEncoder((tEncoder*)data);
+    SPrintf(msgBuffer, "%d", GetEncoder((tEncoder*)data));
     
-    SPrintf(buffer, "%d", ticks);
-    
-    return buffer;
+    return msgBuffer;
 }
-    
-void test(void) {
+
+void setupPublishing(void) {
     tEncoder *rightEnc = InitializeEncoder(PIN_B0, PIN_B1),
              *leftEnc = InitializeEncoder(PIN_B2, PIN_B3);
 
-    AddPublisher("right_encoder", rightEnc, encoderPublisher);
-    AddPublisher("left_encoder", leftEnc, encoderPublisher);
+    InitializePublisher(&rightEncPub, "right_encoder", rightEnc, encoderPublisher);
+    InitializePublisher(&leftEncPub, "left_encoder", leftEnc, encoderPublisher);
 
     BeginPublishing(.1);
 }
@@ -30,6 +30,7 @@ int main(void) {
     InitializeMCU();
     InitializeUART();
     
-    test();
+    setupPublishing();
+    
     while(1);
 }

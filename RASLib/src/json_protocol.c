@@ -4,43 +4,32 @@
 #include "uart.h"
 #include "rasstring.h"
 
-struct {
-    char *key;
-    void *data;
-    char* (*handler)(void*);
-    unsigned int keylen;
-} typedef tPub;
-
-struct {
-    char *key;
-    void *data;
-    void (*handler)(void*,char*);
-    unsigned int keylen;
-} typedef tSub;
-
 //
-// Internal buffers for data
+// Internal buffers for keeping track of publishers and subscribers
 //
-static tPub pubBuff[MAX_PUBLISHERS];
-static tSub subBuff[MAX_SUBSCRIBERS];
-static char keyBuff[KEY_BUFF_SIZE];
+static tPub* pubPtrBuff[MAX_PUBLISHERS];
+static tSub* subPtrBuff[MAX_SUBSCRIBERS];
 
 static unsigned int pubCount = 0,
-                    subCount = 0,
-                    keyBuffCount = 0;
+                    subCount = 0;
 
 //
-// input/output buffer and jsmn stuff
+// Input/output message buffers and jsmn stuff
 //
 static char inMsgBuff[MAX_IN_MSG_SIZE],
             outMsgBuff[MAX_OUT_MSG_SIZE];
 static jsmn_parser parser;
 static jsmntok_t tokens[MAX_IN_TOKENS];
 
+//
+// Constants for keeping track of tokens in messages
+//
 static const int elemExtra = 6, // for the comma (or beginning bracket), the colon, and four quotes
                  msgExtra = 3; // for the closing bracket, ending newline, and null terminator
 
-// These are here to make it easy to change how messages are printed
+//
+// Change these two functions to change how messages are sent
+//
 static void printError(char* msg, int error) {
     Printf("{\"error\":\"%s\",\"code\":%d}\n", msg, error);
 }
@@ -49,81 +38,77 @@ static void printMessage(char* msg) {
     Printf("%s", msg);
 }
 
-static int checkAndCopyKey(char *jsonkey, char **keyPtr, unsigned int *keyLenPtr) {
-    unsigned int keyLen = Strnlen(jsonkey, MAX_KEY_LEN); 
-    char *keyCopy = keyBuff + keyBuffCount;
+// Returns success
+static int checkAndCopyKey(char *jsonkey, char *key, unsigned int *keyLenPtr) {
+    unsigned int keyLen = Strnlen(jsonkey, MAX_KEY_LEN);
 
     if (keyLen >= MAX_KEY_LEN) {
         printError("key exceeds max length", 0);
-        return 0;
+        return false;
     }
 
-    if (keyBuffCount + keyLen >= KEY_BUFF_SIZE) {
-        printError("key cannot fit in buffer", 0);
-        return 0;
-    }
-
-    Strcpy(keyCopy, jsonkey);
-    keyBuffCount += keyLen + 1; // 1 for the null terminator
-
-    *keyPtr = keyCopy;
+    Strcpy(key, jsonkey);
+    key[keyLen] = 0; // null terminator
     *keyLenPtr = keyLen;
 
-    return 1;
+    return true;
 }
 
-// Adds a handler that will be called to create a string value for the given key
-// (this will deepcopy jsonkey to an internal buffer)
-void AddPublisher(char *jsonkey, void *data, char* (*handler)(void*)) {
-    int success = 0;
+int InitializePublisher(tPub *pubPtr, char *jsonkey, void *data, char* (*handler)(void*)) {
+    int success = false;
 
     if (pubCount >= MAX_PUBLISHERS) {
         printError("publisher limit already reached", 0);
-        return;
+        return false;
     }
 
     success = checkAndCopyKey(
         jsonkey,
-        &pubBuff[pubCount].key,
-        &pubBuff[pubCount].keylen
+        pubPtr->key,
+        &(pubPtr->keylen)
         );
 
     if (!success) {
-        return;
+        return false;
     }
 
-    pubBuff[pubCount].data = data;
-    pubBuff[pubCount].handler = handler;
-
+    pubPtr->data = data;
+    pubPtr->handler = handler;
+    
+    pubPtrBuff[pubCount] = pubPtr;
     pubCount += 1;
+    
+    return true;
 }
 
-// Add a handler to be called whenever the given key is found in received messages
-// (this will deepcopy jsonkey to an internal buffer)
-void AddSubscriber(char *jsonkey, void *data, void (*handler)(void*,char*)) {
-    int success = 0;
+int InitializeSubscriber(tSub *subPtr, char *jsonkey, void *data, void (*handler)(void*,char*)) {
+    int success = false;
  
     if (subCount >= MAX_SUBSCRIBERS) {
         printError("subscriber limit already reached", 0);
-        return;
+        return false;
     }
 
     success = checkAndCopyKey(
         jsonkey,
-        &subBuff[subCount].key,
-        &subBuff[subCount].keylen
+        subPtr->key,
+        &(subPtr->keylen)
         );
 
     if (!success) {
-        return;
+        return false;
     }
 
-    subBuff[subCount].data = data;
-    subBuff[subCount].handler = handler;
+    subPtr->data = data;
+    subPtr->handler = handler;
 
+    subPtrBuff[subCount] = subPtr;
     subCount += 1;
+    
+    return true;
 }
 
+// Calls all publisher handlers to put together a message, then sends it
 static void createAndPublishMessage(void *data) {
     int i,
         totalLen = 0;
@@ -133,10 +118,10 @@ static void createAndPublishMessage(void *data) {
          *format = format1;
 
     for (i = 0; i < pubCount; i++) {
-        char *value = pubBuff[i].handler(pubBuff[i].data);
+        char *value = (pubPtrBuff[i]->handler)(pubPtrBuff[i]->data);
 
         unsigned int valuelen = Strnlen(value, MAX_VAL_LEN),
-                     len = pubBuff[i].keylen + valuelen + elemExtra; 
+                     len = pubPtrBuff[i]->keylen + valuelen + elemExtra; 
 
         if (valuelen >= MAX_VAL_LEN) {
             printError("data value string returned by publisher exceeds maximum length", 0);
@@ -151,8 +136,8 @@ static void createAndPublishMessage(void *data) {
         SPrintf(
             msgPtr,
             format,
-            pubBuff[i].key,
-            pubBuff[i].handler(pubBuff[i].data)
+            pubPtrBuff[i]->key,
+            (pubPtrBuff[i]->handler)(pubPtrBuff[i]->data)
             );
 
         format = format2;
@@ -169,12 +154,11 @@ static void createAndPublishMessage(void *data) {
     printMessage(outMsgBuff);
 }
 
-// Begins calling all pub handlers and encoding data every 'period' seconds
 void BeginPublishing(float period) {
     CallEvery(createAndPublishMessage, 0, period);
 }
 
-// this uses recursion to traverse JSON messages and pick out top-leve keys.
+// Uses recursion to traverse JSON messages and pick out top-leve keys.
 // TODO: using recursion on a microcontroller is probably not a good idea because of
 //  limited stack space. this should probably be rewritten iteratively, using a stack
 //  that is statically allocated in file scope.
@@ -187,8 +171,11 @@ static int walkJSONMsg(int index, int isKey) {
         inMsgBuff[tokens[index + 1].end] = 0;
 
         for (i = 0; i < subCount; i++) {
-            if (0 == Strcmp(subBuff[i].key, &inMsgBuff[tokens[index].start])) {
-                subBuff[i].handler(subBuff[i].data, &inMsgBuff[tokens[index + 1].start]);
+            if (0 == Strcmp(subPtrBuff[i]->key, &inMsgBuff[tokens[index].start])) {
+                (subPtrBuff[i]->handler)(
+                    subPtrBuff[i]->data, 
+                    &inMsgBuff[tokens[index + 1].start]
+                    );
             }
         }
     }
@@ -203,7 +190,6 @@ static int walkJSONMsg(int index, int isKey) {
     return total + tokens[index].size;
 }
 
-// Begins parsing messages and calling sub handlers in a blocking loop
 void BeginSubscribing(float secsBetweenReads) {
     while (1) {
         int numBytes = Gets(inMsgBuff, sizeof(inMsgBuff));
@@ -216,7 +202,8 @@ void BeginSubscribing(float secsBetweenReads) {
             error = jsmn_parse(&parser, inMsgBuff, tokens, MAX_IN_TOKENS);
 
             if (error == JSMN_SUCCESS) {
-                // recursively run thru the tokens, compare with subscriber keys
+                // recursively run thru the tokens, comparing with subscriber keys,
+                //  and calling subscriber handlers when finding matching keys
                 walkJSONMsg(0, 0);
             } else {
                 printError("jsmn parse error", error);

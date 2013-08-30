@@ -63,22 +63,37 @@
 #define MAX_SUBSCRIBERS 10
 #define MAX_KEY_LEN 15
 #define MAX_VAL_LEN 20
-#define KEY_BUFF_SIZE 300
 #define MAX_IN_MSG_SIZE 1000
 #define MAX_OUT_MSG_SIZE 1000
 #define MAX_IN_TOKENS 20
 
-// Adds a handler that will be called to create a string value for the given key 
-// (this will deepcopy jsonkey to an internal buffer)
-void AddPublisher(char *jsonkey, void *data, char* (*handler)(void*)); 
+struct {
+    char key[MAX_KEY_LEN];
+    void *data;
+    char* (*handler)(void*);
+    unsigned int keylen;
+} typedef tPub;
 
-// Add a handler to be called whenever the given key is found in received messages
-// (this will deepcopy jsonkey to an internal buffer)
-void AddSubscriber(char *jsonkey, void *data, void (*handler)(void*,char*));
+struct {
+    char key[MAX_KEY_LEN];
+    void *data;
+    void (*handler)(void*,char*);
+    unsigned int keylen;
+} typedef tSub;
+
+// Initializes a handler that will be called to create a string value for the given key, 
+//  which will be sent in a json message.
+//  (this will deepcopy jsonkey to the key buffer in the pub struct)
+int InitializePublisher(tPub *pub, char *jsonkey, void *data, char* (*handler)(void*)); 
+
+// Initializes a handler to be called whenever the given key is found in received messages
+//  (this will deepcopy jsonkey to the key buffer in the sub struct)
+int InitializeSubscriber(tSub *sub, char *jsonkey, void *data, void (*handler)(void*,char*)); 
 
 // Begins calling all publisher handlers and encoding data every 'period' seconds
 void BeginPublishing(float period);
 
-// Begins parsing messages and calling subscriber handlers in a blocking loop
+// Begins parsing messages and calling subscriber handlers in a blocking loop, pausing for
+//  'secsBetweenReads' seconds between each read
 void BeginSubscribing(float secsBetweenReads);
 
