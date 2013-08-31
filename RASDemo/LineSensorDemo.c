@@ -12,7 +12,7 @@
 tLineSensor *ls;
 
 void initLineSensor(void) {
-	ls = InitializeLineSensor(PIN_B3, PIN_B2);
+	ls = InitializeLineSensor(PIN_B3, PIN_B2, 0);
 }
 
 void lineSensorDemo(void) {
@@ -20,7 +20,7 @@ void lineSensorDemo(void) {
 	UARTprintf("Press:\nany key-read line sensor\n");
 	UARTprintf("any key after read begins-quit\n");
 	while(!keyWasPressed()) {
-		UARTprintf("Line Sensor: %x\n", LineSensorRead(ls, 0.5f));
+		UARTprintf("Line Sensor: %x\r", LineSensorRead(ls, 0.5f));
 	}
 	UARTprintf("\n"); 
 }

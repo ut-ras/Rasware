@@ -66,12 +66,10 @@ tLineSensor *InitializeLineSensor(tPin sda, tPin scl, unsigned int address) {
 // Internally used handler to trigger next
 // sensor read in the line sensor
 void LineSensorHandler(tLineSensor *ls) {
-    if (ls->index == 8) {
+    if (ls->index >= 8) {
         // If we're finished we call the callback
         ls->in_callback = true;
         ls->callback(ls->data);
-        
-        // release all the flags
         ls->in_callback = false;
         ls->pending = false;
         
@@ -81,7 +79,7 @@ void LineSensorHandler(tLineSensor *ls) {
         
         I2CBackgroundRequest(ls->i2c, ls->address,
                              &REQUEST_CMD, 1,
-                             &ls->values[ls->index], 1,
+                             &ls->values[ls->index-1], 1,
                              LineSensorHandler, ls);
     }
 }     
@@ -95,8 +93,9 @@ void LineSensorBackgroundRead(tLineSensor *ls, tCallback callback, void *data) {
     ls->callback = callback ? callback : Dummy;
     ls->data = data;
     
-    // Reset the index;
+    // Reset the index and flags
     ls->index = 0;
+    ls->pending = true;
     
     // Call the handler itself to start reading the values
     LineSensorHandler(ls);

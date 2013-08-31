@@ -29,15 +29,20 @@ struct I2C {
     unsigned char *data;
     unsigned int len;
     
+    // Pins in use
+    tPin sda;
+    tPin scl;
+    
     // Callback data
     tCallback callback;
     void *cbdata;
     
     // State machine
     volatile enum {
+        DONE,
         SENDING,
         RECEIVING,
-        DONE
+        TIMEOUT
     } state;
     
     // Information for requests
@@ -67,12 +72,8 @@ tI2C i2cBuffer[] = {
 int i2cCount = 0;
 
 
-// Function to initialize an I2C module on a pair of pins
-// The returned pointer can be used by the Send and Recieve functions
-tI2C *InitializeI2C(tPin sda, tPin scl) {
-    // Grab the next module
-    tI2C *i2c = &i2cBuffer[i2cCount++];
-    
+// Internally used function to setup an I2C module
+static void InitializeI2CModule(tI2C *i2c) {
     // Reset the state machine
     i2c->state = DONE;
     
@@ -80,11 +81,14 @@ tI2C *InitializeI2C(tPin sda, tPin scl) {
     SysCtlPeripheralEnable(i2c->PERIPH);
     
     // Setup the pins as specified
-    GPIOPinTypeI2C(PORT_VAL(sda), PIN_VAL(sda));
-    GPIOPinTypeI2CSCL(PORT_VAL(scl), PIN_VAL(scl));
+    GPIOPinTypeI2C(PORT_VAL(i2c->sda), PIN_VAL(i2c->sda));
+    GPIOPinTypeI2CSCL(PORT_VAL(i2c->scl), PIN_VAL(i2c->scl));
     
     // Setup the clock
     I2CMasterInitExpClk(i2c->BASE, SysCtlClockGet(), false);
+    
+    // Timeout value is set to arbitrarily 20ms
+    I2CMasterTimeoutSet(i2c->BASE, 0x7d);
     
     // Enable the I2C module
     I2CMasterEnable(i2c->BASE);
@@ -93,6 +97,21 @@ tI2C *InitializeI2C(tPin sda, tPin scl) {
     I2CMasterIntEnableEx(i2c->BASE, I2C_MASTER_INT_TIMEOUT | 
                                     I2C_MASTER_INT_DATA);
 	IntEnable(i2c->INT);
+}
+
+
+// Function to initialize an I2C module on a pair of pins
+// The returned pointer can be used by the Send and Recieve functions
+tI2C *InitializeI2C(tPin sda, tPin scl) {
+    // Grab the next module
+    tI2C *i2c = &i2cBuffer[i2cCount++];
+    
+    // Setup the pins
+    i2c->sda = sda;
+    i2c->scl = scl;
+    
+    // Initialize the underlying module
+    InitializeI2CModule(i2c);
     
     // Return the initialized module
     return i2c;
@@ -101,7 +120,8 @@ tI2C *InitializeI2C(tPin sda, tPin scl) {
 // This function returns true if the 
 // previous transaction was successful
 tBoolean I2CSuccess(tI2C *i2c) {
-    return (I2CMasterErr(i2c->BASE) == I2C_MASTER_ERR_NONE);
+    return (i2c->state != TIMEOUT && 
+            I2CMasterErr(i2c->BASE) == I2C_MASTER_ERR_NONE);
 }
 
 
@@ -111,8 +131,17 @@ tBoolean I2CSuccess(tI2C *i2c) {
 #define I2C_HANDLER(MOD)                                                \
 void I2C##MOD##Handler(void) {                                          \
     tI2C *i2c = &i2cBuffer[MOD];                                        \
+    unsigned long status = I2CMasterIntStatusEx(I2C##MOD##_MASTER_BASE, \
+                                                false);                 \
                                                                         \
-    I2CMasterIntClear(I2C##MOD##_MASTER_BASE);                          \
+    if (status == I2C_MASTER_INT_TIMEOUT) {                             \
+        I2CMasterIntClearEx(I2C##MOD##_MASTER_BASE,                     \
+                            I2C_MASTER_INT_TIMEOUT);                    \
+        i2c->state = TIMEOUT;                                           \
+    } else {                                                            \
+        I2CMasterIntClearEx(I2C##MOD##_MASTER_BASE,                     \
+                            I2C_MASTER_INT_DATA);                       \
+    }                                                                   \
                                                                         \
     switch(i2c->state) {                                                \
         case SENDING:                                                   \
@@ -154,6 +183,10 @@ void I2C##MOD##Handler(void) {                                          \
                                  I2C_MASTER_CMD_BURST_RECEIVE_FINISH);  \
                                                                         \
             break;                                                      \
+                                                                        \
+        case TIMEOUT:                                                   \
+            i2c->callback(i2c->cbdata);                                 \
+            break;                                                      \
     }                                                                   \
 }
 
@@ -175,6 +208,12 @@ void I2CBackgroundSend(tI2C *i2c, unsigned char addr,
     if (len < 1) {
         callback(cbdata);
         return;
+    }
+    
+    // Reset the module in erronous condition
+    if (i2c->state == TIMEOUT) {
+        SysCtlPeripheralReset(i2c->PERIPH);
+        InitializeI2CModule(i2c);
     }
     
     // We loop here while the bus is busy
@@ -229,6 +268,12 @@ void I2CBackgroundReceive(tI2C *i2c, unsigned char addr,
         return;
     }
     
+    // Reset the module in erronous condition
+    if (i2c->state == TIMEOUT) {
+        SysCtlPeripheralReset(i2c->PERIPH);
+        InitializeI2CModule(i2c);
+    }
+    
     // We loop here while the bus is busy
     // correct recieving behaviour should be implemented
     // at a higher level
@@ -241,6 +286,10 @@ void I2CBackgroundReceive(tI2C *i2c, unsigned char addr,
     // Initialize callback information
     i2c->callback = callback ? callback : Dummy;
     i2c->cbdata = cbdata;
+    
+    // Setup receiving data
+    i2c->data = data;
+    i2c->len = len;
     
     // Either read single byte of data or multiple
     if (len == 1)
@@ -284,7 +333,7 @@ void I2CBackgroundRequest(tI2C *i2c, unsigned char addr,
     // We loop here while the bus is busy
     // correct requesting behaviour should be implemented
     // at a higher level
-    while (i2c->state != DONE);
+    while (i2c->state != DONE && i2c->state != TIMEOUT);
 
     // First fill out request information to keep track of
     i2c->request.addr = addr;
