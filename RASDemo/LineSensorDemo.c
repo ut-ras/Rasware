@@ -1,11 +1,10 @@
 #include <inc/hw_types.h>		// tBoolean
 #include <inc/hw_memmap.h>
-#include <utils/uartstdio.h>	// input/output over UART	 
-#include <driverlib/uart.h>		// input/output over UART
 #include <driverlib/gpio.h>
 #include <driverlib/sysctl.h>
 
 #include <RASLib/inc/linesensor.h>
+#include <RASLib/inc/uart.h>
 
 #include "RASDemo.h"
 
@@ -17,10 +16,20 @@ void initLineSensor(void) {
 
 void lineSensorDemo(void) {
 	// 2012 Line Sensor Demo
-	UARTprintf("Press:\nany key-read line sensor\n");
-	UARTprintf("any key after read begins-quit\n");
-	while(!keyWasPressed()) {
-		UARTprintf("Line Sensor: %x\r", LineSensorRead(ls, 0.5f));
+	Printf("Press:\nany key-read line sensor\n");
+	Printf("any key after read begins-quit\n");
+	while(!KeyWasPressed()) {
+        int i;
+        float line[8];
+        
+        LineSensorReadArray(ls, line);
+		Printf("Line Sensor: [");
+        
+        for (i=0; i < 8; i++) {
+            Printf("%f ", line[i]);
+        }
+        
+        Printf("\b]\r");
 	}
-	UARTprintf("\n"); 
+	Printf("\n"); 
 }

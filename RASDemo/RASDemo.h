@@ -1,9 +1,3 @@
-// Functions in UARTDemo
-void initUART(void);
-void uartDemo(void);
-char getc(void);
-void putc(char ch);
-int keyWasPressed(void);
 
 // Functions in MotorDemo
 
@@ -26,3 +20,6 @@ void IRSensorDemo(void);
 // Functions in EncoderDemo
 void initEncoders(void);
 void encoderDemo(void);
+
+// Function for UARTDemo
+void uartDemo(void);
