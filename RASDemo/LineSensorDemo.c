@@ -23,7 +23,7 @@ void lineSensorDemo(void) {
         float line[8];
         
         LineSensorReadArray(ls, line);
-		Printf("Line Sensor: [");
+        Printf("Line Sensor: [");
         
         for (i=0; i < 8; i++) {
             Printf("%f ", line[i]);
