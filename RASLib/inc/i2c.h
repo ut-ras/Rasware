@@ -18,8 +18,15 @@ extern "C"
 {
 #endif
     
+// Constants used for I2C timing
+// Each is given in units of microseconds
+#define I2C_TIMEOUT 20000
+    
 // Definition of struct I2C in i2c.c
 typedef struct I2C tI2C;
+
+// Number of available I2C modules
+#define I2C_COUNT 6
 
 // Function to initialize an I2C module on a pair of pins
 // The returned pointer can be used by the Send and Recieve functions

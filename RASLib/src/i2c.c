@@ -58,9 +58,10 @@ struct I2C {
     } request;
 };
 
+
 // Buffer of I2C structs to use
 // Limited to the available modules
-tI2C i2cBuffer[] = {
+static tI2C i2cBuffer[I2C_COUNT] = {
     {I2C0_MASTER_BASE, SYSCTL_PERIPH_I2C0, INT_I2C0},
     {I2C1_MASTER_BASE, SYSCTL_PERIPH_I2C1, INT_I2C1},
     {I2C2_MASTER_BASE, SYSCTL_PERIPH_I2C2, INT_I2C2},
@@ -69,7 +70,7 @@ tI2C i2cBuffer[] = {
     {I2C5_MASTER_BASE, SYSCTL_PERIPH_I2C5, INT_I2C5},
 };
 
-int i2cCount = 0;
+static int i2cCount = 0;
 
 
 // Internally used function to setup an I2C module
@@ -84,11 +85,9 @@ static void InitializeI2CModule(tI2C *i2c) {
     GPIOPinTypeI2C(PORT_VAL(i2c->sda), PIN_VAL(i2c->sda));
     GPIOPinTypeI2CSCL(PORT_VAL(i2c->scl), PIN_VAL(i2c->scl));
     
-    // Setup the clock
+    // Setup the clock and timeout value
     I2CMasterInitExpClk(i2c->BASE, SysCtlClockGet(), false);
-    
-    // Timeout value is set to arbitrarily 20ms
-    I2CMasterTimeoutSet(i2c->BASE, 0x7d);
+    I2CMasterTimeoutSet(i2c->BASE, (I2C_TIMEOUT / 10) >> 4);
     
     // Enable the I2C module
     I2CMasterEnable(i2c->BASE);
@@ -98,7 +97,6 @@ static void InitializeI2CModule(tI2C *i2c) {
                                     I2C_MASTER_INT_DATA);
 	IntEnable(i2c->INT);
 }
-
 
 // Function to initialize an I2C module on a pair of pins
 // The returned pointer can be used by the Send and Recieve functions
@@ -116,6 +114,7 @@ tI2C *InitializeI2C(tPin sda, tPin scl) {
     // Return the initialized module
     return i2c;
 }
+
 
 // This function returns true if the 
 // previous transaction was successful
@@ -204,7 +203,7 @@ I2C_HANDLER(5);
 void I2CBackgroundSend(tI2C *i2c, unsigned char addr, 
                                   const unsigned char *data, unsigned int len,
                                   tCallback callback, void *cbdata) {
-	// Make sure data is actually being sent
+    // Make sure data is actually being sent
     if (len < 1) {
         callback(cbdata);
         return;
@@ -262,7 +261,7 @@ tBoolean I2CSend(tI2C *i2c, unsigned char addr,
 void I2CBackgroundReceive(tI2C *i2c, unsigned char addr, 
                                      unsigned char *data, unsigned int len,
                                      tCallback callback, void *cbdata) {
-	// Make sure data is actually being retrieve
+    // Make sure data is actually being retrieved
     if (len < 1) {
         callback(cbdata);
         return;

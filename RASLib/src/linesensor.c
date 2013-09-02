@@ -39,12 +39,13 @@ struct LineSensor {
     volatile tBoolean pending : 1;
 };
 
-// Buffer of line sensor structs to use
-// There can only be the total count of pins/2 since each
-// line sensor needs 2 pins
-tLineSensor lineSensorBuffer[PIN_COUNT / 2];
 
-int lineSensorCount = 0;
+// Buffer of line sensor structs to use
+// There can only be up to the number of I2C modules times 4
+// since there can be 4 addresses on each bus
+static tLineSensor lineSensorBuffer[I2C_COUNT * 4];
+
+static int lineSensorCount = 0;
         
 
 // Function to initialize a line sensor on a pair of pins
@@ -63,9 +64,10 @@ tLineSensor *InitializeLineSensor(tPin sda, tPin scl, unsigned int address) {
     return ls;
 }
 
+
 // Internally used handler to trigger next
 // sensor read in the line sensor
-void LineSensorHandler(tLineSensor *ls) {
+static void LineSensorHandler(tLineSensor *ls) {
     if (ls->index >= 8) {
         // If we're finished we call the callback
         ls->in_callback = true;
@@ -86,8 +88,7 @@ void LineSensorHandler(tLineSensor *ls) {
                              &ls->values[index], 1,
                              LineSensorHandler, ls);
     }
-}     
-
+}
 
 // This function sets up a LineSensor to be run in the background
 // A callback can be passed, in which a call to LineSensorRead 
@@ -200,8 +201,3 @@ void LineSensorReadContinuouslyUS(tLineSensor *ls, tTime us) {
 void LineSensorReadContinuously(tLineSensor *ls, float s) {
     LineSensorReadContinuouslyUS(ls, US(s));
 }
-
-
-
-
-

@@ -39,12 +39,14 @@ tLineSensor *InitializeLineSensor(tPin sda, tPin scl, unsigned int address);
 // each bit is matched against a threshold that is passed.
 // If the LineSensor is not continously reading,
 // then the function will busy wait for the results
+// If there is an error in the I2C module, the returned value will be all ones
 unsigned char LineSensorRead(tLineSensor *ls, float threshold);
 
 // This function returns the values measured as an
 // array of ratios placed in the passed memory location.
 // If the LineSensor is not continously reading,
 // then the function will busy wait for the results
+// If there is an error in the I2C module, the array will be filled with infinity.
 void LineSensorReadArray(tLineSensor *ls, float *array);
 
 // This function sets up a LineSensor to be run in the background

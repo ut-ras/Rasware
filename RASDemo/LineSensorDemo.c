@@ -12,6 +12,7 @@ tLineSensor *ls;
 
 void initLineSensor(void) {
 	ls = InitializeLineSensor(PIN_B3, PIN_B2, 0);
+    LineSensorReadContinuously(ls, 1);
 }
 
 void lineSensorDemo(void) {
