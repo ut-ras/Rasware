@@ -57,6 +57,7 @@ tMotor *InitializeMotor(tPin a, tPin b, tBoolean brake, tBoolean invert) {
     
     // Setup the initial data
     mtr->brake = brake;
+    mtr->invert = invert;
     
     // Initialize pwm on both pins
     mtr->pwm0 = InitializePWM(a, 100.0f);
