@@ -102,6 +102,12 @@ __heap_limit
         EXTERN WTimer4BHandler
         EXTERN WTimer5AHandler
         EXTERN WTimer5BHandler
+        EXTERN I2C0Handler
+        EXTERN I2C1Handler
+        EXTERN I2C2Handler
+        EXTERN I2C3Handler
+        EXTERN I2C4Handler
+        EXTERN I2C5Handler
         
         EXPORT  __Vectors
 __Vectors
@@ -129,7 +135,7 @@ __Vectors
         DCD     IntDefaultHandler           ; UART0 Rx and Tx
         DCD     IntDefaultHandler           ; UART1 Rx and Tx
         DCD     IntDefaultHandler           ; SSI0 Rx and Tx
-        DCD     IntDefaultHandler           ; I2C0 Master and Slave
+        DCD     I2C0Handler                 ; I2C0 Master and Slave
         DCD     IntDefaultHandler           ; PWM Fault
         DCD     IntDefaultHandler           ; PWM Generator 0
         DCD     IntDefaultHandler           ; PWM Generator 1
@@ -158,7 +164,7 @@ __Vectors
         DCD     IntDefaultHandler           ; SSI1 Rx and Tx
         DCD     IntDefaultHandler           ; Timer 3 subtimer A
         DCD     IntDefaultHandler           ; Timer 3 subtimer B
-        DCD     IntDefaultHandler           ; I2C1 Master and Slave
+        DCD     I2C1Handler                 ; I2C1 Master and Slave
         DCD     IntDefaultHandler           ; Quadrature Encoder 1
         DCD     IntDefaultHandler           ; CAN0
         DCD     IntDefaultHandler           ; CAN1
@@ -189,8 +195,8 @@ __Vectors
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
-        DCD     IntDefaultHandler           ; I2C2 Master and Slave
-        DCD     IntDefaultHandler           ; I2C3 Master and Slave
+        DCD     I2C2Handler                 ; I2C2 Master and Slave
+        DCD     I2C3Handler                 ; I2C3 Master and Slave
         DCD     IntDefaultHandler           ; Timer 4 subtimer A
         DCD     IntDefaultHandler           ; Timer 4 subtimer B
         DCD     0                           ; Reserved
@@ -230,8 +236,8 @@ __Vectors
         DCD     IntDefaultHandler           ; FPU
         DCD     IntDefaultHandler           ; PECI 0
         DCD     IntDefaultHandler           ; LPC 0
-        DCD     IntDefaultHandler           ; I2C4 Master and Slave
-        DCD     IntDefaultHandler           ; I2C5 Master and Slave
+        DCD     I2C4Handler                 ; I2C4 Master and Slave
+        DCD     I2C5Handler                 ; I2C5 Master and Slave
         DCD     IntDefaultHandler           ; GPIO Port M
         DCD     IntDefaultHandler           ; GPIO Port N
         DCD     IntDefaultHandler           ; Quadrature Encoder 2

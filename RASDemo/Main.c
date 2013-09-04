@@ -39,7 +39,7 @@ int main(void)
 		}
 		else if (ch == '3') {			   
 			Printf("\nLine Sensor Demo\n");
-			InitializeLineSensor();		  
+			initLineSensor();		  
 			lineSensorDemo();
 		}
 		else if (ch == '4') {	   
