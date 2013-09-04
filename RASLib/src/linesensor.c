@@ -50,15 +50,15 @@ static int lineSensorCount = 0;
 
 // Function to initialize a line sensor on a pair of pins
 // The returned pointer can be used by the LineSensorRead functions
-tLineSensor *InitializeLineSensor(tPin sda, tPin scl, unsigned int address) {
+tLineSensor *InitializeLineSensor(tI2C *i2c, unsigned int address) {
     // Grab the next line sensor
     tLineSensor *ls = &lineSensorBuffer[lineSensorCount++];
     
-    // Initialize the I2C module
-    ls->i2c = InitializeI2C(sda, scl);
+    // Keep track of the I2C module
+    ls->i2c = i2c;
     
     // Create the actual address
-    ls->address = ADS7830 | address;
+    ls->address = ADS7830 | (0x3 & address);
     
     // Return the initialized line sensor
     return ls;
@@ -144,7 +144,7 @@ unsigned char LineSensorRead(tLineSensor *ls, float threshold) {
 // array of ratios placed in the passed memory location.
 // If the LineSensor is not continously reading,
 // then the function will busy wait for the results
-void LineSensorReadArray(tLineSensor *ls, float *array) {
+tBoolean LineSensorReadArray(tLineSensor *ls, float *array) {
     int i;
     
     // Check if we need to read a value
@@ -159,13 +159,15 @@ void LineSensorReadArray(tLineSensor *ls, float *array) {
         for (i=0; i < 8; i++)
             array[i] = INFINITY;
         
-        return;
+        return false;
     }
     
     // Calculate the values
     for (i=0; i < 8; i++) {
         array[i] = (ls->values[i] / (float)(0x100));
     }
+    
+    return true;
 }
 
 

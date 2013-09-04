@@ -33,7 +33,7 @@ typedef struct LineSensor tLineSensor;
 // Function to initialize a line sensor on a pair of pins
 // Address is be a 2-bit value determined by the solder jumpers on the board
 // The returned pointer can be used by the LineSensorRead functions
-tLineSensor *InitializeLineSensor(tPin sda, tPin scl, unsigned int address);
+tLineSensor *InitializeLineSensor(tI2C *i2c, unsigned int address);
 
 // This function returns the values measured as a bit-packed byte
 // each bit is matched against a threshold that is passed.
@@ -46,8 +46,9 @@ unsigned char LineSensorRead(tLineSensor *ls, float threshold);
 // array of ratios placed in the passed memory location.
 // If the LineSensor is not continously reading,
 // then the function will busy wait for the results
-// If there is an error in the I2C module, the array will be filled with infinity.
-void LineSensorReadArray(tLineSensor *ls, float *array);
+// The function returns true if successful, otherwise
+// it returns false and fills the array with infinities
+tBoolean LineSensorReadArray(tLineSensor *ls, float *array);
 
 // This function sets up a LineSensor to be run in the background
 // A callback can be passed, in which a call to LineSensorRead 

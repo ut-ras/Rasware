@@ -11,8 +11,8 @@
 tLineSensor *ls;
 
 void initLineSensor(void) {
-	ls = InitializeLineSensor(PIN_B3, PIN_B2, 0);
-    LineSensorReadContinuously(ls, 1);
+    tI2C *bus = InitializeI2C(PIN_B3, PIN_B2);
+	ls = InitializeLineSensor(bus, 0);
 }
 
 void lineSensorDemo(void) {
