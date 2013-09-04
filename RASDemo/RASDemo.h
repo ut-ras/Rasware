@@ -9,6 +9,7 @@ void initServo(void);
 void servoDemo(void);
 
 // Functions in LineSensorDemo
+void initLineSensor(void);
 void lineSensorDemo(void);
 
 // Function in IRDemo

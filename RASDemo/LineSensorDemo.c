@@ -8,28 +8,29 @@
 
 #include "RASDemo.h"
 
-void lineSensorDemo(void) {
-	unsigned char lineSensorArray[8];
-//	char filteredArray[8]; 
-	int i; 
+tLineSensor *ls;
 
+void initLineSensor(void) {
+    tI2C *bus = InitializeI2C(PIN_B3, PIN_B2);
+	ls = InitializeLineSensor(bus, 0);
+}
+
+void lineSensorDemo(void) {
+	// 2012 Line Sensor Demo
 	Printf("Press:\nany key-read line sensor\n");
 	Printf("any key after read begins-quit\n");
 	while(!KeyWasPressed()) {
-		ReadLineSensorArray(lineSensorArray);
-		Printf("Line Sensor: ");
-		for(i = 0; i < 8; i++)
-    {	
-			/*
-			if(lineSensorArray[i]>100) {
-				filteredArray[i] = 1; 
-			}
-			else filteredArray[i] = 0; 
-			*/
-			Printf("%u      ",lineSensorArray[i]);
-	  }
-		Printf("\r"); 
-
+        int i;
+        float line[8];
+        
+        LineSensorReadArray(ls, line);
+        Printf("Line Sensor: [");
+        
+        for (i=0; i < 8; i++) {
+            Printf("%f ", line[i]);
+        }
+        
+        Printf("\b]\r");
 	}
 	Printf("\n"); 
 }
