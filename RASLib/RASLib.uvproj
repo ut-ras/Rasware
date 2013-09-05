@@ -468,7 +468,7 @@
             <File>
               <FileName>driverlib-cm4f.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>..\StellarisWare\driverlib\rvmdk-cm4f\driverlib-cm4f.lib</FilePath>
+              <FilePath>C:\StellarisWare\driverlib\rvmdk-cm4f\driverlib-cm4f.lib</FilePath>
             </File>
           </Files>
         </Group>
