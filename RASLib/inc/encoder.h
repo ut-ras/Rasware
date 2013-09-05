@@ -39,7 +39,7 @@ typedef struct Encoder tEncoder;
 
 // Function to initialize an encoder on a pair of pins
 // The returned pointer can be used by the GetEncoder function
-tEncoder *InitializeEncoder(tPin a, tPin b);
+tEncoder *InitializeEncoder(tPin a, tPin b, tBoolean invert);
 
 // This function returns the accumulated encoder value
 signed long GetEncoder(tEncoder *enc);
