@@ -10,7 +10,6 @@ int main(void)
 	char ch;	  	 
 
 	InitializeMCU();
-	InitializeUART();
 
 	while(1) {
 		Printf("\nRAS Demo for Robotathon 2013\n");

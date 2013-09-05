@@ -21,4 +21,5 @@
 //
 //*****************************************************************************
 
+// The following function sets up the LM4F to use RASLib
 void InitializeMCU(void);

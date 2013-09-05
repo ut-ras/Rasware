@@ -27,9 +27,11 @@
 #include "init.h"
 #include "time.h"
 #include "gpio.h"
+#include "uart.h"
 #include "driverlib/fpu.h"
 #include "driverlib/interrupt.h"
 
+// The following function sets up the LM4F to use RASLib
 void InitializeMCU(void)
 {
     // Enable lazy stacking for interrupt handlers.  This allows floating-point
@@ -46,6 +48,9 @@ void InitializeMCU(void)
     
     //Initialize GPIO Interrupt Handlers
     InitializeGPIO();
+    
+    //Initialize UART for communication
+    InitializeUART();
     
     //Enable global interrupts
     IntMasterEnable();    
