@@ -428,7 +428,7 @@
             <File>
               <FileName>Startup.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\RASLib\src\Startup.s</FilePath>
+              <FilePath>.\Startup.s</FilePath>
             </File>
           </Files>
         </Group>

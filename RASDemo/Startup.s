@@ -78,6 +78,37 @@ __heap_limit
 ; The vector table.
 ;
 ;******************************************************************************
+        EXTERN ADC0SS0Handler
+        EXTERN ADC0SS1Handler
+        EXTERN ADC1SS0Handler
+        EXTERN ADC1SS1Handler
+        EXTERN PortAHandler
+        EXTERN PortBHandler
+        EXTERN PortCHandler
+        EXTERN PortDHandler
+        EXTERN PortEHandler
+        EXTERN PortFHandler
+        EXTERN SysTickHandler
+        EXTERN Timer5Handler
+        EXTERN WTimer0AHandler
+        EXTERN WTimer0BHandler
+        EXTERN WTimer1AHandler
+        EXTERN WTimer1BHandler
+        EXTERN WTimer2AHandler
+        EXTERN WTimer2BHandler
+        EXTERN WTimer3AHandler
+        EXTERN WTimer3BHandler
+        EXTERN WTimer4AHandler
+        EXTERN WTimer4BHandler
+        EXTERN WTimer5AHandler
+        EXTERN WTimer5BHandler
+        EXTERN I2C0Handler
+        EXTERN I2C1Handler
+        EXTERN I2C2Handler
+        EXTERN I2C3Handler
+        EXTERN I2C4Handler
+        EXTERN I2C5Handler
+        
         EXPORT  __Vectors
 __Vectors
         DCD     StackMem + Stack            ; Top of Stack
@@ -95,23 +126,23 @@ __Vectors
         DCD     IntDefaultHandler           ; Debug monitor handler
         DCD     0                           ; Reserved
         DCD     IntDefaultHandler           ; PendSV Handler
-        DCD     IntDefaultHandler           ; SysTick Handler
-        DCD     IntDefaultHandler           ; GPIO Port A
-        DCD     IntDefaultHandler           ; GPIO Port B
-        DCD     IntDefaultHandler           ; GPIO Port C
-        DCD     IntDefaultHandler           ; GPIO Port D
-        DCD     IntDefaultHandler           ; GPIO Port E
+        DCD     SysTickHandler              ; SysTick Handler
+        DCD     PortAHandler                ; GPIO Port A
+        DCD     PortBHandler                ; GPIO Port B
+        DCD     PortCHandler                ; GPIO Port C
+        DCD     PortDHandler                ; GPIO Port D
+        DCD     PortEHandler                ; GPIO Port E
         DCD     IntDefaultHandler           ; UART0 Rx and Tx
         DCD     IntDefaultHandler           ; UART1 Rx and Tx
         DCD     IntDefaultHandler           ; SSI0 Rx and Tx
-        DCD     IntDefaultHandler           ; I2C0 Master and Slave
+        DCD     I2C0Handler                 ; I2C0 Master and Slave
         DCD     IntDefaultHandler           ; PWM Fault
         DCD     IntDefaultHandler           ; PWM Generator 0
         DCD     IntDefaultHandler           ; PWM Generator 1
         DCD     IntDefaultHandler           ; PWM Generator 2
         DCD     IntDefaultHandler           ; Quadrature Encoder 0
-        DCD     IntDefaultHandler           ; ADC Sequence 0
-        DCD     IntDefaultHandler           ; ADC Sequence 1
+        DCD     ADC0SS0Handler              ; ADC Sequence 0
+        DCD     ADC0SS1Handler              ; ADC Sequence 1
         DCD     IntDefaultHandler           ; ADC Sequence 2
         DCD     IntDefaultHandler           ; ADC Sequence 3
         DCD     IntDefaultHandler           ; Watchdog timer
@@ -126,14 +157,14 @@ __Vectors
         DCD     IntDefaultHandler           ; Analog Comparator 2
         DCD     IntDefaultHandler           ; System Control (PLL, OSC, BO)
         DCD     IntDefaultHandler           ; FLASH Control
-        DCD     IntDefaultHandler           ; GPIO Port F
+        DCD     PortFHandler                ; GPIO Port F
         DCD     IntDefaultHandler           ; GPIO Port G
         DCD     IntDefaultHandler           ; GPIO Port H
         DCD     IntDefaultHandler           ; UART2 Rx and Tx
         DCD     IntDefaultHandler           ; SSI1 Rx and Tx
         DCD     IntDefaultHandler           ; Timer 3 subtimer A
         DCD     IntDefaultHandler           ; Timer 3 subtimer B
-        DCD     IntDefaultHandler           ; I2C1 Master and Slave
+        DCD     I2C1Handler                 ; I2C1 Master and Slave
         DCD     IntDefaultHandler           ; Quadrature Encoder 1
         DCD     IntDefaultHandler           ; CAN0
         DCD     IntDefaultHandler           ; CAN1
@@ -144,8 +175,8 @@ __Vectors
         DCD     IntDefaultHandler           ; PWM Generator 3
         DCD     IntDefaultHandler           ; uDMA Software Transfer
         DCD     IntDefaultHandler           ; uDMA Error
-        DCD     IntDefaultHandler           ; ADC1 Sequence 0
-        DCD     IntDefaultHandler           ; ADC1 Sequence 1
+        DCD     ADC1SS0Handler              ; ADC1 Sequence 0
+        DCD     ADC1SS1Handler              ; ADC1 Sequence 1
         DCD     IntDefaultHandler           ; ADC1 Sequence 2
         DCD     IntDefaultHandler           ; ADC1 Sequence 3
         DCD     IntDefaultHandler           ; I2S0
@@ -164,8 +195,8 @@ __Vectors
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
-        DCD     IntDefaultHandler           ; I2C2 Master and Slave
-        DCD     IntDefaultHandler           ; I2C3 Master and Slave
+        DCD     I2C2Handler                 ; I2C2 Master and Slave
+        DCD     I2C3Handler                 ; I2C3 Master and Slave
         DCD     IntDefaultHandler           ; Timer 4 subtimer A
         DCD     IntDefaultHandler           ; Timer 4 subtimer B
         DCD     0                           ; Reserved
@@ -188,25 +219,25 @@ __Vectors
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
         DCD     0                           ; Reserved
-        DCD     IntDefaultHandler           ; Timer 5 subtimer A
+        DCD     Timer5Handler               ; Timer 5 subtimer A
         DCD     IntDefaultHandler           ; Timer 5 subtimer B
-        DCD     IntDefaultHandler           ; Wide Timer 0 subtimer A
-        DCD     IntDefaultHandler           ; Wide Timer 0 subtimer B
-        DCD     IntDefaultHandler           ; Wide Timer 1 subtimer A
-        DCD     IntDefaultHandler           ; Wide Timer 1 subtimer B
-        DCD     IntDefaultHandler           ; Wide Timer 2 subtimer A
-        DCD     IntDefaultHandler           ; Wide Timer 2 subtimer B
-        DCD     IntDefaultHandler           ; Wide Timer 3 subtimer A
-        DCD     IntDefaultHandler           ; Wide Timer 3 subtimer B
-        DCD     IntDefaultHandler           ; Wide Timer 4 subtimer A
-        DCD     IntDefaultHandler           ; Wide Timer 4 subtimer B
-        DCD     IntDefaultHandler           ; Wide Timer 5 subtimer A
-        DCD     IntDefaultHandler           ; Wide Timer 5 subtimer B
+        DCD     WTimer0AHandler             ; Wide Timer 0 subtimer A
+        DCD     WTimer0BHandler             ; Wide Timer 0 subtimer B
+        DCD     WTimer1AHandler             ; Wide Timer 1 subtimer A
+        DCD     WTimer1BHandler             ; Wide Timer 1 subtimer B
+        DCD     WTimer2AHandler             ; Wide Timer 2 subtimer A
+        DCD     WTimer2BHandler             ; Wide Timer 2 subtimer B
+        DCD     WTimer3AHandler             ; Wide Timer 3 subtimer A
+        DCD     WTimer3BHandler             ; Wide Timer 3 subtimer B
+        DCD     WTimer4AHandler             ; Wide Timer 4 subtimer A
+        DCD     WTimer4BHandler             ; Wide Timer 4 subtimer B
+        DCD     WTimer5AHandler             ; Wide Timer 5 subtimer A
+        DCD     WTimer5BHandler             ; Wide Timer 5 subtimer B
         DCD     IntDefaultHandler           ; FPU
         DCD     IntDefaultHandler           ; PECI 0
         DCD     IntDefaultHandler           ; LPC 0
-        DCD     IntDefaultHandler           ; I2C4 Master and Slave
-        DCD     IntDefaultHandler           ; I2C5 Master and Slave
+        DCD     I2C4Handler                 ; I2C4 Master and Slave
+        DCD     I2C5Handler                 ; I2C5 Master and Slave
         DCD     IntDefaultHandler           ; GPIO Port M
         DCD     IntDefaultHandler           ; GPIO Port N
         DCD     IntDefaultHandler           ; Quadrature Encoder 2
