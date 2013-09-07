@@ -60,8 +60,8 @@ tMotor *InitializeMotor(tPin a, tPin b, tBoolean brake, tBoolean invert) {
     mtr->invert = invert;
     
     // Initialize pwm on both pins
-    mtr->pwm0 = InitializePWM(a, 100.0f);
-    mtr->pwm1 = InitializePWM(b, 100.0f);
+    mtr->pwm0 = InitializePWM(a, 1000.0f);
+    mtr->pwm1 = InitializePWM(b, 1000.0f);
     
     // Return the new motor
     return mtr;
@@ -84,11 +84,11 @@ void SetMotor(tMotor *mtr, float input) {
     if (mtr->brake) {
         if (input < 0) {
             // CCW (P, ~P)
-            SetPWM(mtr->pwm0, 1.0f+input, -input);
-            SetPWM(mtr->pwm1, -input, 0.0f);
+            SetPWM(mtr->pwm0, 1.0f+input, 0.0f);
+            SetPWM(mtr->pwm1, -input, 1.0f+input);
         } else if (input > 0) {
             // CW (P, 0)
-            SetPWM(mtr->pwm0, input, 0.0f);
+            SetPWM(mtr->pwm0, 1.0f-input, 0.0f);
             SetPWM(mtr->pwm1, 0.0f, 0.0f);
         } else {
             // S (1, 0)
@@ -98,12 +98,12 @@ void SetMotor(tMotor *mtr, float input) {
     } else {
         if (input < 0) {
             // CCW (P, 1)
-            SetPWM(mtr->pwm0, 1.0f+input, -input);
+            SetPWM(mtr->pwm0, 1.0f+input, 0.0f);
             SetPWM(mtr->pwm1, 1.0f, 0.0f);
         } else if (input > 0) {
             // CW (P, P)
-            SetPWM(mtr->pwm0, input, 0.0f);
-            SetPWM(mtr->pwm1, input, 0.0f);
+            SetPWM(mtr->pwm0, 1.0f-input, 0.0f);
+            SetPWM(mtr->pwm1, 1.0f-input, 0.0f);
         } else {
             // S (1, 1)
             SetPWM(mtr->pwm0, 1.0f, 0.0f);
