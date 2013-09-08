@@ -1,6 +1,6 @@
 #include "RASDemo.h"
 
-#include <RASLib/inc/uart.h>
+#include <RASLib/inc/common.h>
 #include <RASLib/inc/servo.h>
 
 tServo *servo;

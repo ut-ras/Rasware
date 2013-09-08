@@ -24,7 +24,7 @@
 #ifndef _R_I2C_H_
 #define _R_I2C_H_
 
-#include "internal.h"
+#include "common.h"
 #include "gpio.h"
 
 #ifdef __cplusplus

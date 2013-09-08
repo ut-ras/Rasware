@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// init - Microcontroller Initializations
+// common - Shared functionality
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -21,20 +21,33 @@
 //
 //*****************************************************************************
 
-#ifndef _R_INIT_H_
-#define _R_INIT_H_
+#ifndef _R_COMMON_H_
+#define _R_COMMON_H_
+
+// Included for definition of tBoolean
+#include <StellarisWare/inc/hw_types.h>
+
+// Included for common use in debugging
+#include "uart.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 
+// Definition of callback function pointer
+typedef void (*tCallback)();
+
+
 // The following function sets up the LM4F to use RASLib
 void InitializeMCU(void);
+
+// Function which does nothing
+void Dummy(void);
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // _R_INIT_H_
+#endif // _R_COMMON_H_

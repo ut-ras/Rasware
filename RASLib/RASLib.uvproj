@@ -396,11 +396,6 @@
               <FilePath>.\src\Startup.s</FilePath>
             </File>
             <File>
-              <FileName>init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\init.c</FilePath>
-            </File>
-            <File>
               <FileName>motor.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\motor.c</FilePath>
@@ -431,11 +426,6 @@
               <FilePath>.\src\encoder.c</FilePath>
             </File>
             <File>
-              <FileName>internal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\internal.c</FilePath>
-            </File>
-            <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\gpio.c</FilePath>
@@ -459,6 +449,11 @@
               <FileName>linesensor.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\linesensor.c</FilePath>
+            </File>
+            <File>
+              <FileName>common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\common.c</FilePath>
             </File>
           </Files>
         </Group>

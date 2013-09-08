@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// init - Microcontroller Initializations
+// common - Shared functionality
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -21,7 +21,7 @@
 //
 //*****************************************************************************
 
-#include "init.h"
+#include "common.h"
 #include "time.h"
 #include "gpio.h"
 #include "uart.h"
@@ -30,6 +30,10 @@
 #include <StellarisWare/driverlib/sysctl.h>
 #include <StellarisWare/driverlib/fpu.h>
 #include <StellarisWare/driverlib/interrupt.h>
+
+
+// Does nothing
+void Dummy(void) {}
 
 
 // The following function sets up the LM4F to use RASLib

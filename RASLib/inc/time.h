@@ -24,7 +24,7 @@
 #ifndef _R_TIME_H_
 #define _R_TIME_H_
 
-#include "internal.h"
+#include "common.h"
 
 #ifdef __cplusplus
 extern "C" {

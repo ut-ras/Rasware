@@ -1,7 +1,7 @@
 #include "RASDemo.h"
 
+#include <RASLib/inc/common.h>
 #include <RASLib/inc/encoder.h>
-#include <RASLib/inc/uart.h>
 
 
 tEncoder *demoEncoder[2];

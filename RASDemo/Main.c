@@ -1,7 +1,6 @@
 #include "RASDemo.h"
 
-#include <RASLib/inc/init.h> 
-#include <RASLib/inc/uart.h>
+#include <RASLib/inc/common.h>
 
 int main(void)
 {	

@@ -1,4 +1,4 @@
-#include <RASLib/inc/init.h>
+#include <RASLib/inc/common.h>
 
 // The 'main' function is the entry point of the program
 int main(void) {

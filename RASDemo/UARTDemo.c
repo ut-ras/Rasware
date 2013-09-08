@@ -1,5 +1,6 @@
 #include "RASDemo.h"
 
+#include <RASLib/inc/common.h>
 #include <RASLib/inc/uart.h>
 
 void uartDemo(void) {

@@ -1,7 +1,7 @@
 #include "RASDemo.h"
 
+#include <RASLib/inc/common.h>
 #include <RASLib/inc/linesensor.h>
-#include <RASLib/inc/uart.h>
 
 tLineSensor *ls;
 
