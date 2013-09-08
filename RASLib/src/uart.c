@@ -448,7 +448,7 @@ again:
           {
             UARTwrite("NaN", 3);
           }
-          else if(dValue == INFINITY)
+          else if(isinf(dValue))
           {
             if(cNeg)
             {

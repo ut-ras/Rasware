@@ -380,7 +380,7 @@
             <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc></Misc>
+            <Misc>--entry=ResetHandler --first=__Vectors --datacompressor=off</Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
@@ -390,11 +390,6 @@
         <Group>
           <GroupName>Source</GroupName>
           <Files>
-            <File>
-              <FileName>Startup.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\src\Startup.s</FilePath>
-            </File>
             <File>
               <FileName>motor.c</FileName>
               <FileType>1</FileType>
@@ -454,6 +449,11 @@
               <FileName>common.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\common.c</FilePath>
+            </File>
+            <File>
+              <FileName>Startup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Startup.c</FilePath>
             </File>
           </Files>
         </Group>

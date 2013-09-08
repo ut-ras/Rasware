@@ -168,7 +168,7 @@ tBoolean LineSensorReadArray(tLineSensor *ls, float *array) {
     }
     
     // Check for any errors
-    if (!I2CSuccess(ls->i2c)) {
+    if (!I2CSuccess(ls->i2c)) {        
         for (i=0; i < 8; i++)
             array[i] = INFINITY;
         

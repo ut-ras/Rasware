@@ -380,7 +380,7 @@
             <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc></Misc>
+            <Misc>--entry=ResetHandler --first=__Vectors</Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
@@ -426,9 +426,9 @@
               <FilePath>.\UARTDemo.c</FilePath>
             </File>
             <File>
-              <FileName>Startup.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\Startup.s</FilePath>
+              <FileName>Startup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Startup.c</FilePath>
             </File>
             <File>
               <FileName>GPIODemo.c</FileName>
