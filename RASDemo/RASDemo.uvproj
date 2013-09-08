@@ -380,7 +380,7 @@
             <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc>--entry=ResetHandler --first=__Vectors</Misc>
+            <Misc>--entry=ResetHandler --first=__Vectors --datacompressor=off</Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
