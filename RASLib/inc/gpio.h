@@ -1,7 +1,6 @@
 //*****************************************************************************
 //
-// gpio.h - GPIO interrupt handlers
-// This file exists to sanction multiple functions per GPIO interrupt handler
+// gpio - GPIO related funcions
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -18,18 +17,19 @@
 // at the University of Texas at Austin
 //
 // Website: ras.ece.utexas.edu
-// Contact: rasware@ras.ece.utexas.edu
+// Contact: ut.ieee.ras@gmail.com
 //
 //*****************************************************************************
 
-#ifndef __GPIOINTS_H__
-#define __GPIOINTS_H__
+#ifndef _R_GPIO_H_
+#define _R_GPIO_H_
 
 #include "internal.h"
 
-#include "driverlib/gpio.h"
-#include "inc/hw_types.h"
-#include "inc/hw_memmap.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 // Definition of tPin. Pins are named `PIN_XY' 
 // where X is the port letter and Y is the pin number
@@ -68,4 +68,8 @@ void SetPinZ(tPin pin);
 void CallOnPin(tCallback callback, void *data, tPin pin);
 
 
-#endif // __GPIOINTS_H__
+#ifdef __cplusplus
+}
+#endif
+
+#endif // _R_GPIO_H_

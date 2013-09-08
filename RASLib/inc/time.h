@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// time.h - real time based functions
+// time - Real Time based functions
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -17,14 +17,19 @@
 // at the University of Texas at Austin
 //
 // Website: ras.ece.utexas.edu
-// Contact: rasware@ras.ece.utexas.edu
+// Contact: ut.ieee.ras@gmail.com
 //
 //*****************************************************************************
 
-#ifndef __TIME_H__
-#define __TIME_H__
+#ifndef _R_TIME_H_
+#define _R_TIME_H_
 
 #include "internal.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 // Definition of time type intended to store microseconds. 
 // Will last for 584 thousand years.
@@ -41,6 +46,7 @@ typedef unsigned long long tTime;
 // Number of tasks to internally allocate
 // Surpassing this value will cleanly return an id of 0
 #define TASK_COUNT 64
+
 
 // Initializes a system timer with microsecond resolution
 void InitializeSystemTime(void);
@@ -66,4 +72,8 @@ void CallStop(int id);
 void WaitUS(tTime ms);
 void Wait(float s);
 
-#endif // __TIME_H__
+#ifdef __cplusplus
+}
+#endif
+
+#endif // _R_TIME_H_

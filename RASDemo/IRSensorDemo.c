@@ -1,14 +1,7 @@
-#include <inc/hw_types.h>		// tBoolean
-#include <inc/hw_memmap.h>
-#include <driverlib/gpio.h>
-#include <driverlib/sysctl.h>
-
-#include <driverlib/adc.h>
+#include "RASDemo.h"
 
 #include <RASLib/inc/adc.h>
 #include <RASLib/inc/uart.h>
-
-#include "RASDemo.h"
 
 tADC *adc[4];
 

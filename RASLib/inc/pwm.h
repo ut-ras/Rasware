@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// pwm.h - software pwm drivers for the TLE5205-2
+// pwm - Software PWM drivers
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -17,19 +17,19 @@
 // at the University of Texas at Austin
 //
 // Website: ras.ece.utexas.edu
-// Contact: rasware@ras.ece.utexas.edu
+// Contact: ut.ieee.ras@gmail.com
 //
 //*****************************************************************************
 
+#ifndef _R_PWM_H_
+#define _R_PWM_H_
+
 #include "gpio.h"
 
-#include "inc/hw_types.h"
-#include "inc/hw_memmap.h"
-#include "driverlib/gpio.h"
-#include "driverlib/sysctl.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#ifndef __PWM_H__
-#define __PWM_H__
 
 // Definition of struct PWM in pwm.c
 typedef struct PWM tPWM;
@@ -45,4 +45,5 @@ tPWM *InitializePWM(tPin pin, float freq);
 // Both Duty Cycle and Phase must be in percentage
 void SetPWM(tPWM *pwm, float duty, float phase);
 
-#endif //  __PWM_H__
+
+#endif //  _R_PWM_H_

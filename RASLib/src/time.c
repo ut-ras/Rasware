@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// time.c - real time based functions
+// time - Real Time based functions
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -17,20 +17,19 @@
 // at the University of Texas at Austin
 //
 // Website: ras.ece.utexas.edu
-// Contact: rasware@ras.ece.utexas.edu
+// Contact: ut.ieee.ras@gmail.com
 //
 //*****************************************************************************
 
 #include "time.h"
-#include "gpio.h"
-#include "inc/hw_types.h"
-#include "inc/hw_memmap.h"
-#include "inc/hw_ints.h"
-#include "inc/lm4f120h5qr.h"
-#include "driverlib/sysctl.h"
-#include "driverlib/systick.h"
-#include "driverlib/timer.h"
-#include "driverlib/interrupt.h"
+
+#include <StellarisWare/inc/hw_memmap.h>
+#include <StellarisWare/inc/hw_ints.h>
+#include <StellarisWare/driverlib/sysctl.h>
+#include <StellarisWare/driverlib/systick.h>
+#include <StellarisWare/driverlib/timer.h>
+#include <StellarisWare/driverlib/interrupt.h>
+
 
 // Global System Clock
 // Only contains resolution to sysTickPeriod

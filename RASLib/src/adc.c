@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// adc.c - analog to digital converter drivers
+// adc - Analog to Digital converter drivers
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -17,20 +17,18 @@
 // at the University of Texas at Austin
 //
 // Website: ras.ece.utexas.edu
-// Contact: rasware@ras.ece.utexas.edu
+// Contact: ut.ieee.ras@gmail.com
 //
 //*****************************************************************************
 
-#include "inc/hw_types.h"
-#include "inc/hw_memmap.h"
-#include "inc/hw_ints.h"
-#include "inc/lm4f120h5qr.h"
-#include "driverlib/sysctl.h"
-#include "driverlib/timer.h"
-#include "driverlib/interrupt.h"
-#include "driverlib/adc.h"
-#include "driverlib/gpio.h"
 #include "adc.h"
+
+#include <StellarisWare/inc/hw_ints.h>
+#include <StellarisWare/inc/hw_memmap.h>
+#include <StellarisWare/driverlib/sysctl.h>
+#include <StellarisWare/driverlib/interrupt.h>
+#include <StellarisWare/driverlib/adc.h>
+#include <StellarisWare/driverlib/gpio.h>
 
 
 // Definition of ADC Pin-map for the TM4C1233H6PM / LM4F120H5QR/

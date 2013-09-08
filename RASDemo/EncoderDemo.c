@@ -1,12 +1,8 @@
-#include <inc/hw_types.h>		// tBoolean
-#include <inc/hw_memmap.h>
-#include <RASLib/inc/uart.h>	// input/output over 
-#include <driverlib/gpio.h>
-#include <driverlib/sysctl.h>
+#include "RASDemo.h"
 
 #include <RASLib/inc/encoder.h>
+#include <RASLib/inc/uart.h>
 
-#include "RASDemo.h"
 
 tEncoder *demoEncoder[2];
 

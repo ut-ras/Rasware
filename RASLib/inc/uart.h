@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// uart.h - usbuart commuications
+// uart - USB UART Communications
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -17,9 +17,17 @@
 // at the University of Texas at Austin
 //
 // Website: ras.ece.utexas.edu
-// Contact: rasware@ras.ece.utexas.edu
+// Contact: ut.ieee.ras@gmail.com
 //
 //*****************************************************************************
+
+#ifndef _R_UART_H_
+#define _R_UART_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 // Must be called before using other UART commands
 void InitializeUART(void);
@@ -38,3 +46,10 @@ void Puts(const char *pcString);
 void StdioConfig(unsigned long ulPort, unsigned long ulBaud, unsigned long ulSrcClock);
 void StdioInit(unsigned long ulPort);
 void StdioInitExpClk(unsigned long ulPort, unsigned long ulBaud);
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // _R_UART_H_

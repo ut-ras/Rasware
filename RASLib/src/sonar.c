@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// sonar.c - software sonar driver
+// sonar - Software Sonar driver
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -17,18 +17,14 @@
 // at the University of Texas at Austin
 //
 // Website: ras.ece.utexas.edu
-// Contact: rasware@ras.ece.utexas.edu
+// Contact: ut.ieee.ras@gmail.com
 //
 //*****************************************************************************
 
 #include "sonar.h"
-#include "time.h"
-#include "gpio.h"
-#include "math.h"
-#include "inc/hw_ints.h"
-#include "inc/lm4f120h5qr.h"
-#include "driverlib/interrupt.h"
-#include "driverlib/timer.h"
+
+#include <math.h>
+
 
 // Definition of struct Sonar
 // Defined to tSonar in sonar.h

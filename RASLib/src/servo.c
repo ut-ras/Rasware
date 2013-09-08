@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// servo.c - software servo (rc pwm) driver
+// servo - Servo (RC PWM) driver
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -17,15 +17,13 @@
 // at the University of Texas at Austin
 //
 // Website: ras.ece.utexas.edu
-// Contact: rasware@ras.ece.utexas.edu
+// Contact: ut.ieee.ras@gmail.com
 //
 //*****************************************************************************
 
 #include "servo.h"
-#include "inc/hw_ints.h"
-#include "inc/lm4f120h5qr.h"
-#include "driverlib/interrupt.h"
-#include "driverlib/timer.h"
+#include "pwm.h"
+
 
 // Function to initialize a servo on a pin
 // The returned pointer can be used by the SetPWM function

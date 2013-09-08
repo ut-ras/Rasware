@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// encoder.h - encoder driver
+// linesensor - I2C based line sensor
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -17,15 +17,20 @@
 // at the University of Texas at Austin
 //
 // Website: ras.ece.utexas.edu
-// Contact: rasware@ras.ece.utexas.edu
+// Contact: ut.ieee.ras@gmail.com
 //
 //*****************************************************************************
 
-#ifndef __LINESENSOR_H__
-#define __LINESENSOR_H__
+#ifndef _R_LINESENSOR_H_
+#define _R_LINESENSOR_H_
 
 #include "time.h"
 #include "i2c.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 // Definition of struct LineSensor in linesensor.c
 typedef struct LineSensor tLineSensor;
@@ -63,4 +68,8 @@ void LineSensorReadContinuouslyUS(tLineSensor *ls, tTime us);
 void LineSensorReadContinuously(tLineSensor *ls, float s);
 
 
-#endif /* __LINESENSOR_H__ */
+#ifdef __cplusplus
+}
+#endif
+
+#endif // _R_LINESENSOR_H_

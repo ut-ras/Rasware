@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// uart.c - usbuart commuications
+// uart - USB UART Communications
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -17,25 +17,19 @@
 // at the University of Texas at Austin
 //
 // Website: ras.ece.utexas.edu
-// Contact: rasware@ras.ece.utexas.edu
+// Contact: ut.ieee.ras@gmail.com
 //
 //*****************************************************************************
 
+#include "uart.h"
+
 #include <stdarg.h>
 #include <math.h>
-#include "inc/hw_types.h"
-#include "inc/hw_memmap.h"
-#include "inc/hw_ints.h"
-#include "inc/lm4f120h5qr.h"
-#include "driverlib/sysctl.h"
-#include "driverlib/systick.h"
-#include "driverlib/timer.h"
-#include "driverlib/interrupt.h"
-#include "driverlib/gpio.h"
-#include "driverlib/debug.h"
-#include "driverlib/uart.c"
-#include "utils/uartstdio.c"
-#include "uart.h"
+
+#include <StellarisWare/inc/hw_types.h>
+#include <StellarisWare/driverlib/gpio.h>
+#include <StellarisWare/utils/uartstdio.c>
+
 
 static const char * const g_pcHex_U = "0123456789ABCDEF";
 static const char * const g_pcHex_L = "0123456789abcdef";

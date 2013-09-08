@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// servo.h - software servo (rc pwm) driver
+// servo - Servo (RC PWM) driver
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -17,20 +17,20 @@
 // at the University of Texas at Austin
 //
 // Website: ras.ece.utexas.edu
-// Contact: rasware@ras.ece.utexas.edu
+// Contact: ut.ieee.ras@gmail.com
 //
 //*****************************************************************************
 
+#ifndef _R_SERVO_H_
+#define _R_SERVO_H_
+
+#include "gpio.h"
 #include "pwm.h"
 
-#include "inc/hw_types.h"
-#include "inc/hw_memmap.h"
-#include "driverlib/gpio.h"
-#include "driverlib/sysctl.h"
-#include "internal.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#ifndef __SERVO_H__
-#define __SERVO_H__
 
 // All a servo needs is a pointer to a pwm
 typedef tPWM tServo;
@@ -43,4 +43,9 @@ tServo *InitializeServo(tPin pin);
 // This function sets a servo value, with 0.0 being 2.5% and 1.0 being 12.5%
 void SetServo(tServo *servo, float value);
 
-#endif //  __SERVO_H__
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif //  _R_SERVO_H_

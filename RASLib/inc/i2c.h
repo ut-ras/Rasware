@@ -1,23 +1,37 @@
-// ***************************
-// I2C FUNCTIONS AND DEFINES
-// ***************************
-#ifndef I2C_H
-#define I2C_H
+//*****************************************************************************
+//
+// i2c - Inter-Intergrated Circuit driver
+// 
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. THE AUTHORS OF THIS FILE
+// SHALL NOT, UNDER ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL,
+// OR CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
+// 
+// This is part of RASLib Rev0 of the RASWare2013 package.
+//
+// Written by: 
+// The student branch of the 
+// IEEE - Robotics and Automation Society 
+// at the University of Texas at Austin
+//
+// Website: ras.ece.utexas.edu
+// Contact: ut.ieee.ras@gmail.com
+//
+//*****************************************************************************
+
+#ifndef _R_I2C_H_
+#define _R_I2C_H_
 
 #include "internal.h"
 #include "gpio.h"
 
-//*****************************************************************************
-//
-// If building with a C++ compiler, make all of the definitions in this header
-// have a C binding.
-//
-//*****************************************************************************
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
-    
+
+
 // Constants used for I2C timing
 // Each is given in units of microseconds
 #define I2C_TIMEOUT 20000
@@ -80,13 +94,9 @@ tBoolean I2CRequest(tI2C *i2c, unsigned char addr,
                                const unsigned char *sendData, unsigned int sendLen,
                                unsigned char *recData, unsigned int recLen);
 
-//*****************************************************************************
-//
-// Mark the end of the C bindings section for C++ compilers.
-//
-//*****************************************************************************
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif // I2C_H
+#endif // _R_I2C_H_

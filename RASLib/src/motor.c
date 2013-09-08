@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// motor.c - software pwm drivers for the TLE5205-2 
+// motor - Software PWM drivers for the TLE5205-2
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -17,15 +17,13 @@
 // at the University of Texas at Austin
 //
 // Website: ras.ece.utexas.edu
-// Contact: rasware@ras.ece.utexas.edu
+// Contact: ut.ieee.ras@gmail.com
 //
 //*****************************************************************************
 
 #include "motor.h"
-#include "inc/hw_ints.h"
-#include "inc/lm4f120h5qr.h"
-#include "driverlib/interrupt.h"
-#include "driverlib/timer.h"
+#include "pwm.h"
+
 
 // Definition of struct Motor
 // Defined to tMotor in motor.h

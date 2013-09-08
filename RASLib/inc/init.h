@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// init.h - initializations
+// init - Microcontroller Initializations
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -17,9 +17,24 @@
 // at the University of Texas at Austin
 //
 // Website: ras.ece.utexas.edu
-// Contact: rasware@ras.ece.utexas.edu
+// Contact: ut.ieee.ras@gmail.com
 //
 //*****************************************************************************
 
+#ifndef _R_INIT_H_
+#define _R_INIT_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 // The following function sets up the LM4F to use RASLib
 void InitializeMCU(void);
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // _R_INIT_H_

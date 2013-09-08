@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// adc.h - analog to digital converter drivers
+// adc - Analog to Digital converter drivers
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -17,12 +17,20 @@
 // at the University of Texas at Austin
 //
 // Website: ras.ece.utexas.edu
-// Contact: rasware@ras.ece.utexas.edu
+// Contact: ut.ieee.ras@gmail.com
 //
 //*****************************************************************************
 
-#include "time.h"
+#ifndef _R_ADC_H_
+#define _R_ADC_H_
+
 #include "gpio.h"
+#include "time.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 // Constant for ADC oversampling
 // Can be 0, 2, 4, 8, 16, 32, 64
@@ -70,3 +78,9 @@ void ADCBackgroundRead(tADC *snr, tCallback callback, void *data);
 // the ADC to complete, the ADC will read as fast as possible without overlap
 void ADCReadContinuouslyUS(tADC *snr, tTime us);
 void ADCReadContinuously(tADC *snr, float s);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // _R_ADC_H_

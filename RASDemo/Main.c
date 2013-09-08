@@ -1,9 +1,7 @@
-#include <inc/hw_types.h>		// tBoolean
 #include "RASDemo.h"
-#include <RASLib/inc/uart.h>
-#include <RASLib/inc/linesensor.h> 
+
 #include <RASLib/inc/init.h> 
-#include <RASLib/inc/time.h>
+#include <RASLib/inc/uart.h>
 
 int main(void)
 {	

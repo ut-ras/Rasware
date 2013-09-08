@@ -1,12 +1,7 @@
-#include <inc/hw_types.h>		// tBoolean
-#include <inc/hw_memmap.h>
-#include <utils/uartstdio.h>	// input/output over 
-#include <driverlib/gpio.h>
-#include <driverlib/sysctl.h>
+#include "RASDemo.h"
+
 #include <RASLib/inc/uart.h>
 #include <RASLib/inc/motor.h>
-
-#include "RASDemo.h"
 
 tMotor *motors[12];
 

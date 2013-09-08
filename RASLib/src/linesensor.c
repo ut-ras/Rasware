@@ -1,17 +1,30 @@
+//*****************************************************************************
+//
+// linesensor - I2C based line sensor
+// 
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. THE AUTHORS OF THIS FILE
+// SHALL NOT, UNDER ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL,
+// OR CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
+// 
+// This is part of RASLib Rev0 of the RASWare2013 package.
+//
+// Written by: 
+// The student branch of the 
+// IEEE - Robotics and Automation Society 
+// at the University of Texas at Austin
+//
+// Website: ras.ece.utexas.edu
+// Contact: ut.ieee.ras@gmail.com
+//
+//*****************************************************************************
+
 #include "linesensor.h"
-#include "i2c.h"
-#include "UART.h"
-#include <stdlib.h>
-#include <stdarg.h>
-#include <inc/hw_types.h>
-#include <inc/hw_memmap.h>
-#include <driverlib/i2c.h>
-#include "i2c.h"
-#include <driverlib/gpio.h>
-#include <driverlib/pin_map.h>
-#include <driverlib/sysctl.h>
-#include <inc/hw_i2c.h>
+
 #include <math.h>
+
 
 #define ADS7830 0x48
 

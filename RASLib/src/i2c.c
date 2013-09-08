@@ -1,20 +1,34 @@
-//*******************************
-// I2C Functions and Defines 
-//*******************************
+//*****************************************************************************
+//
+// i2c - Inter-Intergrated Circuit driver
+// 
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. THE AUTHORS OF THIS FILE
+// SHALL NOT, UNDER ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL,
+// OR CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
+// 
+// This is part of RASLib Rev0 of the RASWare2013 package.
+//
+// Written by: 
+// The student branch of the 
+// IEEE - Robotics and Automation Society 
+// at the University of Texas at Austin
+//
+// Website: ras.ece.utexas.edu
+// Contact: ut.ieee.ras@gmail.com
+//
+//*****************************************************************************
 
-#include <stdlib.h>
-#include <stdarg.h>
-#include <inc/hw_types.h>
-#include <inc/hw_memmap.h>
-#include <inc/hw_ints.h>
-#include <driverlib/i2c.h>
 #include "i2c.h"
-#include "gpio.h"
-#include <driverlib/gpio.h>
-#include <driverlib/pin_map.h>
-#include <driverlib/sysctl.h>
-#include <driverlib/interrupt.h>
-#include <inc/hw_i2c.h>
+
+#include <StellarisWare/inc/hw_memmap.h>
+#include <StellarisWare/inc/hw_ints.h>
+#include <StellarisWare/driverlib/i2c.h>
+#include <StellarisWare/driverlib/gpio.h>
+#include <StellarisWare/driverlib/interrupt.h>
+
 
 // Definition of struct I2C
 // Defined to tI2C in i2c.h

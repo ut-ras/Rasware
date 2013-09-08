@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// encoder.h - encoder driver
+// encoder - Quadrature Encoder driver
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -17,22 +17,19 @@
 // at the University of Texas at Austin
 //
 // Website: ras.ece.utexas.edu
-// Contact: rasware@ras.ece.utexas.edu
+// Contact: ut.ieee.ras@gmail.com
 //
 //*****************************************************************************
 
-#ifndef __ENCODER_H__
-#define __ENCODER_H__
+#ifndef _R_ENCODER_H_
+#define _R_ENCODER_H_
 
 #include "gpio.h"
-#include "internal.h"
 
-#include "inc/hw_types.h"
-#include "inc/hw_memmap.h"
-#include "inc/hw_ints.h"
-#include "driverlib/gpio.h"
-#include "driverlib/sysctl.h"
-#include "driverlib/interrupt.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 // Definition of struct Encoder in encoder.c
 typedef struct Encoder tEncoder;
@@ -47,4 +44,9 @@ signed long GetEncoder(tEncoder *enc);
 // This function clears any ticks on the encoder
 void ResetEncoder(tEncoder *enc);
 
-#endif // __ENCODER_H__
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // _R_ENCODER_H_

@@ -1,7 +1,6 @@
 //*****************************************************************************
 //
-// gpio.c - GPIO interrupt handlers
-// This file exists to sanction multiple functions per GPIO interrupt handler
+// gpio - GPIO related funcions
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -18,18 +17,18 @@
 // at the University of Texas at Austin
 //
 // Website: ras.ece.utexas.edu
-// Contact: rasware@ras.ece.utexas.edu
+// Contact: ut.ieee.ras@gmail.com
 //
 //*****************************************************************************
 
 #include "gpio.h"
-#include "inc/hw_ints.h"
-#include "inc/hw_types.h"
-#include "inc/hw_memmap.h"
-#include "driverlib/interrupt.h"
-#include "driverlib/gpio.h"
-#include "driverlib/sysctl.h"
-#include "internal.h"
+
+#include <StellarisWare/inc/hw_ints.h>
+#include <StellarisWare/inc/hw_memmap.h>
+#include <StellarisWare/driverlib/interrupt.h>
+#include <StellarisWare/driverlib/gpio.h>
+#include <StellarisWare/driverlib/sysctl.h>
+
 
 // Port table is used externally to lookup port values
 const unsigned long PIN_PORTS[PORT_COUNT] = {

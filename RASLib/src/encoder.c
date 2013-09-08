@@ -23,6 +23,7 @@
 
 #include "encoder.h"
 
+
 // Definition of tDecoderState
 // Contains all data for the mealy machine
 typedef const struct {

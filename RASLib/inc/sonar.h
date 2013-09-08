@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// sonar.h - software sonar driver
+// sonar - Software Sonar driver
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -17,20 +17,20 @@
 // at the University of Texas at Austin
 //
 // Website: ras.ece.utexas.edu
-// Contact: rasware@ras.ece.utexas.edu
+// Contact: ut.ieee.ras@gmail.com
 //
 //*****************************************************************************
 
-#ifndef __SONAR_H__
-#define __SONAR_H__
+#ifndef _R_SONAR_H_
+#define _R_SONAR_H_
 
 #include "gpio.h"
 #include "time.h"
 
-#include "inc/hw_types.h"
-#include "inc/hw_memmap.h"
-#include "driverlib/gpio.h"
-#include "driverlib/sysctl.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 // Constants used for sonar timing
 // Each is given in units of microseconds
@@ -64,4 +64,9 @@ void SonarBackgroundRead(tSonar *snr, tCallback callback, void *data);
 void SonarReadContinuouslyUS(tSonar *snr, tTime us);
 void SonarReadContinuously(tSonar *snr, float s);
 
-#endif //  __SONAR_H__
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // _R_SONAR_H_
