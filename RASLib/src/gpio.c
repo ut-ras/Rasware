@@ -25,6 +25,7 @@
 
 #include <StellarisWare/inc/hw_ints.h>
 #include <StellarisWare/inc/hw_memmap.h>
+#include <StellarisWare/inc/hw_gpio.h>
 #include <StellarisWare/driverlib/interrupt.h>
 #include <StellarisWare/driverlib/gpio.h>
 #include <StellarisWare/driverlib/sysctl.h>
@@ -87,6 +88,16 @@ void InitializeGPIO(void) {
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+    
+    // Special workarounds for PF0 and PD7
+    // For more info lookup NMI mux issue on the LM4F
+    HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
+    HWREG(GPIO_PORTD_BASE + GPIO_O_CR) = GPIO_PIN_7;
+    HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = 0;
+    
+    HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
+    HWREG(GPIO_PORTF_BASE + GPIO_O_CR) = GPIO_PIN_0;
+    HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = 0;
         
     // Enable the interrupts
     // This shouldn't be nescessary but for some reason is...
