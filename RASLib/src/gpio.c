@@ -133,6 +133,18 @@ void SetPinZ(tPin pin) {
     GPIOPinTypeGPIOInput(PORT_VAL(pin), PIN_VAL(pin));
 }
 
+// Add a weak pull up resistor to the pin
+void PullUpPin(tPin pin) {
+    GPIOPadConfigSet(PORT_VAL(pin), PIN_VAL(pin), 
+                     GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
+}
+
+// Add a weak pull down resistor to the pin
+void PullDownPin(tPin pin) {
+    GPIOPadConfigSet(PORT_VAL(pin), PIN_VAL(pin), 
+                     GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
+}
+
 // Register a callback to be called when the pin's value changes, 
 // the state of the pin can then be determined through the GetPin function.
 void CallOnPin(tCallback callback, void *data, tPin pin) {
