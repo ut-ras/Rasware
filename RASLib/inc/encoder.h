@@ -34,14 +34,26 @@ extern "C" {
 // Definition of struct Encoder in encoder.c
 typedef struct Encoder tEncoder;
 
-// Function to initialize an encoder on a pair of pins
-// The returned pointer can be used by the GetEncoder function
+/**
+ * Initialize an encoder on a pair of pins
+ * @param a Pin that the encoder A line should be plugged into
+ * @param b Pin that the encoder B line should be plugged into
+ * @param invert Flag to switch the direction that the encoder value is incremented 
+ * @return Pointer to a tEncoder used by the GetEncoder and ResetEncoder functions
+ */
 tEncoder *InitializeEncoder(tPin a, tPin b, tBoolean invert);
 
-// This function returns the accumulated encoder value
+/**
+ * Get the accumulated value for an encoder 
+ * @param enc Pointer to a tEncoder that was returned by the InitializeEncoder function
+ * @return Accumulated encoder value
+ */
 signed long GetEncoder(tEncoder *enc);
 
-// This function clears any ticks on the encoder
+/**
+ * Clear any ticks that have been accumulated for an encoder
+ * @param enc Pointer to a tEncoder that was returned by the InitializeEncoder function
+ */
 void ResetEncoder(tEncoder *enc);
 
 
