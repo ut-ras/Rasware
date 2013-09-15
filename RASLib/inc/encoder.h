@@ -35,7 +35,7 @@ extern "C" {
 typedef struct Encoder tEncoder;
 
 /**
- * Initialize an encoder on a pair of pins
+ * Initializes an encoder on a pair of pins
  * @param a Pin that the encoder A line should be plugged into
  * @param b Pin that the encoder B line should be plugged into
  * @param invert Flag to switch the direction that the encoder value is incremented 
@@ -44,14 +44,14 @@ typedef struct Encoder tEncoder;
 tEncoder *InitializeEncoder(tPin a, tPin b, tBoolean invert);
 
 /**
- * Get the accumulated value for an encoder 
+ * Gets the accumulated value for an encoder
  * @param enc Pointer to a tEncoder that was returned by the InitializeEncoder function
  * @return Accumulated encoder value
  */
 signed long GetEncoder(tEncoder *enc);
 
 /**
- * Clear any ticks that have been accumulated for an encoder
+ * Clears any ticks that have been accumulated for an encoder
  * @param enc Pointer to a tEncoder that was returned by the InitializeEncoder function
  */
 void ResetEncoder(tEncoder *enc);

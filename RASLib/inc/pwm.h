@@ -34,15 +34,21 @@ extern "C" {
 // Definition of struct PWM in pwm.c
 typedef struct PWM tPWM;
 
-// Function to initialize pwm on a pin
-// The returned pointer can be used by the SetPWM function
-// Frequency must be specified in hertz
-// If the number of frequencies passes the number of available
-// modules, which is currently 12, then a null pointer is returned
+/**
+ * Initializes a PWM signal for a pin
+ * @param pin Pin that will output a PWM signal
+ * @param freq Frequency of the signal, must be specified in hertz
+ * @return Pointer to an initialized tPWM, can be used by the SetPWM function
+ * Note: If the number of frequencies passes the number of available modules, which is currently 12, then a null pointer is returned
+ */
 tPWM *InitializePWM(tPin pin, float freq);
 
-// This function sets a pwm duty cycle and phase
-// Both Duty Cycle and Phase must be in percentage
+/**
+ * Sets a PWM duty cycle and phase
+ * @param pwm Initialized tPWM, returned by InitializePWM
+ * @param duty Duty cycle of signal, specified as a percentage
+ * @param phase Phase of signal, specified as a percentage
+ */
 void SetPWM(tPWM *pwm, float duty, float phase);
 
 
