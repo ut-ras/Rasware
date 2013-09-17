@@ -145,9 +145,8 @@ void PullDownPin(tPin pin) {
                      GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
 }
 
-// Register a callback to be called when the pin's value changes, 
-// the state of the pin can then be determined through the GetPin function.
-void CallOnPin(tCallback callback, void *data, tPin pin) {
+// Internally used function to register a pin interrupt
+static void CallOnPinType(tCallback callback, void *data, tPin pin, unsigned long type) {
     tPinTask *task = &pinTaskBuffer[pin];
 
     // Stop the interrupt first to avoid a race condition
@@ -164,8 +163,26 @@ void CallOnPin(tCallback callback, void *data, tPin pin) {
         task->callback = callback;
         
         // Setup the interrupts
-        GPIOIntTypeSet(PORT_VAL(pin), PIN_VAL(pin), GPIO_BOTH_EDGES);
+        GPIOIntTypeSet(PORT_VAL(pin), PIN_VAL(pin), type);
         GPIOPinIntClear(PORT_VAL(pin), PIN_VAL(pin));
         GPIOPinIntEnable(PORT_VAL(pin), PIN_VAL(pin));
     }
+}
+
+// Register a callback to be called when the pin's value changes, 
+// the state of the pin can then be determined through the GetPin function.
+void CallOnPin(tCallback callback, void *data, tPin pin) {
+    CallOnPinType(callback, data, pin, GPIO_BOTH_EDGES);
+}
+
+// Register a callback to be called when the pin's value goes from low to high, 
+// the state of the pin can then be determined through the GetPin function.
+void CallOnPinRising(tCallback callback, void *data, tPin pin) {
+    CallOnPinType(callback, data, pin, GPIO_RISING_EDGE);
+}
+
+// Register a callback to be called when the pin's value goes from high to low, 
+// the state of the pin can then be determined through the GetPin function.
+void CallOnPinFalling(tCallback callback, void *data, tPin pin) {
+    CallOnPinType(callback, data, pin, GPIO_FALLING_EDGE);
 }

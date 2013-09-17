@@ -81,6 +81,14 @@ void PullDownPin(tPin pin);
 // the state of the pin can then be determined through the GetPin function.
 void CallOnPin(tCallback callback, void *data, tPin pin);
 
+// Register a callback to be called when the pin's value goes from low to high, 
+// the state of the pin can then be determined through the GetPin function.
+void CallOnPinRising(tCallback callback, void *data, tPin pin);
+
+// Register a callback to be called when the pin's value goes from high to low, 
+// the state of the pin can then be determined through the GetPin function.
+void CallOnPinFalling(tCallback callback, void *data, tPin pin);
+
 
 #ifdef __cplusplus
 }
