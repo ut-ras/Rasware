@@ -38,7 +38,7 @@ typedef struct Motor tMotor;
  * Initializes a motor on a pair of pins
  * @param a Pin that should plug into the IN1 motor line
  * @param b Pin that should plug into the IN2 motor line
- * @param brake [TODO: describe brake]
+ * @param brake Flag to enable breaking when the motor is set to 0 speed
  * @param invert Flag to switch the direction that the motor will turn
  * @return Pointer to an initialized tMotor, can be used by the SetMotor function
  */

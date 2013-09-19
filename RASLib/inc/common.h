@@ -38,11 +38,14 @@ extern "C" {
 // Definition of callback function pointer
 typedef void (*tCallback)();
 
-
-// The following function sets up the LM4F to use RASLib
+/**
+ * Sets up the LM4F to use RASLib
+ */
 void InitializeMCU(void);
 
-// Function which does nothing
+/**
+ * Function which does nothing
+ */
 void Dummy(void);
 
 

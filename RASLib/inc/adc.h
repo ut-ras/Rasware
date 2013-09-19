@@ -56,28 +56,48 @@ typedef struct ADC tADC;
 // PIN_E5
 #define ADC_COUNT 12
 
-// Function to initialize an ADC on a pin, if ADC
-// is not supported in hardware on the given pin, 
-// then a null pointer is returned
-// The returned pointer can be used by the ADCRead functions
+/**
+ * Initializes an ADC on a pin
+ * @param pin Pin plugged into a servo
+ * @return Pointer to an initialized tADC, can be used by the ADCRead functions
+ * Note: if ADC is not supported in hardware on the given pin, then a null pointer is returned
+ */
 tADC *InitializeADC(tPin pin);
 
-// This function returns the value measured as a percentage
-// If the ADC is not continously reading,
-// then the function will busy wait for the results
+/**
+ * Returns value on a pin used with the tADC provided
+ * @param adc Pointer to an initialized tADC, returned by InitializeADC
+ * @return Value measured as a percentage
+ * Note: if the ADC is not continously reading, then the function will busy wait for the results
+ */
 float ADCRead(tADC *adc);
 
-// This function sets up an ADC to be run in the background
-// A callback can be passed, in which a call to ADCRead 
-// will return with the newly obtained value immediately
-void ADCBackgroundRead(tADC *snr, tCallback callback, void *data);
+/**
+ * Sets up an ADC to be run in the background
+ * @param adc Pointer to an initialized tADC, returned by InitializeADC
+ * @param callback Function called the next time the ADC updates, in which a call to ADCRead will return with the newly obtained value immediately
+ * @param data Argument sent to the provided callback function whenever it is called
+ */
+void ADCBackgroundRead(tADC *adc, tCallback callback, void *data);
 
-// These function set up an ADC to read indefinitly
-// Any following calls to ADCRead will return the most recent value
-// If the passed time between calls is less than the time it takes for
-// the ADC to complete, the ADC will read as fast as possible without overlap
-void ADCReadContinuouslyUS(tADC *snr, tTime us);
-void ADCReadContinuously(tADC *snr, float s);
+/**
+ * Sets up an ADC to read indefinitly
+ * @param adc Pointer to an initialized tADC, returned by InitializeADC
+ * @param us Time between calls to read the ADC specified in micro seconds
+ * Note: Any following calls to ADCRead will return the most recent value
+ * Note: If the passed time between calls is less than the time it takes for the ADC to complete, the ADC will read as fast as possible without overlap
+ */
+void ADCReadContinuouslyUS(tADC *adc, tTime us);
+
+/**
+ * Sets up an ADC to read indefinitly
+ * @param adc Pointer to an initialized tADC, returned by InitializeADC
+ * @param s Time between calls to read the ADC specified in seconds
+ * Note: Any following calls to ADCRead will return the most recent value
+ * Note: If the passed time between calls is less than the time it takes for the ADC to complete, the ADC will read as fast as possible without overlap
+ */
+void ADCReadContinuously(tADC *adc, float s);
+
 
 #ifdef __cplusplus
 }
