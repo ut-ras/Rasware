@@ -42,26 +42,46 @@ extern "C" {
 // Definition of struct Sonar in sonar.c
 typedef struct Sonar tSonar;
 
-// Function to initialize a sonar on a pair of pins
-// The returned pointer can be used by the SonarRead functions
+/**
+ * Initializes a sonar on a pair of pin
+ * @param trigger Pin plugged into the sonar's tigger line
+ * @param echo Pin plugged into the sonar's echo line
+ * @return Pointer to an initialized tSonar, can be used by the SonarRead functions
+ */
 tSonar *InitializeSonar(tPin trigger, tPin echo);
 
-// This function returns the distance measured as a percentage of 
-// maximum range of the sonar. If no response is detected, a value of 
-// infinity is returned. If the sonar is not continously reading,
-// then the function will busy wait for the results
+/**
+ * Returns the distance measured from the sonar
+ * @param snr Pointer to an initialized tSonar, returned by InitializeSonar
+ * @return The distance measured as a percentage of maximum range of the sonar. If no response is detected, a value of infinity is returned. 
+ * Note: if the sonar is not continously reading, then the function will busy wait for the results
+ */
 float SonarRead(tSonar *snr);
 
-// This function sets up a sonar to be read in the background. 
-// A callback can be passed, in which a call to SonarRead 
-// will return with the newly obtained value immediately
+/**
+ * Sets up an sonar to be run in the background
+ * @param snr Pointer to an initialized tSonar, returned by InitializeSonar
+ * @param callback Function called the next time the sonar read completes, in which a call to SonarRead will return with the newly obtained value immediately
+ * @param data Argument sent to the provided callback function whenever it is called
+ */
 void SonarBackgroundRead(tSonar *snr, tCallback callback, void *data);
 
-// These function set up a sonar to read indefinitly
-// Any following calls to SonarRead will return the most recent value
-// If the passed time between calls is less than the time it takes for
-// the sonar to complete, the sonar will fire as fast as possible without overlap
+/**
+ * Sets up an sonar to read indefinitly
+ * @param snr Pointer to an initialized tSonar, returned by InitializeSonar
+ * @param us Time between calls to read the sonar in micro seconds
+ * Note: Any following calls to SonarRead will return the most recent value
+ * Note: If the passed time between calls is less than the time it takes for the sonar read to complete, the sonar will fire as fast as possible without overlap
+ */
 void SonarReadContinuouslyUS(tSonar *snr, tTime us);
+
+/**
+ * Sets up an sonar to read indefinitly
+ * @param snr Pointer to an initialized tSonar, returned by InitializeSonar
+ * @param s Time between calls to read the sonar in seconds
+ * Note: Any following calls to SonarRead will return the most recent value
+ * Note: If the passed time between calls is less than the time it takes for the sonar read to complete, the sonar will fire as fast as possible without overlap
+ */
 void SonarReadContinuously(tSonar *snr, float s);
 
 

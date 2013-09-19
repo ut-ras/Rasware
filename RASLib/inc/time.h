@@ -48,28 +48,75 @@ typedef unsigned long long tTime;
 #define TASK_COUNT 64
 
 
-// Initializes a system timer with microsecond resolution
+/**
+ * Initializes a system timer with microsecond resolution
+ */
 void InitializeSystemTime(void);
 
-// Outputs system time
-tTime GetTimeUS(void);
+/**
+ * Outputs system time
+ * @return System time in microseconds
+ */
+ tTime GetTimeUS(void);
+
+/**
+ * Outputs system time
+ * @return System time in seconds
+ */
 float GetTime(void);
 
-// Schedules a callback function to be called in given time
-// The return value can be used to stop the call with CallStop
+/**
+ * Schedules a callback function to be called in given time
+ * @param callback Function that will be called
+ * @param data Argument sent to the callback function when it's called
+ * @param us Period between calls, specified in microseconds
+ * @return ID that can be used to stop the call with CallStop
+ */
 int CallInUS(tCallback callback, void *data, tTime us);
+
+/**
+ * Schedules a callback function to be called in given time
+ * @param callback Function that will be called
+ * @param data Argument sent to the callback function when it's called
+ * @param s Period between calls, specified in seconds
+ * @return ID that can be used to stop the call with CallStop
+ */
 int CallIn(tCallback callback, void *data, float s);
 
-// Schedules a callback function to be called repeatedly
-// The return value can be used to stop the call with CallStop
+/**
+ * Schedules a callback function to be called repeatedly
+ * @param callback Function that is called repeatedly
+ * @param data Argument sent to the callback function each time it's called
+ * @param us Period between calls, specified in microseconds
+ * @return ID that can be used to stop the call with CallStop
+ */
 int CallEveryUS(tCallback callback, void *data, tTime us);
+
+/**
+ * Schedules a callback function to be called repeatedly
+ * @param callback Function that is called repeatedly
+ * @param data Argument sent to the callback function each time it's called
+ * @param s Period between calls, specified in seconds
+ * @return ID that can be used to stop the call with CallStop
+ */
 int CallEvery(tCallback callback, void *data, float s);
 
-// Stops a pending call based on the passed identifier
+/**
+ * Stops a pending call based on the passed identifier
+ * @param id Value returned by CallEvery and CallIn functions
+ */
 void CallStop(int id);
 
-// Busy waits for given time
+/**
+ * Busy waits for given time
+ * @param ms Amount of time to wait, specified in milliseconds
+ */
 void WaitUS(tTime ms);
+
+/**
+ * Busy waits for given time
+ * @param s Amount of time to wait, specified in seconds
+ */
 void Wait(float s);
 
 #ifdef __cplusplus

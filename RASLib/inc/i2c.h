@@ -64,7 +64,7 @@ tBoolean I2CSuccess(tI2C *i2c);
  * @param data Pointer to array of byes being sent
  * @param len Number of bytes in data array
  * @param callback Function that will be called when the data has been sent
- * @param cbdata [TODO: describe cbdata]
+ * @param cbdata Argument sent to the callback whenever it is called
  */
 void I2CBackgroundSend(tI2C *i2c, unsigned char addr, 
                                   const unsigned char *data, unsigned int len,
@@ -88,7 +88,7 @@ tBoolean I2CSend(tI2C *i2c, unsigned char addr,
  * @param data Pointer to array of byes to store the data received
  * @param len Number of bytes allocated in the data array
  * @param callback Function that will be called when all of the data is received
- * @param cbdata [TODO: describe cbdata]
+ * @param cbdata Argument sent to the callback whenever it is called
  */
 void I2CBackgroundReceive(tI2C *i2c, unsigned char addr, 
                                      unsigned char *data, unsigned int len,
@@ -114,7 +114,7 @@ tBoolean I2CReceive(tI2C *i2c, unsigned char addr,
  * @param recData Pointer to array of byes to store the data received
  * @param recLen Number of bytes allocated in the receive data array
  * @param callback Function that will be called when all of the data is received
- * @param cbdata [TODO: describe cbdata]
+ * @param cbdata Argument sent to the callback whenever it is called
  */
 void I2CBackgroundRequest(tI2C *i2c, unsigned char addr, 
                                      const unsigned char *sendData, unsigned int sendLen,
