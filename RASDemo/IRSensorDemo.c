@@ -10,10 +10,10 @@ void initIRSensor(void) {
 	ADCSequenceConfigure(ADC_BASE,0, ADC_TRIGGER_PROCESSOR, 0);
 	ADCSequenceStepConfigure(ADC_BASE, 0, 0, ADC_CTL_IE | ADC_CTL_END | ADC_CTL_CH0);
 	ADCSequenceEnable(ADC_BASE, 0);*/
-	adc[0] = InitializeADC(PIN_E2);
-    adc[1] = InitializeADC(PIN_E3);
-    adc[2] = InitializeADC(PIN_E4);
-    adc[3] = InitializeADC(PIN_E5);
+	adc[0] = InitializeADC(PIN_E4);
+    adc[1] = InitializeADC(PIN_E5);
+    adc[2] = InitializeADC(PIN_E1);
+    adc[3] = InitializeADC(PIN_B4);
 	//Printf("init IRSensor not working.\n");
 }
 
