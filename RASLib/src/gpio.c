@@ -25,6 +25,7 @@
 
 #include <StellarisWare/inc/hw_ints.h>
 #include <StellarisWare/inc/hw_memmap.h>
+#include <StellarisWare/inc/hw_gpio.h>
 #include <StellarisWare/driverlib/interrupt.h>
 #include <StellarisWare/driverlib/gpio.h>
 #include <StellarisWare/driverlib/sysctl.h>
@@ -87,6 +88,16 @@ void InitializeGPIO(void) {
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+    
+    // Special workarounds for PF0 and PD7
+    // For more info lookup NMI mux issue on the LM4F
+    HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
+    HWREG(GPIO_PORTD_BASE + GPIO_O_CR) = GPIO_PIN_7;
+    HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = 0;
+    
+    HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
+    HWREG(GPIO_PORTF_BASE + GPIO_O_CR) = GPIO_PIN_0;
+    HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = 0;
         
     // Enable the interrupts
     // This shouldn't be nescessary but for some reason is...
@@ -122,9 +133,20 @@ void SetPinZ(tPin pin) {
     GPIOPinTypeGPIOInput(PORT_VAL(pin), PIN_VAL(pin));
 }
 
-// Register a callback to be called when the pin's value changes, 
-// the state of the pin can then be determined through the GetPin function.
-void CallOnPin(tCallback callback, void *data, tPin pin) {
+// Add a weak pull up resistor to the pin
+void PullUpPin(tPin pin) {
+    GPIOPadConfigSet(PORT_VAL(pin), PIN_VAL(pin), 
+                     GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
+}
+
+// Add a weak pull down resistor to the pin
+void PullDownPin(tPin pin) {
+    GPIOPadConfigSet(PORT_VAL(pin), PIN_VAL(pin), 
+                     GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
+}
+
+// Internally used function to register a pin interrupt
+static void CallOnPinType(tCallback callback, void *data, tPin pin, unsigned long type) {
     tPinTask *task = &pinTaskBuffer[pin];
 
     // Stop the interrupt first to avoid a race condition
@@ -141,8 +163,26 @@ void CallOnPin(tCallback callback, void *data, tPin pin) {
         task->callback = callback;
         
         // Setup the interrupts
-        GPIOIntTypeSet(PORT_VAL(pin), PIN_VAL(pin), GPIO_BOTH_EDGES);
+        GPIOIntTypeSet(PORT_VAL(pin), PIN_VAL(pin), type);
         GPIOPinIntClear(PORT_VAL(pin), PIN_VAL(pin));
         GPIOPinIntEnable(PORT_VAL(pin), PIN_VAL(pin));
     }
+}
+
+// Register a callback to be called when the pin's value changes, 
+// the state of the pin can then be determined through the GetPin function.
+void CallOnPin(tCallback callback, void *data, tPin pin) {
+    CallOnPinType(callback, data, pin, GPIO_BOTH_EDGES);
+}
+
+// Register a callback to be called when the pin's value goes from low to high, 
+// the state of the pin can then be determined through the GetPin function.
+void CallOnPinRising(tCallback callback, void *data, tPin pin) {
+    CallOnPinType(callback, data, pin, GPIO_RISING_EDGE);
+}
+
+// Register a callback to be called when the pin's value goes from high to low, 
+// the state of the pin can then be determined through the GetPin function.
+void CallOnPinFalling(tCallback callback, void *data, tPin pin) {
+    CallOnPinType(callback, data, pin, GPIO_FALLING_EDGE);
 }

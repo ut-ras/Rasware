@@ -40,8 +40,16 @@ typedef enum {
     PIN_D0, PIN_D1, PIN_D2, PIN_D3, PIN_D4, PIN_D5, PIN_D6, PIN_D7,
     PIN_E0, PIN_E1, PIN_E2, PIN_E3, PIN_E4, PIN_E5, PIN_E6, PIN_E7,
     PIN_F0, PIN_F1, PIN_F2, PIN_F3, PIN_F4, PIN_F5, PIN_F6, PIN_F7,
-    PIN_COUNT, PORT_COUNT = PIN_COUNT >> 3,
+    PIN_COUNT, PORT_COUNT = PIN_COUNT / 8,
 } tPin;
+
+// Convenient definitions of Launchpad pins
+#define PIN_RED   PIN_F1
+#define PIN_GREEN PIN_F2
+#define PIN_BLUE  PIN_F3
+
+#define PIN_BUTTON_0 PIN_F0
+#define PIN_BUTTON_1 PIN_F4
 
 // These macros can be used to extract the pin and port bit values
 // for use in StellarisWare function calls.
@@ -63,9 +71,23 @@ void SetPin(tPin pin, tBoolean val);
 // Set a pin into high impedance mode
 void SetPinZ(tPin pin);
 
+// Add a weak pull up resistor to the pin
+void PullUpPin(tPin pin);
+
+// Add a weak pull down resistor to the pin
+void PullDownPin(tPin pin);
+
 // Register a callback to be called when the pin's value changes, 
 // the state of the pin can then be determined through the GetPin function.
 void CallOnPin(tCallback callback, void *data, tPin pin);
+
+// Register a callback to be called when the pin's value goes from low to high, 
+// the state of the pin can then be determined through the GetPin function.
+void CallOnPinRising(tCallback callback, void *data, tPin pin);
+
+// Register a callback to be called when the pin's value goes from high to low, 
+// the state of the pin can then be determined through the GetPin function.
+void CallOnPinFalling(tCallback callback, void *data, tPin pin);
 
 
 #ifdef __cplusplus
