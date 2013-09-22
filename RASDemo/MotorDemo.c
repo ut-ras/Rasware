@@ -11,12 +11,10 @@ void initMotors(void) {
 }
 
 void motorDemo(void) {
-	// 2012 Motor Demo
 	Printf("Press:\n  w-forward\n  s-backward\n  a-left\n  ");
 	Printf("d-right\n  space-stop\n  enter-quit\n");
 	
 	{
-		// max speed is 1.0 but 0.75 lets us check for working pwm
 		float left = 0, right = 0, speed = 0.75;
 		char newline = 13;
 		char ch = Getc();

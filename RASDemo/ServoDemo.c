@@ -10,11 +10,11 @@ void initServo(void) {
 }
 
 void servoDemo(void) {
-	// 2012 Servo Demo code
 	Printf("Press:\n  a-'up' 0.10\n  w-'up' 0.01\n  s-'down' 0.01\n");
 	Printf("  d-'down' 0.10\n  enter-quit\n");
 	
-	{   float position = 0;
+	{
+		float position = 0;
 		char newline = 13;
 		char ch;
 		
