@@ -6,7 +6,7 @@
 tServo *servo;
 
 void initServo(void) {
-    servo = InitializeServo(PIN_B0);
+    servo = InitializeServo(PIN_B1);
 }
 
 void servoDemo(void) {
