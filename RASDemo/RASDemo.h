@@ -26,6 +26,5 @@ void uartDemo(void);
 void initSonar(void);
 void sonarDemo(void);
 
-// Functions in GPIODemo
-void initGPIO(void);
+// Function for GPIODemo
 void gpioDemo(void);

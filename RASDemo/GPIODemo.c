@@ -1,9 +1,7 @@
 #include "RASDemo.h"
 
-void initGPIO(void) {
-	
-}
+#include <RASLib/inc/common.h>
 
 void gpioDemo(void) {
-	
+  // Think of something to use for this
 }
