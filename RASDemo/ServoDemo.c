@@ -6,11 +6,11 @@
 tServo *servo;
 
 void initServo(void) {
-    servo = InitializeServo(PIN_B0);
+    servo = InitializeServo(PIN_B1);
 }
 
 void servoDemo(void) {
-	// 2012 Servo Demo code
+		ch = Getc();
 	/**************************************************
 	* Servo takes position argument 0.00f-1.00f
 	*
@@ -56,4 +56,10 @@ void servoDemo(void) {
 				 
 		Printf("\n");
 	}
+      Printf("\rposition: %f ",position);   
+      ch = Getc();
+    }
+         
+    Printf("\n");
+  }
 }

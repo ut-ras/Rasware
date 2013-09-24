@@ -430,6 +430,16 @@
               <FileType>2</FileType>
               <FilePath>.\Startup.s</FilePath>
             </File>
+            <File>
+              <FileName>GPIODemo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\GPIODemo.c</FilePath>
+            </File>
+            <File>
+              <FileName>SonarDemo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\SonarDemo.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

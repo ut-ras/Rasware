@@ -349,10 +349,11 @@ void SetPWM(tPWM *pwm, float duty, float phase) {
     unsigned long iphase, iduty;
 
     // Limit the range of both values to [0.0,1.0]
-    duty = (duty > 1.0f) ? 1.0f :
-           (duty < 0.0f) ? 0.0f : duty;
-    phase = (phase > 1.0f) ? 1.0f :
-            (phase < 0.0f) ? 0.0f : phase;
+    if (duty > 1.0f || duty < 0.0f)
+        return;
+    
+    if (phase > 1.0f || phase < 0.0f)
+        return;
 
     // Calculate the new absolute phase and duty
     iphase = (unsigned long)(phase * pwm->period);

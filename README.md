@@ -14,8 +14,7 @@ Robotathon Setup Instructions
 
 1. Create a free GitHub account on [github.com](https://github.com/signup/free)
 2. Follow GitHub's great instructions for installing [Git](https://help.github.com/articles/set-up-git) on your computer.
-3. If you want to learn more about Git, you can read GitPro online for free (and legally, too!) at http://git-scm.com/book
-TODO: Add instructions to not have to input credentials every time
+3. If you want to learn more about Git, you can read the GitPro book online for free (and legally, too!) at http://git-scm.com/book
 
 ### Fork Rasware (only one Robotathon team member should do this step) ###
 
@@ -29,17 +28,17 @@ Setup for Windows (WIP)
 -----------------
 
 ### Install TortiseGIT
-1. Go to [Google Code]<https://code.google.com/p/tortoisegit/wiki/Download>
+1. Go to [Google Code](https://code.google.com/p/tortoisegit/wiki/Download)
 2. Download the correct architecture according to your machine (If you don't know, Right Click in My Computer, click Properties, and check wht System Type is)
 3. Run the executable with default values
 
 ### Install Stellarisware
-1. Go to [TI]<https://myportal.ti.com/portal/dt?provider=TIPassLoginSingleContainer&lt=myti&j5=2&j3=1&goto=https://my.ti.com/cgi-bin/home.pl> and create a new account.
-2. Go to [TI]<http://www.ti.com/tool/sw-lm3s>, and download SW-LM3S-LM4F.exe.
+1. Go to [TI](https://myportal.ti.com/portal/dt?provider=TIPassLoginSingleContainer&lt=myti&j5=2&j3=1&goto=https://my.ti.com/cgi-bin/home.pl) and create a new account.
+2. Go to [TI](http://www.ti.com/tool/sw-lm3s), and download SW-LM3S-LM4F.exe.
 3. When complete, run the installer with the default installation paths.
 
 ### Install Keil uVision ###
-1. Go to [TI]<http://www.ti.com/tool/SW-EK-TM4C123GXL> and download EK-TM4C123GXL-KEIL.exe.
+1. Go to [TI](http://www.ti.com/tool/SW-EK-TM4C123GXL) and download EK-TM4C123GXL-KEIL.exe.
 2. Extact the archive
 3. Navigate to Tools/Keil/ and run the installer.
 
@@ -78,7 +77,7 @@ Note: for windows 8, the drivers are unsigned, so installing them requires you t
 
 ### Committing code back to the repo
 1. While in the directory, right click and select Git Commit
-2. Write useful commit comments. See [link]<https://github.com/erlang/otp/wiki/Writing-good-commit-messages>. Your teammates will thank you.
+2. Write useful commit comments. See [link](https://github.com/erlang/otp/wiki/Writing-good-commit-messages). Your teammates will thank you.
 3. You will be promted to do a Git Push. Do so. At this point, you've only made changes to the repo on your machine. The Git Push uploads the changes to GitHub.
 4. If you need to log in, check with a mentor to resetup 
 

@@ -3,10 +3,20 @@
 #include <RASLib/inc/common.h>
 
 int main(void)
-{	
-	char ch;	  	 
+{  
+  char ch;       
+  InitializeMCU();
 
-	InitializeMCU();
+  while(1) {
+    Printf("\nRAS Demo for Robotathon 2013\n");
+    Printf("  0=UART Demo\n  1=Motor Demo\n");
+    Printf("  2=Servo Demo\n  3=Line Sensor\n");
+    Printf("  4=IR Sensor Demo\n  5=Encoders Demo\n");
+    Printf("  6=Sonar Demo\n  7=GPIO Demo\n");
+    
+    Printf(">> ");
+    ch = Getc();
+    Printf("%c\n", ch);
 
 	while(1) {
 		Printf("\nRAS Demo for Robotathon 2013\n");

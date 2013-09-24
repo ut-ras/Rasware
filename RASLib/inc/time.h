@@ -45,7 +45,7 @@ typedef unsigned long long tTime;
 
 // Number of tasks to internally allocate
 // Surpassing this value will cleanly return an id of 0
-#define TASK_COUNT 64
+#define TASK_COUNT 128
 
 
 // Initializes a system timer with microsecond resolution

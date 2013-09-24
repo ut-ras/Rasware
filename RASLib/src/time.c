@@ -84,12 +84,12 @@ void InitializeSystemTime(void) {
   
     // Reset queue and thread all tasks in the buffer together
     unusedQueue = &taskBuffer[0];
-    unusedEnd = &unusedQueue;
 
     for (i = 0; i < TASK_COUNT-1; i++)
         taskBuffer[i].next = &taskBuffer[i+1];
 
     taskBuffer[TASK_COUNT-1].next = 0;
+    unusedEnd = &taskBuffer[TASK_COUNT-1].next;
 
     // Reset the pending queue as well
     pendingQueue = 0;
@@ -206,13 +206,13 @@ void Timer5Handler(void) {
     tTime time = GetTimeUS();
     
     TimerIntClear(TIMER5_BASE, TIMER_TIMA_TIMEOUT);
-  
+
     // Handling any waiting tasks
     while (pendingQueue && time >= pendingQueue->target) {
         // remove it from the buffer
         tTask *task = pendingQueue;
         pendingQueue = task->next;
-      
+
         task->callback(task->data);
         
         if (task->repeatTime) {
@@ -237,7 +237,7 @@ void Timer5Handler(void) {
 // The return value can be used to stop the call with CallStop
 int CallInUS(tCallback callback, void *data, tTime us) {
     tTask *task;
-
+    
     // Check if any tasks are available
     if (!unusedQueue)
         return 0;

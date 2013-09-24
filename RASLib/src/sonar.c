@@ -91,7 +91,7 @@ tSonar *InitializeSonar(tPin trigger, tPin echo) {
 static void BeginSonarSequence(tSonar *snr);
 
 // Handler to the delay after full reads
-static void DelayHandler(tSonar *snr) {  
+static void DelayHandler(tSonar *snr) {
     // Check if there is pending operation
     if (snr->state == PENDING)
         BeginSonarSequence(snr);
