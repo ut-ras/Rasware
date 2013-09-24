@@ -6,6 +6,16 @@
 tMotor *motors[12];
 
 void initMotors(void) {
+	/***********************************************************
+	* Motor initializations:
+	* 	param1,2,3,4: 
+	*		1,2 - initialize PWM signals on pin PARAM1,PARAM2
+	*		3 - boolean to set brake mode on/off
+	* 		4 - invert motor directions (when motors face opposite 
+	* 			directions)
+	*	
+	*	Source: RASLib/src/motor.c	
+	************************************************************/
     motors[0] = InitializeMotor(PIN_B6, PIN_B7, true, false);
     motors[1] = InitializeMotor(PIN_E5, PIN_E4, true, false);
 }
@@ -22,28 +32,37 @@ void motorDemo(void) {
 		char ch = Getc();
 		while(ch != newline) {
 			ch = Getc();
-			Printf("%c", ch);
-			if (ch == 'w') {
-				left = speed;
-				right = speed;
-			} else if (ch == 's') {
-				left = -speed;
-				right = -speed;
-			} else if (ch == 'a') {
-				left = -speed;
-				right = speed;
-			} else if (ch == 'd') {
-				left = speed;
-				right = -speed;
-			} else if (ch == ' ') {
-				left = 0;
-				right = 0;
+			switch(ch)
+			{
+			 	case 'w':
+					left = speed;
+					right = speed;
+					break;
+				case 's':
+					left = -speed;
+					right = -speed;
+					break;
+				case 'a':
+					left = -speed;
+					right = speed;
+					break;
+				case 'd':
+					left = speed;
+					right = -speed;
+					break;
+				default:
+					left = 0; 
+					right = 0;
+					break;
 			}
+
+			Printf("%c", ch);
+
 			SetMotor(motors[0], left);
 			SetMotor(motors[1], right);
 			Printf(" Set Motor to %d %d  \r", (int)(left*100), (int)(right*100));
 		}
-	}
+	}				 
 	
 	SetMotor(motors[0], 0.0f);
 	SetMotor(motors[1], 0.0f);

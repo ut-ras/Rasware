@@ -4,7 +4,7 @@
 #include <RASLib/inc/uart.h>
 
 void uartDemo(void) {
-	Printf("tell me something!\n-> ");
+	Printf("tell me something! (science)\n-> ");
 	
 	{
 		char charArray[100];

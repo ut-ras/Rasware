@@ -15,6 +15,7 @@ int main(void)
 		Printf("  4=IR Sensor Demo\n  5=Encoders Demo\n");
 		
 		Printf(">> ");
+		// Read input from User
 		ch = Getc();
 		Printf("%c", ch);
 		Printf("\n");
