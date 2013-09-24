@@ -21,20 +21,18 @@ void initMotors(void) {
 }
 
 void motorDemo(void) {
-  Printf("Press:\n  w-forward\n  s-backward\n  a-left\n  ");
-  Printf("d-right\n  space-stop\n  enter-quit\n");
+	Printf("Press:\n  w-forward\n  s-backward\n  a-left\n  ");
+	Printf("d-right\n  space-stop\n  enter-quit\n");
   
-  {
-    float left = 0, right = 0, speed = 0.75;
-    char newline = 13;
-    char ch = Getc();
-    while(ch != newline) {
-      ch = Getc();
-      Printf("%c", ch);
-      if (ch == 'w') {
-        left = speed;
-        right = speed;
-			 	case 'w':
+	{
+    	float left = 0, right = 0, speed = 0.75;
+    	char newline = 13;
+    	char ch = Getc();
+    	while(ch != newline) {
+    		ch = Getc();
+    		Printf("%c", ch);
+			switch(ch) {
+				case 'w':
 					left = speed;
 					right = speed;
 					break;
