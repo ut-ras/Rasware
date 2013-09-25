@@ -29,22 +29,71 @@ extern "C" {
 #endif
 
 
-// Must be called before using other UART commands
+/**
+ * Must be called before using other UART commands
+ */
 void InitializeUART(void);
 
-// These are functions for getting UART input
+/**
+ * Checks to see if a character has been received in the UART buffer
+ * @return 1 if a character was found, 0 otherwise
+ */
 int KeyWasPressed(void);
+
+/**
+ * Busy-waits for input characters over UART and places them into the provided buffer
+ * TODO: finish
+ * @param pcBuf
+ * @param ulLen
+ * @return
+ */
 int Gets(char *pcBuf, unsigned long ulLen);
+
+/**
+ * Busy-waits for an input character and then returns it
+ * @return Character received
+ */
 unsigned char Getc(void);
 
-// These are functions for generating UART output
+/**
+ * Formats a string and outputs it over UART
+ * @param pcString Format string
+ * @param ... Additional parameters to be inserted into the format string
+ */
 void Printf(const char *pcString, ...);
+
+/**
+ * Outputs a single character over UART
+ * @param ch Character to output
+ */
 void Putc(char ch);
+
+/**
+ * Outputs the characters of a null-terminated string over UART
+ * @param pcString String of character to output
+ */
 void Puts(const char *pcString);
 
 // These functions configure UART but aren't a part of standard use
+/**
+ * TODO: finish
+ * @param ulPort
+ * @param ulBaud
+ * @param ulSrcClock
+ */
 void StdioConfig(unsigned long ulPort, unsigned long ulBaud, unsigned long ulSrcClock);
+
+/**
+ * TODO: finish
+ * @param ulPort
+ */
 void StdioInit(unsigned long ulPort);
+
+/**
+ * TODO: finish
+ * @param ulPort
+ * @param ulBaud
+ */
 void StdioInitExpClk(unsigned long ulPort, unsigned long ulBaud);
 
 

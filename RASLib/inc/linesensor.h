@@ -35,36 +35,57 @@ extern "C" {
 // Definition of struct LineSensor in linesensor.c
 typedef struct LineSensor tLineSensor;
 
-// Function to initialize a line sensor on a pair of pins
-// Address is be a 2-bit value determined by the solder jumpers on the board
-// The returned pointer can be used by the LineSensorRead functions
+/**
+ * Initializes a line sensor with an address on an i2c bus
+ * @param i2c Pointer to an initialized tI2C, returned by InitializeI2C
+ * @param address 2-bit value determined by the solder jumpers on the board
+ * @return Pointer to an initialized tLineSensor, can be used by the LineSensorRead functions
+ */
 tLineSensor *InitializeLineSensor(tI2C *i2c, unsigned int address);
 
-// This function returns the values measured as a bit-packed byte
-// each bit is matched against a threshold that is passed.
-// If the LineSensor is not continously reading,
-// then the function will busy wait for the results
-// If there is an error in the I2C module, the returned value will be all ones
+/**
+ * Returns the line sensor value measured as a bit-packed byte
+ * @param ls Pointer to an initialized tLineSensor, returned by InitializeLineSensor
+ * @param threshold If the value read from a single IR on the linesensor is above this threshold, it is converted to 1 and then packed into the byte
+ * @return Value measured from the line sensors as a bit-packed byte, where each bit of the byte corresponds to the value of a single IR senor on the line sensor array
+ * Note: if the line sensor is not continously reading, then the function will busy wait for the results
+ * Note: if there is an error in the I2C module, the returned value will be all ones
+ */
 unsigned char LineSensorRead(tLineSensor *ls, float threshold);
 
-// This function returns the values measured as an
-// array of ratios placed in the passed memory location.
-// If the LineSensor is not continously reading,
-// then the function will busy wait for the results
-// The function returns true if successful, otherwise
-// it returns false and fills the array with infinities
+/**
+ * Puts the values read from the line sensor into an array of 8 floats
+ * @param ls Pointer to an initialized tLineSensor, returned by InitializeLineSensor
+ * @param array Array of 8 percentages, each corresponding to an IR sensor in the line sensor array
+ * @return true if successful, otherwise it returns false and fills the array with infinities
+ * Note: if the line sensor is not continously reading, then the function will busy wait for the results
+ */
 tBoolean LineSensorReadArray(tLineSensor *ls, float *array);
 
-// This function sets up a LineSensor to be run in the background
-// A callback can be passed, in which a call to LineSensorRead 
-// will return with the newly obtained value immediately
+/**
+ * Sets up a line sensor to be run in the background
+ * @param snr Pointer to an initialized tLineSensor, returned by InitializeLineSensor
+ * @param callback Function called the next time the line sensor read completes, in which a call to LineSensorRead will return with the newly obtained value immediately
+ * @param data Argument sent to the provided callback function whenever it is called
+ */
 void LineSensorBackgroundRead(tLineSensor *ls, tCallback callback, void *data);
 
-// These function set up a LineSensor to read indefinitly
-// Any following calls to LineSensorRead will return the most recent value
-// If the passed time between calls is less than the time it takes for
-// the LineSensor to complete, the LineSensor will read as fast as possible without overlap
+/**
+ * Sets up an line sensor to be read indefinitly
+ * @param snr Pointer to an initialized tLineSensor, returned by InitializeLineSensor
+ * @param us Time between calls to read the line sensor in microseconds
+ * Note: Any following calls to LineSensorRead will return the most recent value
+ * Note: If the passed time between calls is less than the time it takes for the line sensor read to complete, the line sensor will fire as fast as possible without overlap
+ */
 void LineSensorReadContinuouslyUS(tLineSensor *ls, tTime us);
+
+/**
+ * Sets up an line sensor to be read indefinitly
+ * @param snr Pointer to an initialized tLineSensor, returned by InitializeLineSensor
+ * @param s Time between calls to read the line sensor in seconds
+ * Note: Any following calls to LineSensorRead will return the most recent value
+ * Note: If the passed time between calls is less than the time it takes for the line sensor read to complete, the line sensor will fire as fast as possible without overlap
+ */
 void LineSensorReadContinuously(tLineSensor *ls, float s);
 
 

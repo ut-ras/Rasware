@@ -34,12 +34,22 @@ extern "C" {
 // Definition of struct Motor in motor.c
 typedef struct Motor tMotor;
 
-// Function to initialize a motor on a pair of pins
-// The returned pointer can be used by the SetMotor function
+/**
+ * Initializes a motor on a pair of pins
+ * @param a Pin that should plug into the IN1 motor line
+ * @param b Pin that should plug into the IN2 motor line
+ * @param brake Flag to enable breaking when the motor is set to 0 speed
+ * @param invert Flag to switch the direction that the motor will turn
+ * @return Pointer to an initialized tMotor, can be used by the SetMotor function
+ */
 tMotor *InitializeMotor(tPin a, tPin b, tBoolean brake, tBoolean invert);
 
-// This function sets a motor speed
-void SetMotor(tMotor *mtr, float speed);
+/**
+ * Sets a motor speed
+ * @param mtr Pointer to an initialized tMotor, returned by InitializeMotor
+ * @param speed Float on range [-1, 1] where -1 means maximum backward speed and 1 means maximum forward speed
+ */
+ void SetMotor(tMotor *mtr, float speed);
 
 
 #ifdef __cplusplus
