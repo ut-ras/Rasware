@@ -44,7 +44,6 @@ typedef struct Motor tMotor;
  */
 tMotor *InitializeMotor(tPin a, tPin b, tBoolean brake, tBoolean invert);
 
-// This function sets a motor speed
 /**
  * Sets a motor speed
  * @param mtr Pointer to an initialized tMotor, returned by InitializeMotor
