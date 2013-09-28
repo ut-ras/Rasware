@@ -35,12 +35,19 @@ extern "C" {
 // All a servo needs is a pointer to a pwm
 typedef tPWM tServo;
 
-// Function to initialize a servo on a pin
-// The returned pointer can be used by the SetPWM function
+/**
+ * Initializes a servo on a pin
+ * @param pin Pin plugged into a servo
+ * @return Pointer to an initialized tServo, can be used by the SetServo function
+ */
 tServo *InitializeServo(tPin pin);
 
-// Servo output is 50hz with 2.5% to 12.5% duty cycle, centered at 7.5%
-// This function sets a servo value, with 0.0 being 2.5% and 1.0 being 12.5%
+/**
+ * Sets a servo to a specified position
+ * @param servo Pointer to an initialized tServo, returned by InitializeServo
+ * @param value Float on range [0,1] representing the desired position of the servo
+ * Note: Servo output is 50hz with 2.5% to 12.5% duty cycle, centered at 7.5%. This function sets a servo value, with 0.0 being 2.5% and 1.0 being 12.5%
+ */
 void SetServo(tServo *servo, float value);
 
 

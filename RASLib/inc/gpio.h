@@ -59,26 +59,51 @@ typedef enum {
 extern const unsigned long PIN_PORTS[PORT_COUNT];
 
 
-// Initialize GPIO
+/**
+ * Initializes GPIO
+ */
 void InitializeGPIO(void);
 
-// Get Pin value as a boolean
+/**
+ * Gets pin value as a boolean
+ * @param pin The pin being checked
+ * @return The boolean value of given pin
+ */
 tBoolean GetPin(tPin pin);
 
-// Set Pin value as a boolean
+/**
+ * Sets pin value as a boolean
+ * @param pin The pin being set
+ * @param val The boolean value the pin is being set to
+ */
 void SetPin(tPin pin, tBoolean val);
 
-// Set a pin into high impedance mode
+/**
+ * Sets a pin into high impedance mode
+ * @param pin The pin being set to high impedance mode
+ */
 void SetPinZ(tPin pin);
 
-// Add a weak pull up resistor to the pin
+/**
+ * Adds a weak pull up resistor to the pin
+ * @param pin The pin getting a weak pull up resistor 
+ */
 void PullUpPin(tPin pin);
 
-// Add a weak pull down resistor to the pin
+/**
+ * Adds a weak pull down resistor to the pin
+ * @param pin The pin getting a weak pull down resistor
+ */
 void PullDownPin(tPin pin);
 
-// Register a callback to be called when the pin's value changes, 
-// the state of the pin can then be determined through the GetPin function.
+/**
+ * Registers a callback to be called when the pin's value changes, the state of the
+ * pin can then be determined through the GetPin function.
+ * @param callback Pointer to a function that will be called whenever the pin changes
+ * @param data Pointer that will be sent as an argument to the callback everytime it
+ * is called
+ * @param pin Pin being listened to
+ */
 void CallOnPin(tCallback callback, void *data, tPin pin);
 
 // Register a callback to be called when the pin's value goes from low to high, 
