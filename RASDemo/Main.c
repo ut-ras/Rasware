@@ -1,16 +1,42 @@
 #include "RASDemo.h"
 
 #include <RASLib/inc/common.h>
+#include <RASLib/inc/gpio.h>
+#include <RASLib/inc/time.h>
+
+int led_on;
+
+void blink(void) {
+	SetPin(PIN_BLUE, led_on);
+
+	led_on = !led_on;
+}
+
+void green_light(void) {
+	SetPin(PIN_GREEN, GetPin(PIN_F0));
+}
+
+void red_light(void) {
+	SetPin(PIN_RED, GetPin(PIN_F4));
+}
 
 int main(void) {  
 	char ch;       
 	InitializeMCU();
+
+	CallEvery(blink, 0, 0.25f);
+
+	PullUpPin(PIN_F0);
+	CallOnPin(green_light, 0, PIN_F0);
+	PullUpPin(PIN_F4);
+	CallOnPin(red_light, 0, PIN_F4);
 
 	while(1) {
 		Printf("\nRAS Demo for Robotathon 2013\n");
 		Printf("  0=UART Demo\n  1=Motor Demo\n");
 		Printf("  2=Servo Demo\n  3=Line Sensor\n");
 		Printf("  4=IR Sensor Demo\n  5=Encoders Demo\n");
+		Printf("  6=GPIO Demo\n");
 		
 		Printf(">> ");
 		// Read input from User
@@ -47,6 +73,9 @@ int main(void) {
 				Printf("\nEncoders Demo\n");
 				initEncoders();
 				encoderDemo();
+				break;
+			case '6':
+				gpioDemo();
 				break;
 		}
 	}

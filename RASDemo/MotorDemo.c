@@ -16,7 +16,7 @@ void initMotors(void) {
 	*	
 	*	Source: RASLib/src/motor.c	
 	************************************************************/
-    motors[0] = InitializeMotor(PIN_B6, PIN_B7, true, false);
+    motors[0] = InitializeMotor(PIN_B7, PIN_B6, true, false);
     motors[1] = InitializeMotor(PIN_E5, PIN_E4, true, false);
 }
 
@@ -53,8 +53,6 @@ void motorDemo(void) {
 					right = 0;
 					break;
 			}
-
-			Printf("%c", ch);
 
 			SetMotor(motors[0], left);
 			SetMotor(motors[1], right);

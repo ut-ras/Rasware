@@ -6,7 +6,7 @@
 tServo *servo;
 
 void initServo(void) {
-    servo = InitializeServo(PIN_B1);
+	servo = InitializeServo(PIN_B0);
 }
 
 void servoDemo(void) {
@@ -14,12 +14,13 @@ void servoDemo(void) {
 	* Servo takes position argument 0.00f-1.00f
 	*
 	**************************************************/
-	Printf("Press:\n  a-'up' 0.10\n  w-'up' 0.01\n  s-'down' 0.01\n");
-	Printf("  d-'down' 0.10\n  enter-quit\n");
 	float position = 0;
 	char newline = 13;
 	char ch;
-	
+
+	Printf("Press:\n  a-'up' 0.10\n  w-'up' 0.01\n  s-'down' 0.01\n");
+	Printf("  d-'down' 0.10\n  enter-quit\n");
+
 	Printf("position: %f ", position);
 	ch = Getc();
         
