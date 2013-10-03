@@ -1,62 +1,82 @@
 #include "RASDemo.h"
 
 #include <RASLib/inc/common.h>
+#include <RASLib/inc/gpio.h>
+#include <RASLib/inc/time.h>
 
-int main(void)
-{  
-  char ch;       
-  InitializeMCU();
+int led_on;
 
-  while(1) {
-    Printf("\nRAS Demo for Robotathon 2013\n");
-    Printf("  0=UART Demo\n  1=Motor Demo\n");
-    Printf("  2=Servo Demo\n  3=Line Sensor\n");
-    Printf("  4=IR Sensor Demo\n  5=Encoders Demo\n");
-    Printf("  6=Sonar Demo\n  7=GPIO Demo\n");
-    
-    Printf(">> ");
-    ch = Getc();
-    Printf("%c\n", ch);
+void blink(void) {
+	SetPin(PIN_BLUE, led_on);
 
-    if (ch == '0') {
-      Printf("\n UART Demo\n");
-      //initUART is inside InitializeMCU
-      uartDemo();   
-    }
-    else if (ch == '1') {
-      Printf("\nMotor Demo\n");
-      initMotors();
-      motorDemo(); 
-    }
-    else if (ch == '2') {
-      Printf("\nServo Demo\n");
-      initServo();
-      servoDemo();   
-    }
-    else if (ch == '3') {         
-      Printf("\nLine Sensor Demo\n");
-      initLineSensor();      
-      lineSensorDemo();
-    }
-    else if (ch == '4') {     
-      Printf("\nIR Sensor Demo\n");
-      initIRSensor();
-      IRSensorDemo();   
-    }
-    else if (ch == '5') {
-      Printf("\nEncoders Demo\n");
-      initEncoders();
-      encoderDemo();
-    }
-    else if (ch == '6') {
-      Printf("\nSonar Demo\n");
-      initSonar();
-      sonarDemo();
-    }
-    else if (ch == '7') {
-      Printf("\nGPIO Demo\n");
-      //initGPIO is inside InitializeMCU
-      gpioDemo();
-    }
-  }
+	led_on = !led_on;
+}
+
+void green_light(void) {
+	SetPin(PIN_GREEN, GetPin(PIN_F0));
+}
+
+void red_light(void) {
+	SetPin(PIN_RED, GetPin(PIN_F4));
+}
+
+int main(void) {  
+	char ch;       
+	InitializeMCU();
+
+	CallEvery(blink, 0, 0.25f);
+
+	PullUpPin(PIN_F0);
+	CallOnPin(green_light, 0, PIN_F0);
+	PullUpPin(PIN_F4);
+	CallOnPin(red_light, 0, PIN_F4);
+
+	while(1) {
+		Printf("\nRAS Demo for Robotathon 2013\n");
+		Printf("  0=UART Demo\n  1=Motor Demo\n");
+		Printf("  2=Servo Demo\n  3=Line Sensor\n");
+		Printf("  4=IR Sensor Demo\n  5=Encoders Demo\n");
+		Printf("  6=GPIO Demo\n");
+		
+		Printf(">> ");
+		// Read input from User
+		ch = Getc();
+		Printf("%c", ch);
+		Printf("\n");
+
+		switch(ch) {
+			case '0':
+				Printf("\n UART Demo\n");
+				uartDemo();	 			
+				break;
+			case '1':
+				Printf("\nMotor Demo\n");
+				initMotors();
+				motorDemo(); 
+				break;
+			case '2':
+				Printf("\nServo Demo\n");
+				initServo();
+				servoDemo(); 	
+				break;
+			case '3':
+				Printf("\nLine Sensor Demo\n");
+				initLineSensor();		  
+				lineSensorDemo();	
+				break;
+			case '4':							
+	   			Printf("\nIR Sensor Demo\n");
+				initIRSensor();
+				IRSensorDemo();	 
+				break;
+			case '5':
+				Printf("\nEncoders Demo\n");
+				initEncoders();
+				encoderDemo();
+				break;
+			case '6':
+				gpioDemo();
+				break;
+		}
+	}
 }
