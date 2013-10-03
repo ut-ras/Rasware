@@ -12,24 +12,10 @@ void blink(void) {
 	led_on = !led_on;
 }
 
-void green_light(void) {
-	SetPin(PIN_GREEN, GetPin(PIN_F0));
-}
-
-void red_light(void) {
-	SetPin(PIN_RED, GetPin(PIN_F4));
-}
-
 int main(void) {  
 	char ch;       
 	InitializeMCU();
-
 	CallEvery(blink, 0, 0.25f);
-
-	PullUpPin(PIN_F0);
-	CallOnPin(green_light, 0, PIN_F0);
-	PullUpPin(PIN_F4);
-	CallOnPin(red_light, 0, PIN_F4);
 
 	while(1) {
 		Printf("\nRAS Demo for Robotathon 2013\n");
@@ -75,6 +61,7 @@ int main(void) {
 				encoderDemo();
 				break;
 			case '6':
+                Printf("\nGPIO Demo\n");
 				gpioDemo();
 				break;
 		}
