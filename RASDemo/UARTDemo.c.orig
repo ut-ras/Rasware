@@ -1,0 +1,44 @@
+#include "RASDemo.h"
+
+#include <RASLib/inc/common.h>
+#include <RASLib/inc/uart.h>
+
+void uartDemo(void) {
+<<<<<<< HEAD
+	Printf("tell me something! (science)\n-> ");
+	
+	{
+		char charArray[100];
+		Gets(charArray, 100);
+		Printf("you said, \"%s\"\n", charArray);
+		Printf("thanks for the input!\n");
+	}
+	
+	{
+		char newline = 13;
+		char ch = Getc();
+		while(ch != newline) {
+			ch = Getc();
+			Putc(ch);
+		}
+	}
+=======
+  Printf("Tell me something!\n-> ");
+  
+  {
+    char charArray[100];
+    Gets(charArray, 100);
+    Printf("You said, \"%s\"\n", charArray);
+    Printf("Thanks for the input!\n");
+  }
+  
+  {
+    char newline = 13;
+    char ch = Getc();
+    while(ch != newline) {
+      ch = Getc();
+      Putc(ch);
+    }
+  }
+>>>>>>> d56a159aef364b9d652dd2f553a73ec8606b7b5f
+}
