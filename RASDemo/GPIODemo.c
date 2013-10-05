@@ -6,9 +6,9 @@
 
 void gpioDemo(void) {
     Printf("Press:\nany key-read port A values\n");
-	Printf("any key after read begins-quit\n");
+    Printf("any key after read begins-quit\n");
 
-	while(!KeyWasPressed()) {
+    while(!KeyWasPressed()) {
         tPin i;
         
         Printf("port A: ");
@@ -17,7 +17,7 @@ void gpioDemo(void) {
         }
         
         Printf("\n");
-  	}
+      }
     
-  	Printf("\n");
+      Printf("\n");
 }
