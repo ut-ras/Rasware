@@ -4,10 +4,10 @@
 #include <RASLib/inc/gpio.h>
 #include <RASLib/inc/time.h>
 
-int led_on;
+tBoolean led_on;
 
 void blink(void) {
-    SetPin(PIN_BLUE, led_on);
+    SetPin(PIN_F1, led_on);
 
     led_on = !led_on;
 }
