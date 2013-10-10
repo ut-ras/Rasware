@@ -3,19 +3,9 @@
 #include <RASLib/inc/common.h>
 #include <RASLib/inc/motor.h>
 
-tMotor *motors[12];
+tMotor *motors[2];
 
 void initMotors(void) {
-    /***********************************************************
-    * Motor initializations:
-    *     param1,2,3,4: 
-    *        1,2 - initialize PWM signals on pin PARAM1,PARAM2
-    *        3 - boolean to set brake mode on/off
-    *         4 - invert motor directions (when motors face opposite 
-    *             directions)
-    *    
-    *    Source: RASLib/src/motor.c    
-    ************************************************************/
     motors[0] = InitializeMotor(PIN_B7, PIN_B6, true, false);
     motors[1] = InitializeMotor(PIN_E5, PIN_E4, true, false);
 }
