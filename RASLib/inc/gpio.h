@@ -43,18 +43,12 @@ typedef enum {
     PIN_COUNT, PORT_COUNT = PIN_COUNT / 8,
 } tPin;
 
-// Convenient definitions of Launchpad pins
-#define PIN_RED   PIN_F1
-#define PIN_GREEN PIN_F2
-#define PIN_BLUE  PIN_F3
-
-#define PIN_BUTTON_0 PIN_F0
-#define PIN_BUTTON_1 PIN_F4
 
 // These macros can be used to extract the pin and port bit values
 // for use in StellarisWare function calls.
 #define PIN_VAL(p)  (0x1 << ((p) & 0x7))
 #define PORT_VAL(p) (PIN_PORTS[(p) >> 3])
+
 // portTable is defined in gpio.c
 extern const unsigned long PIN_PORTS[PORT_COUNT];
 

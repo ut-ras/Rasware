@@ -13,11 +13,11 @@ void initSonar(void) {
 void sonarDemo(void) {
     Printf("Press any key to quit\n");
     
-      SonarReadContinuously(demoSonar, 0);
+    SonarReadContinuously(demoSonar, 0);
   
-      while(!KeyWasPressed()) {
-         Printf("Sonar value: %d\r", (int)(1000 * SonarRead(demoSonar)));
-      }
+    while(!KeyWasPressed()) {
+        Printf("Sonar value: %d\r", (int)(1000 * SonarRead(demoSonar)));
+    }
   
-      Printf("\n");
+    Printf("\n");
 }
