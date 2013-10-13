@@ -19,10 +19,10 @@ void encoderDemo(void) {
     ResetEncoder(demoEncoder[1]);
 
     while(!KeyWasPressed()) {
-    Printf("enc0:%d  enc1:%d\r",
-        GetEncoder(demoEncoder[0]),
-        GetEncoder(demoEncoder[1]));
-      }
+        Printf("enc0:%d  enc1:%d\r",
+                    GetEncoder(demoEncoder[0]),
+                    GetEncoder(demoEncoder[1]));
+    }
     
-      Printf("\n");
+    Printf("\n");
 }
