@@ -45,7 +45,7 @@ LDFLAGS += --entry ResetHandler
 LDFLAGS += --gc-sections
 LDFLAGS += -L$(RASLIB)/output
 LDFLAGS += -L$(STELLARIS)/driverlib/gcc-cm4f
-LDFLAGS += -L$(ARMCLIB)/$(PREFIX)/lib/thumb/cortex-m4
+LDFLAGS += -L$(ARMCLIB)/$(PREFIX)/lib
 LDFLAGS += -L$(wildcard $(ARMCLIB)/lib/gcc/$(PREFIX)/*)
 
 CFLAGS += $(addprefix -I, $(INC))
