@@ -27,8 +27,17 @@
 #include <math.h>
 
 #include <StellarisWare/inc/hw_types.h>
+#include <StellarisWare/inc/hw_ints.h>
+#include <StellarisWare/inc/hw_memmap.h>
+#include <StellarisWare/inc/hw_types.h>
+#include <StellarisWare/inc/hw_uart.h>
 #include <StellarisWare/driverlib/gpio.h>
-#include <StellarisWare/utils/uartstdio.c>
+#include <StellarisWare/driverlib/debug.h>
+#include <StellarisWare/driverlib/interrupt.h>
+#include <StellarisWare/driverlib/rom.h>
+#include <StellarisWare/driverlib/rom_map.h>
+#include <StellarisWare/driverlib/sysctl.h>
+#include <StellarisWare/driverlib/uart.h>
 
 
 static const char * const g_pcHex_U = "0123456789ABCDEF";
@@ -39,6 +48,7 @@ void InitializeUART(void)
 {
   // Enable GPIO port A which is used for UART0 pins.
   SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+  SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
 
   // Configure the pin muxing for UART0 functions on port A0 and A1.
   GPIOPinConfigure(GPIO_PA0_U0RX);
@@ -47,11 +57,30 @@ void InitializeUART(void)
   // Select the alternate (UART) function for these pins.
   GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
 
+  SysCtlPeripheralEnable(UART0_BASE);
   // Initialize the UART for console I/O.
-  StdioInit(0);
+  UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 115200,
+			  (UART_CONFIG_PAR_NONE | UART_CONFIG_STOP_ONE |
+			   UART_CONFIG_WLEN_8));
 }
 
 // The following block of funcitons are wrappers for StellarisWare UART functions
+void UARTwrite(const unsigned char *pucBuffer, unsigned long ulCount)
+{
+    //
+    // Loop while there are more characters to send.
+    //
+    while(ulCount--)
+    {
+        //
+        // Write the next character to the UART.
+        //
+	if (*pucBuffer == '\n') {
+	    UARTCharPut(UART0_BASE, '\r');
+	}
+        UARTCharPut(UART0_BASE, *pucBuffer++);
+    }
+}
 
 void StdioConfig(unsigned long ulPort, unsigned long ulBaud, unsigned long ulSrcClock)
 {
@@ -68,6 +97,27 @@ void StdioInitExpClk(unsigned long ulPort, unsigned long ulBaud)
   UARTStdioInitExpClk(ulPort, ulBaud);
 }
 
+int UARTgets(unsigned char *pucBuffer, unsigned long ulCount)
+{
+    //
+    // Loop while there are more characters to send.
+    //
+  unsigned long ulTemp = ulCount;
+    while(ulTemp--)
+    {
+        //
+        // Write the next character to the UART.
+        //
+        *pucBuffer = UARTCharGet(UART0_BASE);
+	UARTCharPut(UART0_BASE, *pucBuffer);
+	if( *pucBuffer == '\r') {
+	  return ulCount - ulTemp;
+	}
+	pucBuffer++;
+    }
+    return ulCount;
+}
+
 int Gets(char *pcBuf, unsigned long ulLen)
 {
   return UARTgets(pcBuf, ulLen);
@@ -75,7 +125,7 @@ int Gets(char *pcBuf, unsigned long ulLen)
 
 unsigned char Getc(void)
 {
-  return UARTgetc();
+  return UARTCharGet(UART0_BASE);
 }
 
 // Pulled out of RASDemo Code
@@ -510,6 +560,7 @@ again:
     }
   }
 }
+
 
 void Putc(char ch)
 {
