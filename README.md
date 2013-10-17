@@ -90,62 +90,76 @@ For these instructions, an Ubuntu install is assumed. It should be able to work 
 
 ### Setup a directory
 1. Create a directory to work in. This is where we will place everything.
-    1. "mkdir ras"
-    2. "cd ras"
+    mkdir ras
+    cd ras
 
 ### Install Git ##
 1. Simply install from your distro.
-    1. "sudo apt-get install git"
+    sudo apt-get install git
 2. You should configure git with both your username and email.
-    1. "git config --global user.name "User Name"
-    2. "git config --global user.email "your@email.here"
+    git config --global user.name "User Name"
+    git config --global user.email "your@email.here"
 
-### Installing a cross compiler ###
+### Install the Cross Compiler ###
 1. Cross Compilers for the LM4F can be found [here](https://launchpad.net/gcc-arm-embedded)
 2. Download and move to your ras directory.
-3. Uncompress the file.
-    1. "tar vfxj gcc-arm-none-eabi\*.bz2"
-    2. "rm gcc-arm-none-eabi\*.bz2"
-    3. "mv gcc-arm-none-eabi\* gcc-arm-none-eabi"
-4. You should add the cross-compiler to your path. To do this append the following line to your ~/.bashrc file. Make sure to change the path to the correct location of the ras directory.
-    1. "export PATH=$PATH:~/ras/gcc-arm-none-eabi/bin"
-5. You can then run gcc. It should complaign about missing files, but that will prove that it works.
-    1. "source ~/.bashrc"
-    2. "arm-none-eabi-gcc"
-
-### Install StellarisWare ###
-1. Download [StellarisWare](http://ras.ece.utexas.edu/drivers/StellarisWare.zip), the TI library and move it to your ras directory.
-2. Uncompress the file and compile StellarisWare
-    1. "unzip StellarisWare.zip -d StellarisWare"
-    2. "cd StellarisWare"
-    3. "make"
+3. Uncompress the file and install it your your /usr/local directory.
+    tar vfxj gcc-arm-none-eabi*.bz2
+    sudo mv gcc-arm-none-eabi*/bin/* /usr/local/bin
+    sudo mv gcc-arm-none-eabi*/lib/* /usr/local/lib
+    sudo mv gcc-arm-none-eabi*/share/* /usr/local/share
+    sudo mv gcc-arm-none-eabi*/arm-none-eabi /usr/local
+    rm -r gcc-arm-none-eabi*
+4. You should now be able to run the compiler. It should complain about missing input files, but that means that just means the compiler is working.
+    arm-none-eabi-gcc
 
 ### Install LM4Flash ###
-1. The lm4flsh utility allows us to program the board. To obtain the program you can simply download it from the [github repo](https://github.com/utzig/lm4tools).
-    1. "git clone https://github.com/utzig/lm4tools.git"
+1. The lm4flsh utility allows us to program the board. To obtain the program you can download it from the [github repo](https://github.com/utzig/lm4tools).
+    git clone https://github.com/utzig/lm4tools.git
 2. You will need to compile the library before you can use it.
-    1. "cd lm4tools/lm4flash"
-    2. "make"
-3. If there is an error due to libusb, make sure the package is installed.
-    1. "sudo apt-get install libusb"
-4. You should also add the lm4flash to your path. To do this append the following line to your ~/.bashrc file. Make sure to change the path to the correct location of the ras directory.
-    1. "export PATH=$PATH:~/ras/lm4tools/lm4flash"
+    cd lm4tools/lm4flash
+    make
+3. Now just move it to local/bin so it is in your path.
+    sudo mv lm4flash /usr/local/bin
+    cd ../..
+    rm -rf lm4flash
+3. If there is an error due to libusb, make sure the package is installed and recompile.
+    sudo apt-get install libusb
 
-### Download Code ###
+### Download StellarisWare ###
+1. Download [StellarisWare](http://ras.ece.utexas.edu/drivers/SW-EK-LM4F120XL-9453.zip), the TI library and move it to your ras directory.
+2. Uncompress the file (twice) and compile StellarisWare.
+    unzip SW-EK-LM4F120XL-9453.zip
+    unzip SW-EK-LM4F120XL-9453.exe -d StellarisWare
+    cd StellarisWare
+    make
+    cd ..
+    rm SW-EK-LM4F120XL*
+
+### Download Rasware ###
 1. You can now use git to create a copy of your forked repo with the clone command.
-    1. "git clone https://github.com/username/Rasware2013.git"
+    git clone https://github.com/username/Rasware2013.git
+2. Before you use it, make sure to compile RASLib.
+    cd Rasware2013/RASLib
+    make
 
+### Add the LM4F to UDev ###
+1. To keep from needing root access to communicate with the lm4f, you will need to copy the lm4f rule to the udev directory.
+    sudo cp Rasware2013/RASLib/51-lm4f.rules /etc/udev/rules.d
+2. Restart udev for these changes to come into effect.
+    sudo udevadm control --reload
+    sudo udevadm trigger
 
 ### Compile and run RASDemo ###
-1. Open Rasware2013/RASDemo/RASDemo.uvproj with Keil uVision. This is an example project we made to demostrate how to get a lot of useful peripherals working with the Launchpad, like motors and line sensors. 
-2. With the Launchpad plugged into your computer, in Keil do Project->Build Target and then Flash->Download. This compiles and loads the project onto the Launchpad.
-3. Open PuTTY and connect to the board 
-    1. Click the "serial" radio button
-    2. Under "serial line" type "COM#" where # was the COM port number shown in the Device Manager 
-    3. Under "speed" type "115200"
-    4. Under "Saved Settings" type "Rasware2013" and then click "Save". 
-    5. Now the settings are saved in PuTTY. In the future, just open PuTTY and double click "Rasware2013" under "Saved Settings".
-[TODO: finish this section once RASDemo is done]
+1. Like most projects on Linux, Rasware can be compiled with make. We have created an example project to demonstrate how to use several useful peripherals with the Launchpad, like motors and line-sensors.
+2. To compile RASDemo, simply run make.
+    cd Rasware2013/RASDemo
+    make
+3. The lm4flash utility can be used to load your program on the board.
+    lm4flash RASDemo.axf
+4. The special file /dev/lm4f can now be written to and read from to send data over uart. You can now use an external program, such as screen, to communicate with the devices.
+    screen /dev/lm4f 115200
+5. You should now be presented with a menu for using RASDemo. Feel free to mess around and look into RASDemo's source code to see how it is done. To exit press ctrl-A followed by K.
 
 ### Starting your own project
 [TODO: Make a starter project for RASLets to use?]
