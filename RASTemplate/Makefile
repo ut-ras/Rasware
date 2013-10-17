@@ -1,5 +1,5 @@
 # Makefile for RASWare 2013
-TARGET = RASDemo.axf
+TARGET = RASTemplate.axf
 
 # File Definitions
 SRC := $(wildcard *.c)

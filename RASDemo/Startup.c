@@ -76,7 +76,7 @@ extern void I2C5Handler(void);
 
 // The vector table.  Note that the proper constructs must be placed on this to
 // ensure that it ends up at physical address 0x00000000
-//__attribute__((section(".isr_vector")))
+__attribute__((section(".isr_vector")))
 void (* const __Vectors[])(void) = {
     (void (*)())(pulStack + STACK),         // The initial stack pointer
     ResetHandler,                           // The reset handler
@@ -241,7 +241,7 @@ void (* const __Vectors[])(void) = {
 // for the "data" segment resides immediately following the "text" segment and 
 // the RO and RW memory is garunteed to be sequential.
 // The actual definitions are linker dependent and use the preprocessor to select.
-#ifndef __KEIL__
+#ifdef __KEIL__
     extern unsigned long Load$$ER_RW$$RW$$Base;
     extern unsigned long Image$$ER_RW$$RW$$Base;
     extern unsigned long Image$$ER_RW$$RW$$Limit;

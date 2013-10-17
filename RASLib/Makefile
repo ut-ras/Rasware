@@ -1,10 +1,10 @@
 # Makefile for RASWare 2013
-TARGET = RASDemo.axf
+TARGET = output/libras.a
 
 # File Definitions
-SRC := $(wildcard *.c)
-INC = .. ../.. $(STELLARIS)
-LIB = ras driver-cm4f m c gcc
+SRC := $(wildcard src/*.c)
+INC = .. ../.. inc $(STELLARIS)
+LIB = driver-cm4f m c gcc
 LDS = lm4f.ld
 
 OBJ := $(SRC:.c=.o)
