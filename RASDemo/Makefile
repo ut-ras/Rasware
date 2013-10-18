@@ -51,6 +51,8 @@ LDFLAGS += -L$(wildcard $(ARMCLIB)/lib/gcc/$(PREFIX)/*)
 CFLAGS += $(addprefix -I, $(INC))
 LDFLAGS += $(addprefix -l, $(LIB))
 
+-include ${OBJECTS:.o=.d}
+
 # Rules
 all: $(TARGET)
 

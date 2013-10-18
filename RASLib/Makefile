@@ -3,7 +3,7 @@ TARGET = output/libras.a
 
 # File Definitions
 SRC := $(wildcard src/*.c)
-INC = .. ../.. inc $(STELLARIS)
+INC = .. ${STELLARIS}/.. $(STELLARIS)
 LIB = driver-cm4f m c gcc
 LDS = lm4f.ld
 
@@ -50,6 +50,8 @@ LDFLAGS += -L$(wildcard $(ARMCLIB)/lib/gcc/$(PREFIX)/*)
 
 CFLAGS += $(addprefix -I, $(INC))
 LDFLAGS += $(addprefix -l, $(LIB))
+
+-include ${OBJECTS:.o=.d}
 
 # Rules
 all: $(TARGET)
