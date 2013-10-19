@@ -3,20 +3,28 @@
 #include <RASLib/inc/common.h>
 #include <RASLib/inc/gpio.h>
 #include <RASLib/inc/time.h>
-
+#include <RASLib/inc/pwm.h>
 tBoolean led_on;
-
+tBoolean led_on2;
 void blink(void) {
-    SetPin(PIN_F1, led_on);
+  
+		SetPin(PIN_F1 , !led_on);
 
     led_on = !led_on;
 }
-
+void blink2(void){
+		  SetPin(PIN_F3, led_on2);
+	  led_on2 = !led_on2;
+}
 int main(void) {  
-    char ch;       
+    char ch;   
+	tPWM *val;
+	tPWM *val2;	
     InitializeMCU();
-    CallEvery(blink, 0, 0.25f);
-
+     val=InitializePWM(PIN_F1,50);
+		 val2=InitializePWM(PIN_F3,50);
+	SetPWM(val,1,0);
+	SetPWM(val2,0.5,0);
     while(1) {
         Printf("\nRAS Demo for Robotathon 2013\n");
         Printf("  0=UART Demo\n  1=Motor Demo\n");
