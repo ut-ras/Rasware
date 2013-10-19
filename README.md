@@ -90,13 +90,17 @@ For these instructions, an Ubuntu install is assumed. It should be able to work 
 
 ### Setup a directory
 1. Create a directory to work in. This is where we will place everything.
+
     mkdir ras
     cd ras
 
 ### Install Git ##
 1. Simply install from your distro.
+
     sudo apt-get install git
+
 2. You should configure git with both your username and email.
+
     git config --global user.name "User Name"
     git config --global user.email "your@email.here"
 
@@ -104,31 +108,42 @@ For these instructions, an Ubuntu install is assumed. It should be able to work 
 1. Cross Compilers for the LM4F can be found [here](https://launchpad.net/gcc-arm-embedded)
 2. Download and move to your ras directory.
 3. Uncompress the file and install it your your /usr/local directory.
+
     tar vfxj gcc-arm-none-eabi*.bz2
     sudo mv gcc-arm-none-eabi*/bin/* /usr/local/bin
     sudo mv gcc-arm-none-eabi*/lib/* /usr/local/lib
     sudo mv gcc-arm-none-eabi*/share/* /usr/local/share
     sudo mv gcc-arm-none-eabi*/arm-none-eabi /usr/local
     rm -r gcc-arm-none-eabi*
+
 4. You should now be able to run the compiler. It should complain about missing input files, but that means that just means the compiler is working.
+
     arm-none-eabi-gcc
 
 ### Install LM4Flash ###
 1. The lm4flsh utility allows us to program the board. To obtain the program you can download it from the [github repo](https://github.com/utzig/lm4tools).
+
     git clone https://github.com/utzig/lm4tools.git
+
 2. You will need to compile the library before you can use it.
+
     cd lm4tools/lm4flash
     make
+
 3. Now just move it to local/bin so it is in your path.
+
     sudo mv lm4flash /usr/local/bin
     cd ../..
     rm -rf lm4flash
+
 3. If there is an error due to libusb, make sure the package is installed and recompile.
+
     sudo apt-get install libusb
 
 ### Download StellarisWare ###
 1. Download [StellarisWare](http://ras.ece.utexas.edu/drivers/SW-EK-LM4F120XL-9453.zip), the TI library and move it to your ras directory.
 2. Uncompress the file (twice) and compile StellarisWare.
+
     unzip SW-EK-LM4F120XL-9453.zip
     unzip SW-EK-LM4F120XL-9453.exe -d StellarisWare
     cd StellarisWare
@@ -138,34 +153,59 @@ For these instructions, an Ubuntu install is assumed. It should be able to work 
 
 ### Download Rasware ###
 1. You can now use git to create a copy of your forked repo with the clone command.
+
     git clone https://github.com/username/Rasware2013.git
+
 2. Before you use it, make sure to compile RASLib.
+
     cd Rasware2013/RASLib
     make
 
 ### Add the LM4F to UDev ###
 1. To keep from needing root access to communicate with the lm4f, you will need to copy the lm4f rule to the udev directory.
+
     sudo cp Rasware2013/RASLib/51-lm4f.rules /etc/udev/rules.d
+
 2. Restart udev for these changes to come into effect.
+
     sudo udevadm control --reload
     sudo udevadm trigger
 
 ### Compile and run RASDemo ###
 1. Like most projects on Linux, Rasware can be compiled with make. We have created an example project to demonstrate how to use several useful peripherals with the Launchpad, like motors and line-sensors.
 2. To compile RASDemo, simply run make.
+
     cd Rasware2013/RASDemo
     make
+
 3. The lm4flash utility can be used to load your program on the board.
+
     lm4flash RASDemo.axf
+
 4. The special file /dev/lm4f can now be written to and read from to send data over uart. You can now use an external program, such as screen, to communicate with the devices.
+
     screen /dev/lm4f 115200
+
 5. You should now be presented with a menu for using RASDemo. Feel free to mess around and look into RASDemo's source code to see how it is done. To exit press ctrl-A followed by K.
 
 ### Starting your own project
 [TODO: Make a starter project for RASLets to use?]
 
 ### Committing code back to the repo
-1. While in the directory, right click and select Git Commit
-2. Write useful commit comments. See [link](https://github.com/erlang/otp/wiki/Writing-good-commit-messages). Your teammates will thank you.
-3. You will be promted to do a Git Push. Do so. At this point, you've only made changes to the repo on your machine. The Git Push uploads the changes to GitHub.
-4. If you need to log in, check with a mentor to resetup 
+1. Git will keep track of changes to your directory
+1. You can use the status command to show the state of git.
+
+    git status
+
+2. To track a file, use the add command
+
+    git add filename
+
+3. You can now use the commit command to create a commit. It will open an editor for writing a [commit message](https://github.com/erlang/otp/wiki/Writing-good-commit-messages). If saved, the commit will be created.
+
+    git commit
+
+4. To move your local changes to the server, simply use the push command.
+
+    git push origin master
+

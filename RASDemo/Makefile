@@ -1,19 +1,19 @@
 # Makefile for RASWare 2013
 TARGET = RASDemo.axf
 
+# Library Locations
+STELLARIS = ../../StellarisWare
+RASLIB = ../RASLib
+ARMCLIB = $(dir $(shell which $(CC)))..
+
 # File Definitions
 SRC := $(wildcard *.c)
-INC = .. ../.. $(STELLARIS)
+INC = $(RASLIB)/.. $(STELLARIS)/.. $(STELLARIS)
 LIB = ras driver-cm4f m c gcc
 LDS = lm4f.ld
 
 OBJ := $(SRC:.c=.o)
 ASM := $(SRC:.c=.s)
-
-# Library Locations
-STELLARIS = ../../StellarisWare
-RASLIB = ../RASLib
-ARMCLIB = $(dir $(shell which $(CC)))..
 
 # Command Definitions
 PREFIX = arm-none-eabi
@@ -32,7 +32,7 @@ CFLAGS += -mthumb
 CFLAGS += -mcpu=cortex-m4
 CFLAGS += -mfpu=fpv4-sp-d16
 CFLAGS += -mfloat-abi=softfp
-CFLAGS += -Os
+CFLAGS += -O0
 CFLAGS += -ffunction-sections
 CFLAGS += -fdata-sections
 CFLAGS += -MD
@@ -51,7 +51,7 @@ LDFLAGS += -L$(wildcard $(ARMCLIB)/lib/gcc/$(PREFIX)/*)
 CFLAGS += $(addprefix -I, $(INC))
 LDFLAGS += $(addprefix -l, $(LIB))
 
--include ${OBJECTS:.o=.d}
+-include $(OBJECTS:.o=.d)
 
 # Rules
 all: $(TARGET)
@@ -65,7 +65,7 @@ flash: $(TARGET)
 	$(FLASH) $<
 
 uart:
-	screen /dev/lm4f 115200
+	$(SCREEN) /dev/lm4f 115200
 
 clean:
 	-rm $(TARGET)
