@@ -21,10 +21,10 @@ int main(void) {
 	tPWM *val;
 	tPWM *val2;	
     InitializeMCU();
-     val=InitializePWM(PIN_F1,50);
-		 val2=InitializePWM(PIN_F3,50);
-	SetPWM(val,1,0);
-	SetPWM(val2,0.5,0);
+   //  val=InitializePWM(PIN_F1,5000);
+		// val2=InitializePWM(PIN_F3,5000);
+	//SetPWM(val,1.0f,0);
+	//SetPWM(val2,0.25f,0);
     while(1) {
         Printf("\nRAS Demo for Robotathon 2013\n");
         Printf("  0=UART Demo\n  1=Motor Demo\n");
