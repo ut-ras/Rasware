@@ -65,7 +65,7 @@ void InitializeUART(void)
 }
 
 // The following block of funcitons are wrappers for StellarisWare UART functions
-void UARTwrite(const unsigned char *pucBuffer, unsigned long ulCount)
+void UARTwrite(const char *pucBuffer, unsigned long ulCount)
 {
     //
     // Loop while there are more characters to send.
@@ -82,22 +82,8 @@ void UARTwrite(const unsigned char *pucBuffer, unsigned long ulCount)
     }
 }
 
-void StdioConfig(unsigned long ulPort, unsigned long ulBaud, unsigned long ulSrcClock)
-{
-  UARTStdioConfig(ulPort, ulBaud, ulSrcClock);
-}
 
-void StdioInit(unsigned long ulPort)
-{
-  UARTStdioInit(ulPort);
-}
-
-void StdioInitExpClk(unsigned long ulPort, unsigned long ulBaud)
-{
-  UARTStdioInitExpClk(ulPort, ulBaud);
-}
-
-int UARTgets(unsigned char *pucBuffer, unsigned long ulCount)
+int UARTgets(char *pucBuffer, unsigned long ulCount)
 {
     //
     // Loop while there are more characters to send.
@@ -448,7 +434,7 @@ again:
           {
             UARTwrite("NaN", 3);
           }
-          else if(isinf(dValue))
+          else if(dValue == INFINITY)
           {
             if(cNeg)
             {

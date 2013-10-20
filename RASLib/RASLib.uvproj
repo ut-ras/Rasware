@@ -349,7 +349,7 @@
               <MiscControls></MiscControls>
               <Define>rvmdk PART_LM4F120H5QR TARGET_IS_BLIZZARD_RA1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\;C:\;..\StellarisWare;C:\StellarisWare;inc</IncludePath>
+              <IncludePath>..\;..\..\;C:\;..\StellarisWare;..\..\StellarisWare;C:\StellarisWare;inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>

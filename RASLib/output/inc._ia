@@ -1,1 +1,0 @@
---cpu Cortex-M4.fp --pd "__EVAL SETA 1" -g --apcs=interwork --pd "__MICROLIB SETA 1" -I..\StellarisWare -I "C:\Keil\ARM\CMSIS\Include" -I "C:\Keil\ARM\INC\Luminary" -o ".\output\inc.o" --depend ".\output\inc.d" "..\StellarisWare\inc\inc.sgxx"
