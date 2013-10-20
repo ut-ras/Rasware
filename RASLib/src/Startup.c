@@ -275,7 +275,8 @@ void (* const __Vectors[])(void) = {
 // resetting the bits in that register) are left solely in the hands of the
 // application.
 void ResetHandler(void) {
-    unsigned long *src, *dest;
+    register unsigned long *src;
+    register unsigned long *dest;
 
     // Copy the data segment initializers from flash to SRAM.
     src = DATA_LOAD;
