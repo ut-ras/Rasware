@@ -241,7 +241,7 @@ void (* const __Vectors[])(void) = {
 // for the "data" segment resides immediately following the "text" segment and 
 // the RO and RW memory is garunteed to be sequential.
 // The actual definitions are linker dependent and use the preprocessor to select.
-#ifdef __KEIL__
+#ifdef __CC_ARM
     extern unsigned long Load$$ER_RW$$RW$$Base;
     extern unsigned long Image$$ER_RW$$RW$$Base;
     extern unsigned long Image$$ER_RW$$RW$$Limit;

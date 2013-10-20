@@ -7,8 +7,8 @@ RASLIB = ../RASLib
 ARMCLIB = $(dir $(shell which $(CC)))..
 
 # File Definitions
-SRC := $(wildcard *.c)
-INC = $(RASLIB)/.. $(STELLARIS)/.. $(STELLARIS)
+SRC := $(wildcard src/*.c *.c)
+INC = inc $(RASLIB)/.. $(STELLARIS)/.. $(STELLARIS)
 LIB = ras driver-cm4f m c gcc
 LDS = lm4f.ld
 
