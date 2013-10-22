@@ -86,23 +86,17 @@ Setup for Linux (WIP)
 
 Just a quick warning: unlike Linux, Windows is actually supported by TI for the LM4F. The Linux support is entirely supplied by hobbiest who have put together various toolchains for others to use. This means that a Windows setup will be much easier to create. However, Linux has many benefits, especially for coders, so these instructions are here for those who are already experienced with Linux and willing to take the challenge.
 
-For these instructions, an Ubuntu install is assumed. It should be able to work on any Linux system, and has been tested on Arch and Debian. If you are using a different package manager than apt-get, things should still work if you substitute the correct command.
+These instructions are written for use in a terminal (xterm, gterm, kterm, tty1, etc.) and assume that you have already installed, ard are farmiliar with, your favorite text editor. If you have not found a favorite text editor, I would reccoment you take a look at [Vim](http://www.vim.org), [Emacs](http://www.emacswiki.org/emacs/), and [SublimeText2](http://www.sublimetext.com/2).
 
-### Setup a directory
+### Setup a Directory  ###
 1. Create a directory to work in. This is where we will place everything.
 
         mkdir ras
         cd ras
 
-### Install Git ##
-1. Simply install from your distro.
-
-        sudo apt-get install git
-
-2. You should configure git with both your username and email.
-
-        git config --global user.name "User Name"
-        git config --global user.email "your@email.here"
+#### Install Dependencies ####
+ * Archlinux : ```sudo pacman -S git screen libusb```
+ * Ubuntu/Debian : ```sudo apt-get install git screen libusb libusb-dev pkg-config```
 
 ### Install the Cross Compiler ###
 1. Cross Compilers for the LM4F can be found [here](https://launchpad.net/gcc-arm-embedded)
@@ -110,10 +104,10 @@ For these instructions, an Ubuntu install is assumed. It should be able to work 
 3. Uncompress the file and install it your your /usr/local directory.
 
         tar vfxj gcc-arm-none-eabi*.bz2
-        sudo mv gcc-arm-none-eabi*/bin/* /usr/local/bin
-        sudo mv gcc-arm-none-eabi*/lib/* /usr/local/lib
-        sudo mv gcc-arm-none-eabi*/share/* /usr/local/share
-        sudo mv gcc-arm-none-eabi*/arm-none-eabi /usr/local
+        sudo cp -r gcc-arm-none-eabi*/bin/* /usr/local/bin
+        sudo cp -r gcc-arm-none-eabi*/lib/* /usr/local/lib
+        sudo cp -r gcc-arm-none-eabi*/share/* /usr/local/share
+        sudo cp -r gcc-arm-none-eabi*/arm-none-eabi /usr/local
         rm -r gcc-arm-none-eabi*
 
 4. You should now be able to run the compiler. It should complain about missing input files, but that means that just means the compiler is working.
@@ -135,10 +129,6 @@ For these instructions, an Ubuntu install is assumed. It should be able to work 
         sudo mv lm4flash /usr/local/bin
         cd ../..
         rm -rf lm4flash
-
-3. If there is an error due to libusb, make sure the package is installed and recompile.
-
-        sudo apt-get install libusb
 
 ### Download StellarisWare ###
 1. Download [StellarisWare](http://ras.ece.utexas.edu/drivers/SW-EK-LM4F120XL-9453.zip), the TI library and move it to your ras directory.
@@ -171,6 +161,8 @@ For these instructions, an Ubuntu install is assumed. It should be able to work 
         sudo udevadm control --reload
         sudo udevadm trigger
 
+3. Plug in the Launchpad. you should now see the file /dev/lm4f appear.
+
 ### Compile and run RASDemo ###
 1. Like most projects on Linux, Rasware can be compiled with make. We have created an example project to demonstrate how to use several useful peripherals with the Launchpad, like motors and line-sensors.
 2. To compile RASDemo, simply run make.
@@ -186,26 +178,30 @@ For these instructions, an Ubuntu install is assumed. It should be able to work 
 
         screen /dev/lm4f 115200
 
-5. You should now be presented with a menu for using RASDemo. Feel free to mess around and look into RASDemo's source code to see how it is done. To exit press ctrl-A followed by K.
+5. You should now be presented with a menu for using RASDemo. Feel free to mess around and look into RASDemo's source code to see how it is done. To exit press `C-a k y`, or control-A followed by a K.
 
 ### Starting your own project
 [TODO: Make a starter project for RASLets to use?]
 
 ### Committing code back to the repo
-1. Git will keep track of changes to your directory
-1. You can use the status command to show the state of git.
+1. Before you start, you should configure git with both your username and email.
+
+        git config --global user.name "User Name"
+        git config --global user.email "your@email.here"
+
+2. Git will keep track of changes to your directory. You can use the status command to show the state of git.
 
         git status
 
-2. To track a file, use the add command
+3. To track a file, use the add command
 
         git add filename
 
-3. You can now use the commit command to create a commit. It will open an editor for writing a [commit message](https://github.com/erlang/otp/wiki/Writing-good-commit-messages). If saved, the commit will be created.
+4. You can now use the commit command to create a commit. It will open an editor for writing a [commit message](https://github.com/erlang/otp/wiki/Writing-good-commit-messages). If saved, the commit will be created. To change the default editor, assign a program to the EDITOR variable
 
         git commit
 
-4. To move your local changes to the server, simply use the push command.
+5. To move your local changes to the server, simply use the push command.
 
         git push origin master
 

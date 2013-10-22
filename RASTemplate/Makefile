@@ -6,15 +6,6 @@ STELLARIS = ../../StellarisWare
 RASLIB = ../RASLib
 ARMCLIB = $(dir $(shell which $(CC)))..
 
-# File Definitions
-SRC := $(wildcard src/*.c *.c)
-INC = inc $(RASLIB)/.. $(STELLARIS)/.. $(STELLARIS)
-LIB = ras driver-cm4f m c gcc
-LDS = lm4f.ld
-
-OBJ := $(SRC:.c=.o)
-ASM := $(SRC:.c=.s)
-
 # Command Definitions
 PREFIX = arm-none-eabi
 
@@ -25,6 +16,22 @@ SIZE := $(PREFIX)-size
 
 FLASH := lm4flash
 SCREEN := screen
+
+# File Definitions
+SRC := $(wildcard src/*.c *.c)
+INC = inc $(RASLIB)/.. $(STELLARIS)/.. $(STELLARIS)
+LIB = ras driver-cm4f m c gcc
+LDS = lm4f.ld
+
+OBJ := $(SRC:.c=.o)
+ASM := $(SRC:.c=.s)
+
+LDDIR += $(RASLIB)/output
+LDDIR += $(STELLARIS)/driverlib/gcc-cm4f
+LDDIR += $(ARMCLIB)/$(PREFIX)/lib/thumb/cortex-m4
+LDDIR += $(ARMCLIB)/$(PREFIX)/lib/thumb
+LDDIR += $(wildcard $(ARMCLIB)/lib/gcc/$(PREFIX)/*/thumb/cortex-m4)
+LDDIR += $(wildcard $(ARMCLIB)/lib/gcc/$(PREFIX)/*/thumb)
 
 # Flag Definitions
 CFLAGS += -g
@@ -43,14 +50,9 @@ CFLAGS += -DTARGET_IS_BLIZZARD_RA1
 
 LDFLAGS += --entry ResetHandler
 LDFLAGS += --gc-sections
-LDFLAGS += -L$(RASLIB)/output
-LDFLAGS += -L$(STELLARIS)/driverlib/gcc-cm4f
-LDFLAGS += -L$(ARMCLIB)/$(PREFIX)/lib/thumb/cortex-m4
-LDFLAGS += -L$(ARMCLIB)/$(PREFIX)/lib/thumb
-LDFLAGS += -L$(wildcard $(ARMCLIB)/lib/gcc/$(PREFIX)/*/thumb/cortex-m4)
-LDFLAGS += -L$(wildcard $(ARMCLIB)/lib/gcc/$(PREFIX)/*/thumb)
 
 CFLAGS += $(addprefix -I, $(INC))
+LDFLAGS += $(addprefix -L, $(LDDIR))
 LDFLAGS += $(addprefix -l, $(LIB))
 
 -include $(OBJECTS:.o=.d)
@@ -66,7 +68,7 @@ size: $(TARGET:.axf=.out)
 flash: $(TARGET)
 	$(FLASH) $<
 
-uart:
+uart: flash
 	$(SCREEN) /dev/lm4f 115200
 
 clean:
