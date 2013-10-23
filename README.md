@@ -86,7 +86,7 @@ Setup for Linux (WIP)
 
 Just a quick warning: unlike Linux, Windows is actually supported by TI for the LM4F. The Linux support is entirely supplied by hobbiest who have put together various toolchains for others to use. This means that a Windows setup will be much easier to create. However, Linux has many benefits, especially for coders, so these instructions are here for those who are already experienced with Linux and willing to take the challenge.
 
-These instructions are written for use in a terminal (xterm, gterm, kterm, tty1, etc.) and assume that you have already installed, ard are farmiliar with, your favorite text editor. If you have not found a favorite text editor, I would reccoment you take a look at [Vim](http://www.vim.org), [Emacs](http://www.emacswiki.org/emacs/), and [SublimeText2](http://www.sublimetext.com/2).
+These instructions are written for use in a terminal (xterm, gterm, kterm, tty1, etc.) and assume that you have already installed, ard are farmiliar with, your favorite text editor. If you have not found a favorite text editor, I reccoment you take a look at [Vim](http://www.vim.org), [Emacs](http://www.emacswiki.org/emacs/), and [SublimeText2](http://www.sublimetext.com/2).
 
 ### Setup a Directory  ###
 1. Create a directory to work in. This is where we will place everything.
@@ -94,9 +94,9 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
         mkdir ras
         cd ras
 
-#### Install Dependencies ####
- * Archlinux : ```sudo pacman -S git screen libusb```
- * Ubuntu/Debian : ```sudo apt-get install git screen libusb libusb-dev pkg-config```
+### Install Dependencies ###
+ * Archlinux : ```sudo pacman -S git screen libusb gcc```
+ * Ubuntu/Debian : ```sudo apt-get install git screen libusb libusb-dev pkg-config gcc```
 
 ### Install the Cross Compiler ###
 1. Cross Compilers for the LM4F can be found [here](https://launchpad.net/gcc-arm-embedded)
@@ -156,12 +156,12 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
 
         sudo cp Rasware2013/RASLib/51-lm4f.rules /etc/udev/rules.d
 
-2. Restart udev for these changes to come into effect.
+2. Have udev re-read it's rules for these changes to come into effect.
 
         sudo udevadm control --reload
         sudo udevadm trigger
 
-3. Plug in the Launchpad. you should now see the file /dev/lm4f appear.
+3. Plug in a Stellaris Launchpad. you should now see the file /dev/lm4f appear.
 
 ### Compile and run RASDemo ###
 1. Like most projects on Linux, Rasware can be compiled with make. We have created an example project to demonstrate how to use several useful peripherals with the Launchpad, like motors and line-sensors.
@@ -178,7 +178,8 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
 
         screen /dev/lm4f 115200
 
-5. You should now be presented with a menu for using RASDemo. Feel free to mess around and look into RASDemo's source code to see how it is done. To exit press `C-a k y`, or control-A followed by a K.
+5. You should now be presented with a menu for using RASDemo. Feel free to mess around and look into RASDemo's source code to see how it is done. To exit press `C-a k y`, or control-A followed by a K followed by a Y.
+6. If you don't want to do all of the above steps by hand each time, you can make the code, flash the board, and start screen all by running the command ```make uart```.
 
 ### Starting your own project
 [TODO: Make a starter project for RASLets to use?]
@@ -197,7 +198,7 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
 
         git add filename
 
-4. You can now use the commit command to create a commit. It will open an editor for writing a [commit message](https://github.com/erlang/otp/wiki/Writing-good-commit-messages). If saved, the commit will be created. To change the default editor, assign a program to the EDITOR variable
+4. You can now use the commit command to create a commit which contians all of the modifications to files you `git add`ed. It will open an editor, which defaults to VIM, for writing a [commit message](https://github.com/erlang/otp/wiki/Writing-good-commit-messages). If saved, the commit will be created. To change the default editor, assign a program to the EDITOR variable
 
         git commit
 
