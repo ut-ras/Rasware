@@ -68,7 +68,10 @@ size: $(TARGET:.axf=.out)
 flash: $(TARGET)
 	$(FLASH) $<
 
-uart: flash
+uart:
+	$(SCREEN) /dev/lm4f 115200
+
+run: flash
 	$(SCREEN) /dev/lm4f 115200
 
 clean:

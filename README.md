@@ -95,8 +95,8 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
         cd ras
 
 ### Install Dependencies ###
- * Archlinux : ```sudo pacman -S git screen libusb gcc```
- * Ubuntu/Debian : ```sudo apt-get install git screen libusb libusb-dev pkg-config gcc```
+ * Archlinux : `sudo pacman -S git screen libusb`
+ * Ubuntu/Debian : `sudo apt-get install git screen libusb libusb-dev pkg-config build-essential`
 
 ### Install the Cross Compiler ###
 1. Cross Compilers for the LM4F can be found [here](https://launchpad.net/gcc-arm-embedded)
@@ -179,7 +179,7 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
         screen /dev/lm4f 115200
 
 5. You should now be presented with a menu for using RASDemo. Feel free to mess around and look into RASDemo's source code to see how it is done. To exit press `C-a k y`, or control-A followed by a K followed by a Y.
-6. If you don't want to do all of the above steps by hand each time, you can make the code, flash the board, and start screen all by running the command ```make uart```.
+6. If you don't want to do all of the above steps by hand each time, you can make the code, flash the board, and start screen all by running the command `make run`.
 
 ### Starting your own project
 [TODO: Make a starter project for RASLets to use?]
