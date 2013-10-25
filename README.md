@@ -13,7 +13,6 @@ Robotathon Setup Instructions
 ### Get started with Git ###
 
 1. Create a free GitHub account on [github.com](https://github.com/signup/free)
-2. Follow GitHub's great instructions for installing [Git](https://help.github.com/articles/set-up-git) on your computer.
 3. If you want to learn more about Git, you can read the GitPro book online for free (and legally, too!) at http://git-scm.com/book
 
 ### Fork Rasware (only one Robotathon team member should do this step) ###
@@ -27,12 +26,13 @@ The remainder of the instructions will depend on what type of system you're runn
 Setup for Windows (WIP)
 -----------------
 
-### Install TortiseGIT
+### Install TortiseGit ###
+
 1. Go to [Google Code](https://code.google.com/p/tortoisegit/wiki/Download)
 2. Download the correct architecture according to your machine (If you don't know, Right Click in My Computer, click Properties, and check wht System Type is)
 3. Run the executable with default values
 
-### Install Stellarisware
+### Install Stellarisware ###
 1. Go to [TI](https://myportal.ti.com/portal/dt?provider=TIPassLoginSingleContainer&lt=myti&j5=2&j3=1&goto=https://my.ti.com/cgi-bin/home.pl) and create a new account.
 2. Go to [TI](http://www.ti.com/tool/sw-lm3s), and download SW-LM3S-LM4F.exe.
 3. When complete, run the installer with the default installation paths.
@@ -56,7 +56,7 @@ Note: for windows 8, the drivers are unsigned, so installing them requires you t
 1. Go to <http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html>.
 2. Under "for Windows on Intel x86" click on [putty.exe](http://the.earth.li/~sgtatham/putty/latest/x86/putty.exe) to save putty to your computer.
 
-### Download Code
+### Download Code ###
 1. Choose a directory to work in
 2. Right click on directory, and select Git Clone
 3. Enter your forked repo's url, and press enter
@@ -72,10 +72,10 @@ Note: for windows 8, the drivers are unsigned, so installing them requires you t
     5. Now the settings are saved in PuTTY. In the future, just open PuTTY and double click "Rasware2013" under "Saved Settings".
 [TODO: finish this section once RASDemo is done]
 
-### Starting your own project
+### Starting your own project ###
 [TODO: Make a starter project for RASLets to use?]
 
-### Committing code back to the repo
+### Committing code back to the repo ###
 1. While in the directory, right click and select Git Commit
 2. Write useful commit comments. See [link](https://github.com/erlang/otp/wiki/Writing-good-commit-messages). Your teammates will thank you.
 3. You will be promted to do a Git Push. Do so. At this point, you've only made changes to the repo on your machine. The Git Push uploads the changes to GitHub.
@@ -84,4 +84,125 @@ Note: for windows 8, the drivers are unsigned, so installing them requires you t
 Setup for Linux (WIP)
 ---------------
 
-[TODO: Jimmy/Cruz]
+Just a quick warning: unlike Linux, Windows is actually supported by TI for the LM4F. The Linux support is entirely supplied by hobbiest who have put together various toolchains for others to use. This means that a Windows setup will be much easier to create. However, Linux has many benefits, especially for coders, so these instructions are here for those who are already experienced with Linux and willing to take the challenge.
+
+These instructions are written for use in a terminal (xterm, gterm, kterm, tty1, etc.) and assume that you have already installed, ard are farmiliar with, your favorite text editor. If you have not found a favorite text editor, I recomend you take a look at [Vim](http://www.vim.org), [Emacs](http://www.emacswiki.org/emacs/), and [SublimeText2](http://www.sublimetext.com/2).
+
+### Setup a Directory  ###
+1. Create a directory to work in. This is where we will place everything.
+
+        mkdir ras
+        cd ras
+
+### Install Dependencies ###
+ * Archlinux : `sudo pacman -S git screen libusb`
+ * Ubuntu/Debian : `sudo apt-get install git screen libusb libusb-dev pkg-config build-essential`
+
+### Install the Cross Compiler ###
+1. Cross Compilers for the LM4F can be found [here](https://launchpad.net/gcc-arm-embedded)
+2. Download and move to your ras directory.
+3. Uncompress the file and install it your your /usr/local directory.
+
+        tar vfxj gcc-arm-none-eabi*.bz2
+        sudo cp -r gcc-arm-none-eabi*/bin/* /usr/local/bin
+        sudo cp -r gcc-arm-none-eabi*/lib/* /usr/local/lib
+        sudo cp -r gcc-arm-none-eabi*/share/* /usr/local/share
+        sudo cp -r gcc-arm-none-eabi*/arm-none-eabi /usr/local
+        rm -r gcc-arm-none-eabi*
+
+4. You should now be able to run the compiler. It should complain about missing input files, but that means that just means the compiler is working.
+
+        arm-none-eabi-gcc
+
+### Install LM4Flash ###
+1. The lm4flsh utility allows us to program the board. To obtain the program you can download it from the [github repo](https://github.com/utzig/lm4tools).
+
+        git clone https://github.com/utzig/lm4tools.git
+
+2. You will need to compile the library before you can use it.
+
+        cd lm4tools/lm4flash
+        make
+
+3. Now just move it to local/bin so it is in your path.
+
+        sudo mv lm4flash /usr/local/bin
+        cd ../..
+        rm -rf lm4flash
+
+### Download StellarisWare ###
+1. Download [StellarisWare](http://ras.ece.utexas.edu/drivers/SW-EK-LM4F120XL-9453.zip), the TI library and move it to your ras directory.
+2. Uncompress the file (twice) and compile StellarisWare.
+
+        unzip SW-EK-LM4F120XL-9453.zip
+        unzip SW-EK-LM4F120XL-9453.exe -d StellarisWare
+        cd StellarisWare
+        make
+        cd ..
+        rm SW-EK-LM4F120XL*
+
+### Download Rasware ###
+1. You can now use git to create a copy of your forked repo with the clone command.
+
+        git clone https://github.com/username/Rasware2013.git
+
+2. Before you use it, make sure to compile RASLib.
+
+        cd Rasware2013/RASLib
+        make
+
+### Add the LM4F to UDev ###
+1. To keep from needing root access to communicate with the lm4f, you will need to copy the lm4f rule to the udev directory.
+
+        sudo cp Rasware2013/RASLib/51-lm4f.rules /etc/udev/rules.d
+
+2. Have udev re-read it's rules for these changes to come into effect.
+
+        sudo udevadm control --reload
+        sudo udevadm trigger
+
+3. Plug in a Stellaris Launchpad. you should now see the file /dev/lm4f appear.
+
+### Compile and run RASDemo ###
+1. Like most projects on Linux, Rasware can be compiled with make. We have created an example project to demonstrate how to use several useful peripherals with the Launchpad, like motors and line-sensors.
+2. To compile RASDemo, simply run make.
+
+        cd Rasware2013/RASDemo
+        make
+
+3. The lm4flash utility can be used to load your program on the board.
+
+        lm4flash RASDemo.axf
+
+4. The special file /dev/lm4f can now be written to and read from to send data over uart. You can now use an external program, such as screen, to communicate with the devices.
+
+        screen /dev/lm4f 115200
+
+5. You should now be presented with a menu for using RASDemo. Feel free to mess around and look into RASDemo's source code to see how it is done. To exit press `C-a k y`, or control-A followed by a K followed by a Y.
+6. If you don't want to do all of the above steps by hand each time, you can make the code, flash the board, and start screen all by running the command `make run`.
+
+### Starting your own project
+[TODO: Make a starter project for RASLets to use?]
+
+### Committing code back to the repo
+1. Before you start, you should configure git with both your username and email.
+
+        git config --global user.name "User Name"
+        git config --global user.email "your@email.here"
+
+2. Git will keep track of changes to your directory. You can use the status command to show the state of git.
+
+        git status
+
+3. To track a file, use the add command
+
+        git add filename
+
+4. You can now use the commit command to create a commit which contians all of the modifications to files you `git add`ed. It will open an editor, which defaults to VIM, for writing a [commit message](https://github.com/erlang/otp/wiki/Writing-good-commit-messages). If saved, the commit will be created. To change the default editor, assign a program to the EDITOR variable
+
+        git commit
+
+5. To move your local changes to the server, simply use the push command.
+
+        git push origin master
+
