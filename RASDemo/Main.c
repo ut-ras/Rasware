@@ -25,6 +25,7 @@ int main(void) {
 		// val2=InitializePWM(PIN_F3,5000);
 	//SetPWM(val,1.0f,0);
 	//SetPWM(val2,0.25f,0);
+	CallEvery(blink, 0, .5f);
     while(1) {
         Printf("\nRAS Demo for Robotathon 2013\n");
         Printf("  0=UART Demo\n  1=Motor Demo\n");
