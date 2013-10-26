@@ -7,25 +7,23 @@
 tBoolean led_on;
 tBoolean led_on2;
 void blink(void) {
-  
 		SetPin(PIN_F1 , !led_on);
-
     led_on = !led_on;
 }
 void blink2(void){
-		  SetPin(PIN_F3, led_on2);
+		SetPin(PIN_F3, led_on2);
 	  led_on2 = !led_on2;
 }
 int main(void) {  
     char ch;   
-	tPWM *val;
-	tPWM *val2;	
+	  tPWM *val;
+	  tPWM *val2;	
     InitializeMCU();
-   //  val=InitializePWM(PIN_F1,5000);
-		// val2=InitializePWM(PIN_F3,5000);
-	//SetPWM(val,1.0f,0);
-	//SetPWM(val2,0.25f,0);
-	CallEvery(blink, 0, .5f);
+    //val=InitializePWM(PIN_F1,5000);
+	  //val2=InitializePWM(PIN_F3,5000);
+	  //SetPWM(val,1.0f,0);
+	  //SetPWM(val2,0.25f,0);
+	  CallEvery(blink, 0, .5f);
     while(1) {
         Printf("\nRAS Demo for Robotathon 2013\n");
         Printf("  0=UART Demo\n  1=Motor Demo\n");
