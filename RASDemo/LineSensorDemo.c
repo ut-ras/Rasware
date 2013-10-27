@@ -3,11 +3,12 @@
 #include <RASLib/inc/common.h>
 #include <RASLib/inc/linesensor.h>
 
-tLineSensor *ls;
+//tLineSensor *ls;
 
 void initLineSensor(void) {
-    tI2C *bus = InitializeI2C(PIN_B3, PIN_B2);
-    ls = InitializeLineSensor(bus, 0);
+    //tI2C *bus = InitializeI2C(PIN_B3, PIN_B2);
+    //ls = InitializeLineSensor(bus, 0);
+		InitializeLineSensor();
 }
 
 void lineSensorDemo(void) {
@@ -15,17 +16,21 @@ void lineSensorDemo(void) {
     Printf("any key after read begins-quit\n");
   
     while(!KeyWasPressed()) {
-        int i;
-        float line[8];
+				int i;
+        char *line;
+				
+				ReadLineSensor(line);
+        /*
+				float line[8];
     
         LineSensorReadArray(ls, line);
         Printf("Line Sensor: [");
-    
+				*/
         for (i=0; i < 8; i++) {
-            Printf("%01.4f ", line[i]);
+            Printf("%x ", line[i]);
         }
     
-        Printf("\b]\r");
+        Printf("\r");
       }
   
       Printf("\n"); 
