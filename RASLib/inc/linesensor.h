@@ -31,7 +31,6 @@
 extern "C" {
 #endif
 
-
 // Definition of struct LineSensor in linesensor.c
 typedef struct LineSensor tLineSensor;
 
@@ -41,7 +40,7 @@ typedef struct LineSensor tLineSensor;
  * @param address 2-bit value determined by the solder jumpers on the board
  * @return Pointer to an initialized tLineSensor, can be used by the LineSensorRead functions
  */
-tLineSensor *InitializeLineSensor(tI2C *i2c, unsigned int address);
+tLineSensor *InitializeI2CLineSensor(tI2C *i2c, unsigned int address);
 
 /**
  * Returns the line sensor value measured as a bit-packed byte
@@ -87,7 +86,6 @@ void LineSensorReadContinuouslyUS(tLineSensor *ls, tTime us);
  * Note: If the passed time between calls is less than the time it takes for the line sensor read to complete, the line sensor will fire as fast as possible without overlap
  */
 void LineSensorReadContinuously(tLineSensor *ls, float s);
-
 
 #ifdef __cplusplus
 }

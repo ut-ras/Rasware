@@ -25,7 +25,6 @@
 
 #include <math.h>
 
-
 #define ADS7830 0x48
 
 // Definition of struct LineSensor
@@ -63,7 +62,7 @@ static int lineSensorCount = 0;
 
 // Function to initialize a line sensor on a pair of pins
 // The returned pointer can be used by the LineSensorRead functions
-tLineSensor *InitializeLineSensor(tI2C *i2c, unsigned int address) {
+tLineSensor *InitializeI2CLineSensor(tI2C *i2c, unsigned int address) {
     // Grab the next line sensor
     tLineSensor *ls = &lineSensorBuffer[lineSensorCount++];
     
