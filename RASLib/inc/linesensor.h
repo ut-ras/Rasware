@@ -87,37 +87,6 @@ void LineSensorReadContinuouslyUS(tLineSensor *ls, tTime us);
  */
 void LineSensorReadContinuously(tLineSensor *ls, float s);
 
-// Pololu Line Sensor code from RASLib2012
-
-#define NUM_SENSORS (8)                                        // the number of sensors
-typedef unsigned char linesensor_t;                // the line sensor data type
-
-// Summary: Initializes the appropriate GPIO
-// Note:        Always call this function before any other sensor-related functions
-//                        Initializes dischargeTime to a default value of 1000 us
-
-extern void InitializeLineSensor(void);
-// Summary:        Same as above, but sets up the line sensor for asynchronous operation.
-//                         This means the line sensor will update automatically in the background
-// Note:        Avoid mixing both normal and asynchronous operation
-// Note:        Uses TIMER0. If you use asynchronous line sensing, you should not use TIMER0 elsewhere in your code;
-//                        If you use TIMER0 in your code, you should not use asynchronous line sensing.
-extern void InitializeLineSensorAsync(void);
-
-// Summary: Sets the discharge time
-// Parameters:
-//                dischargeTime: the new discharge time 
-//                                constraints: 120 <= dischargeTime <= 2600
-// Note:        This function applies to both normal and asynchronous operation
-extern void SetDischargeTime(unsigned long dischargeTime);
-
-// Summary:        Reads the current line sensor values
-// Note:        this method takes 10 us + dischargeTime to execute
-// Returns:        a package of bits corresponding to the current readings from the line sensor
-extern void ReadLineSensor(char *ret);
-
-
-
 #ifdef __cplusplus
 }
 #endif
