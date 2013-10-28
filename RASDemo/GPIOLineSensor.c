@@ -113,7 +113,8 @@ void SetDischargeTime(unsigned long dischargeTime)
 
 // Summary:	Reads the current line sensor values
 // Note:	this method takes 10 us + dischargeTime to execute
-// Returns:	a package of bits corresponding to the current readings from the line sensor
+// Parameters:
+//		ret: a char array which will have either 1s or 0s loaded into the first 8 elements
 void ReadLineSensor(char *ret)
 {					   
 	StartChargingLS();								   
