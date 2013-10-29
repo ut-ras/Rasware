@@ -446,9 +446,9 @@
               <FilePath>.\src\i2c.c</FilePath>
             </File>
             <File>
-              <FileName>linesensor.c</FileName>
+              <FileName>i2clinesensor.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\linesensor.c</FilePath>
+              <FilePath>.\src\i2clinesensor.c</FilePath>
             </File>
             <File>
               <FileName>common.c</FileName>
@@ -459,6 +459,11 @@
               <FileName>gpiolinesensor.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\gpiolinesensor.c</FilePath>
+            </File>
+            <File>
+              <FileName>linesensor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\linesensor.c</FilePath>
             </File>
           </Files>
         </Group>

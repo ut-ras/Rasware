@@ -25,6 +25,12 @@
 
 #include <math.h>
 
+// Constants used for line sensor timing
+// Each is given in units of microseconds
+#define GPIO_LINE_SENSOR_TIMEOUT 2500
+#define GPIO_LINE_SENSOR_MAX     2500
+#define GPIO_LINE_SENSOR_PULSE   10
+#define GPIO_LINE_SENSOR_INF     0xffffffffffffffff
 
 // Internally used Pin specific sensor information
 typedef struct GPIOPinSensor {
@@ -129,7 +135,7 @@ static void PulseHandler(tGPIOLineSensor *ls) {
 
 // Function to initialize a line sensor on the provided pins
 // The returned pointer can be used by the GPIOLineSensorRead functions
-tGPIOLineSensor *InitializeGPIOLineSensor(tPin p0, tPin p1, tPin p2, tPin p3, tPin p4, tPin p5, tPin p6, tPin p7) {
+tGPIOLineSensor *hiddenInitializeGPIOLineSensor(tPin p0, tPin p1, tPin p2, tPin p3, tPin p4, tPin p5, tPin p6, tPin p7) {
     int i;
     
     // Grab the next line sensor
@@ -227,7 +233,7 @@ unsigned char GPIOLineSensorRead(tGPIOLineSensor *ls, float threshold) {
 // array of ratios placed in the passed memory location.
 // If the GPIOLineSensor is not continously reading,
 // then the function will busy wait for the results
-void GPIOLineSensorReadArray(tGPIOLineSensor *ls, float *array) {
+tBoolean GPIOLineSensorReadArray(tGPIOLineSensor *ls, float *array) {
     int i;
     
     // Check if we need to read a value
@@ -243,7 +249,7 @@ void GPIOLineSensorReadArray(tGPIOLineSensor *ls, float *array) {
             array[i] = ls->values[i];
         }
         
-        return;
+        return true;
     }
     
     // Calculate the values
@@ -256,7 +262,7 @@ void GPIOLineSensorReadArray(tGPIOLineSensor *ls, float *array) {
             array[i] = ((timing - ls->start_time) / (float)(GPIO_LINE_SENSOR_MAX));
     }
     
-    return;
+    return true;
 }
 
 

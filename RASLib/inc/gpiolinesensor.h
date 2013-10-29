@@ -31,14 +31,6 @@
 extern "C" {
 #endif
 
-    
-// Constants used for line sensor timing
-// Each is given in units of microseconds
-#define GPIO_LINE_SENSOR_TIMEOUT 2500
-#define GPIO_LINE_SENSOR_MAX     2500
-#define GPIO_LINE_SENSOR_PULSE   10
-#define GPIO_LINE_SENSOR_INF     0xffffffffffffffff
-
 
 // Definition of struct GPIOLineSensor in gpiolinesensor.c
 typedef struct GPIOLineSensor tGPIOLineSensor;
@@ -55,7 +47,7 @@ typedef struct GPIOLineSensor tGPIOLineSensor;
  * @param p7 Pin plugged into sensor 7
  * @return Pointer to an initialized tGPIOLineSensor, can be used by the GPIOLineSensorRead functions
  */
-tGPIOLineSensor *InitializeGPIOLineSensor(tPin p0, tPin p1, tPin p2, tPin p3, tPin p4, tPin p5, tPin p6, tPin p7);
+tGPIOLineSensor *hiddenInitializeGPIOLineSensor(tPin p0, tPin p1, tPin p2, tPin p3, tPin p4, tPin p5, tPin p6, tPin p7);
 
 /**
  * Returns the line sensor value measured as a bit-packed byte
@@ -72,7 +64,7 @@ unsigned char GPIOLineSensorRead(tGPIOLineSensor *ls, float threshold);
  * @param array Array of 8 percentages, each corresponding to an IR sensor in the line sensor array
  * Note: if the line sensor is not continously reading, then the function will busy wait for the results
  */
-void GPIOLineSensorReadArray(tGPIOLineSensor *ls, float *array);
+tBoolean GPIOLineSensorReadArray(tGPIOLineSensor *ls, float *array);
 
 /**
  * Sets up a GPIO line sensor to be run in the background
