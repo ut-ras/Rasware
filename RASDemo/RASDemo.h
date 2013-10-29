@@ -28,3 +28,7 @@ void sonarDemo(void);
 
 // Function for GPIODemo
 void gpioDemo(void);
+
+// Functions for GPIOLineSensorDemo
+void initGPIOLineSensor(void);
+void gpioLineSensorDemo(void);
