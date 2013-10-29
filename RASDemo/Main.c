@@ -22,7 +22,7 @@ int main(void) {
         Printf("  0=UART Demo\n  1=Motor Demo\n");
         Printf("  2=Servo Demo\n  3=Line Sensor\n");
         Printf("  4=IR Sensor Demo\n  5=Encoders Demo\n");
-        Printf("  6=GPIO Demo\n");
+        Printf("  6=GPIO Demo\n  7=GPIO Line Sensor Demo\n");
         
         Printf(">> ");
         // Read input from User
@@ -63,6 +63,11 @@ int main(void) {
             case '6':
                 Printf("\nGPIO Demo\n");
                 gpioDemo();
+                break;
+            case '7':
+                Printf("\nGPIO Line Sensor Demo\n");
+                initGPIOLineSensor();
+                gpioLineSensorDemo();
                 break;
         }
     }

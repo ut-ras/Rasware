@@ -440,6 +440,11 @@
               <FileType>1</FileType>
               <FilePath>.\SonarDemo.c</FilePath>
             </File>
+            <File>
+              <FileName>GPIOLineSensorDemo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\GPIOLineSensorDemo.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
