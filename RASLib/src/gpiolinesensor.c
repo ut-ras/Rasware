@@ -21,9 +21,10 @@
 //
 //*****************************************************************************
 
-#include "gpiolinesensor.h"
-
 #include <math.h>
+
+#include "gpio.h"
+#include "time.h"
 
 // Constants used for line sensor timing
 // Each is given in units of microseconds
@@ -42,13 +43,20 @@ typedef struct GPIOPinSensor {
     tTime timing;
     
     // Pointer to containing line sensor
-    tGPIOLineSensor *ls;
+    struct GPIOLineSensor *ls;
 } tGPIOPinSensor;
 
 
 // Definition of struct GPIOLineSensor
 // Defined to tGPIOLineSensor in gpiolinesensor.h
-struct GPIOLineSensor {
+typedef struct GPIOLineSensor {
+    // LineSensor 'abstract' functions
+    unsigned char (*Read)(struct GPIOLineSensor *ls, float threshold);
+    tBoolean (*ReadArray)(struct GPIOLineSensor *ls, float *array);
+    void (*BackgroundRead)(struct GPIOLineSensor *ls, tCallback callback, void *data);
+    void (*ReadContinuouslyUS)(struct GPIOLineSensor *ls, tTime us);
+    void (*ReadContinuously)(struct GPIOLineSensor *ls, float s);
+    
     // General timing information
     tTime start_time;
     
@@ -71,7 +79,7 @@ struct GPIOLineSensor {
     // Some state variables
     tBoolean in_callback : 1;
     tBoolean continous : 1;
-};
+} tGPIOLineSensor;
 
 
 // Buffer of line sensor structs to use
@@ -133,41 +141,12 @@ static void PulseHandler(tGPIOLineSensor *ls) {
 }
 
 
-// Function to initialize a line sensor on the provided pins
-// The returned pointer can be used by the GPIOLineSensorRead functions
-tGPIOLineSensor *hiddenInitializeGPIOLineSensor(tPin p0, tPin p1, tPin p2, tPin p3, tPin p4, tPin p5, tPin p6, tPin p7) {
-    int i;
-    
-    // Grab the next line sensor
-    tGPIOLineSensor *ls = &lineSensorBuffer[lineSensorCount++];
-    
-    // Keep track of the pins
-    ls->pins[0].pin = p0;
-    ls->pins[1].pin = p1;
-    ls->pins[2].pin = p2;
-    ls->pins[3].pin = p3;
-    ls->pins[4].pin = p4;
-    ls->pins[5].pin = p5;
-    ls->pins[6].pin = p6;
-    ls->pins[7].pin = p7;
-
-    // Setup the pin handlers
-    for (i = 0; i < 8; i++) {
-        ls->pins[i].mask = 1 << i;
-        ls->pins[i].ls = ls;
-        
-        CallOnPinFalling(PinHandler, &ls->pins[i], ls->pins[i].pin);
-    }
-    
-    // Return the initialized line sensor
-    return ls;
-}
 
 
 // This function sets up a GPIOLineSensor to be run in the background
 // A callback can be passed, in which a call to GPIOLineSensorRead 
 // will return with the newly obtained value immediately
-void GPIOLineSensorBackgroundRead(tGPIOLineSensor *ls, tCallback callback, void *data) {
+static void GPIOLineSensorBackgroundRead(tGPIOLineSensor *ls, tCallback callback, void *data) {
     int i;
     
     // Store the callback information
@@ -192,7 +171,7 @@ void GPIOLineSensorBackgroundRead(tGPIOLineSensor *ls, tCallback callback, void 
 // each bit is matched against a threshold that is passed.
 // If the LineSensor is not continously reading,
 // then the function will busy wait for the results
-unsigned char GPIOLineSensorRead(tGPIOLineSensor *ls, float threshold) {
+static unsigned char GPIOLineSensorRead(tGPIOLineSensor *ls, float threshold) {
     tTime thresh;
     unsigned char output = 0x0;
     int i;
@@ -233,7 +212,7 @@ unsigned char GPIOLineSensorRead(tGPIOLineSensor *ls, float threshold) {
 // array of ratios placed in the passed memory location.
 // If the GPIOLineSensor is not continously reading,
 // then the function will busy wait for the results
-tBoolean GPIOLineSensorReadArray(tGPIOLineSensor *ls, float *array) {
+static tBoolean GPIOLineSensorReadArray(tGPIOLineSensor *ls, float *array) {
     int i;
     
     // Check if we need to read a value
@@ -296,7 +275,7 @@ static void ContinuousReadHandler(tGPIOLineSensor *ls) {
 // Any following calls to GPIOLineSensorRead will return the most recent value
 // If the passed time between calls is less than the time it takes for
 // the GPIOLineSensor to complete, the GPIOLineSensor will read as fast as possible without overlap
-void GPIOLineSensorReadContinuouslyUS(tGPIOLineSensor *ls, tTime us) {
+static void GPIOLineSensorReadContinuouslyUS(tGPIOLineSensor *ls, tTime us) {
     // Set the continous flag
     ls->continous = true;
     
@@ -309,6 +288,43 @@ void GPIOLineSensorReadContinuouslyUS(tGPIOLineSensor *ls, tTime us) {
         CallEveryUS(SingleReadHandler, ls, us);
 }
 
-void GPIOLineSensorReadContinuously(tGPIOLineSensor *ls, float s) {
+static void GPIOLineSensorReadContinuously(tGPIOLineSensor *ls, float s) {
     GPIOLineSensorReadContinuouslyUS(ls, US(s));
+}
+
+// Function to initialize a line sensor on the provided pins
+// The returned pointer can be used by the GPIOLineSensorRead functions
+tGPIOLineSensor *hiddenInitializeGPIOLineSensor(tPin p0, tPin p1, tPin p2, tPin p3, tPin p4, tPin p5, tPin p6, tPin p7) {
+    int i;
+    
+    // Grab the next line sensor
+    tGPIOLineSensor *ls = &lineSensorBuffer[lineSensorCount++];
+    
+    // Keep track of the pins
+    ls->pins[0].pin = p0;
+    ls->pins[1].pin = p1;
+    ls->pins[2].pin = p2;
+    ls->pins[3].pin = p3;
+    ls->pins[4].pin = p4;
+    ls->pins[5].pin = p5;
+    ls->pins[6].pin = p6;
+    ls->pins[7].pin = p7;
+
+    // Setup the pin handlers
+    for (i = 0; i < 8; i++) {
+        ls->pins[i].mask = 1 << i;
+        ls->pins[i].ls = ls;
+        
+        CallOnPinFalling(PinHandler, &ls->pins[i], ls->pins[i].pin);
+    }
+    
+    // Set parent method/functions 
+    ls->Read = GPIOLineSensorRead;
+    ls->ReadArray = GPIOLineSensorReadArray;
+    ls->BackgroundRead = GPIOLineSensorBackgroundRead;
+    ls->ReadContinuouslyUS = GPIOLineSensorReadContinuouslyUS;
+    ls->ReadContinuously = GPIOLineSensorReadContinuously;
+    
+    // Return the initialized line sensor
+    return ls;
 }

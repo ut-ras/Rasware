@@ -21,16 +21,25 @@
 //
 //*****************************************************************************
 
-#include "i2clinesensor.h"
-
 #include <math.h>
+
+#include "time.h"
+#include "i2c.h"
 
 
 #define ADS7830 0x48
 
+
 // Definition of struct LineSensor
 // Defined to tLineSensor in i2c.h
-struct I2CLineSensor {
+typedef struct I2CLineSensor {
+    // LineSensor 'abstract' functions
+    unsigned char (*Read)(struct I2CLineSensor *ls, float threshold);
+    tBoolean (*ReadArray)(struct I2CLineSensor *ls, float *array);
+    void (*BackgroundRead)(struct I2CLineSensor *ls, tCallback callback, void *data);
+    void (*ReadContinuouslyUS)(struct I2CLineSensor *ls, tTime us);
+    void (*ReadContinuously)(struct I2CLineSensor *ls, float s);
+    
     // Internally used I2C module
     tI2C *i2c;
     
@@ -50,7 +59,7 @@ struct I2CLineSensor {
     tBoolean in_callback : 1;
     tBoolean continous : 1;
     volatile tBoolean pending : 1;
-};
+} tI2CLineSensor;
 
 
 // Buffer of line sensor structs to use
@@ -59,24 +68,6 @@ struct I2CLineSensor {
 static tI2CLineSensor lineSensorBuffer[I2C_COUNT * 4];
 
 static int lineSensorCount = 0;
-        
-
-// Function to initialize a line sensor on a pair of pins
-// The returned pointer can be used by the LineSensorRead functions
-tI2CLineSensor *hiddenInitializeI2CLineSensor(tI2C *i2c, unsigned int address) {
-    // Grab the next line sensor
-    tI2CLineSensor *ls = &lineSensorBuffer[lineSensorCount++];
-    
-    // Keep track of the I2C module
-    ls->i2c = i2c;
-    
-    // Create the actual address
-    ls->address = ADS7830 | (0x3 & address);
-    
-    // Return the initialized line sensor
-    return ls;
-}
-
 
 // Internally used handler to trigger next
 // sensor read in the line sensor
@@ -106,7 +97,7 @@ static void I2CLineSensorHandler(tI2CLineSensor *ls) {
 // This function sets up a LineSensor to be run in the background
 // A callback can be passed, in which a call to LineSensorRead 
 // will return with the newly obtained value immediately
-void I2CLineSensorBackgroundRead(tI2CLineSensor *ls, tCallback callback, void *data) {
+static void I2CLineSensorBackgroundRead(tI2CLineSensor *ls, tCallback callback, void *data) {
     // Store the callback information
     ls->callback = callback ? callback : Dummy;
     ls->data = data;
@@ -124,7 +115,7 @@ void I2CLineSensorBackgroundRead(tI2CLineSensor *ls, tCallback callback, void *d
 // each bit is matched against a threshold that is passed.
 // If the LineSensor is not continously reading,
 // then the function will busy wait for the results
-unsigned char I2CLineSensorRead(tI2CLineSensor *ls, float threshold) {
+static unsigned char I2CLineSensorRead(tI2CLineSensor *ls, float threshold) {
     unsigned char thresh;
     unsigned char output = 0x0;
     int i;
@@ -157,7 +148,7 @@ unsigned char I2CLineSensorRead(tI2CLineSensor *ls, float threshold) {
 // array of ratios placed in the passed memory location.
 // If the LineSensor is not continously reading,
 // then the function will busy wait for the results
-tBoolean I2CLineSensorReadArray(tI2CLineSensor *ls, float *array) {
+static tBoolean I2CLineSensorReadArray(tI2CLineSensor *ls, float *array) {
     int i;
     
     // Check if we need to read a value
@@ -198,7 +189,7 @@ static void ContinuousReadHandler(tI2CLineSensor *ls) {
 // Any following calls to LineSensorRead will return the most recent value
 // If the passed time between calls is less than the time it takes for
 // the LineSensor to complete, the LineSensor will read as fast as possible without overlap
-void I2CLineSensorReadContinuouslyUS(tI2CLineSensor *ls, tTime us) {
+static void I2CLineSensorReadContinuouslyUS(tI2CLineSensor *ls, tTime us) {
     // Set the continous flag
     ls->continous = true;
     
@@ -213,6 +204,30 @@ void I2CLineSensorReadContinuouslyUS(tI2CLineSensor *ls, tTime us) {
         CallEveryUS(SingleReadHandler, ls, us);
 }
 
-void I2CLineSensorReadContinuously(tI2CLineSensor *ls, float s) {
+static void I2CLineSensorReadContinuously(tI2CLineSensor *ls, float s) {
     I2CLineSensorReadContinuouslyUS(ls, US(s));
+}
+
+
+// Function to initialize a line sensor on a pair of pins
+// The returned pointer can be used by the LineSensorRead functions
+tI2CLineSensor *hiddenInitializeI2CLineSensor(tI2C *i2c, unsigned int address) {
+    // Grab the next line sensor
+    tI2CLineSensor *ls = &lineSensorBuffer[lineSensorCount++];
+    
+    // Keep track of the I2C module
+    ls->i2c = i2c;
+    
+    // Create the actual address
+    ls->address = ADS7830 | (0x3 & address);
+    
+    // Set parent method/functions 
+    ls->Read = I2CLineSensorRead;
+    ls->ReadArray = I2CLineSensorReadArray;
+    ls->BackgroundRead = I2CLineSensorBackgroundRead;
+    ls->ReadContinuouslyUS = I2CLineSensorReadContinuouslyUS;
+    ls->ReadContinuously = I2CLineSensorReadContinuously;
+    
+    // Return the initialized line sensor
+    return ls;
 }

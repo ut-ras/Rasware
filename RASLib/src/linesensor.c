@@ -22,18 +22,42 @@
 //*****************************************************************************
 
 #include "linesensor.h"
-#include "i2clinesensor.h"
-#include "gpiolinesensor.h"
+
+// Definition of struct GPIOLineSensor in gpiolinesensor.c
+typedef struct GPIOLineSensor tGPIOLineSensor;
+
+/**
+ * Initializes a GPIO line sensor on the provided pins
+ * @param p0 Pin plugged into sensor 0
+ * @param p1 Pin plugged into sensor 1
+ * @param p2 Pin plugged into sensor 2
+ * @param p3 Pin plugged into sensor 3
+ * @param p4 Pin plugged into sensor 4
+ * @param p5 Pin plugged into sensor 5
+ * @param p6 Pin plugged into sensor 6
+ * @param p7 Pin plugged into sensor 7
+ * @return Pointer to an initialized tGPIOLineSensor, can be used by the GPIOLineSensorRead functions
+ */
+tGPIOLineSensor *hiddenInitializeGPIOLineSensor(tPin p0, tPin p1, tPin p2, tPin p3, tPin p4, tPin p5, tPin p6, tPin p7);
+
+
+typedef struct I2CLineSensor tI2CLineSensor;
+
+/**
+ * Initializes a line sensor with an address on an i2c bus
+ * @param i2c Pointer to an initialized tI2C, returned by InitializeI2C
+ * @param address 2-bit value determined by the solder jumpers on the board
+ * @return Pointer to an initialized tLineSensor, can be used by the LineSensorRead functions
+ */
+tI2CLineSensor *hiddenInitializeI2CLineSensor(tI2C *i2c, unsigned int address);
 
 struct LineSensor {
-    tLineType type;
-    void *sensorData;
+    unsigned char (*Read)(tLineSensor *ls, float threshold);
+    tBoolean (*ReadArray)(tLineSensor *ls, float *array);
+    void (*BackgroundRead)(tLineSensor *ls, tCallback callback, void *data);
+    void (*ReadContinuouslyUS)(tLineSensor *ls, tTime us);
+    void (*ReadContinuously)(tLineSensor *ls, float s);
 };
-
-// Buffer of line sensor structs to use
-static tLineSensor lineSensorBuffer[I2C_COUNT * 4 + PIN_COUNT / 8];
-
-static int lineSensorCount = 0;
 
 
 /**
@@ -43,11 +67,7 @@ static int lineSensorCount = 0;
  * @return Pointer to an initialized tLineSensor, can be used by the LineSensorRead functions
  */
 tLineSensor *InitializeI2CLineSensor(tI2C *i2c, unsigned int address) {
-    tLineSensor *ls = &lineSensorBuffer[lineSensorCount++];
-
-    ls->type = IS_I2C;
-    ls->sensorData = hiddenInitializeI2CLineSensor(i2c, address);
-    return ls;
+    return (tLineSensor *) hiddenInitializeI2CLineSensor(i2c, address);
 }
 
 /**
@@ -63,11 +83,7 @@ tLineSensor *InitializeI2CLineSensor(tI2C *i2c, unsigned int address) {
  * @return Pointer to an initialized tGPIOLineSensor, can be used by the GPIOLineSensorRead functions
  */
 tLineSensor *InitializeGPIOLineSensor(tPin p0, tPin p1, tPin p2, tPin p3, tPin p4, tPin p5, tPin p6, tPin p7) {
-    tLineSensor *ls = &lineSensorBuffer[lineSensorCount++];
-
-    ls->type = IS_GPIO;
-    ls->sensorData = hiddenInitializeGPIOLineSensor(p0, p1, p2, p3, p4, p5, p6, p7);
-    return ls;
+    return (tLineSensor *) hiddenInitializeGPIOLineSensor(p0, p1, p2, p3, p4, p5, p6, p7);
 }
 
 /**
@@ -79,13 +95,7 @@ tLineSensor *InitializeGPIOLineSensor(tPin p0, tPin p1, tPin p2, tPin p3, tPin p
  * Note: if there is an error in the I2C module, the returned value will be all ones
  */
 unsigned char LineSensorRead(tLineSensor *ls, float threshold) {
-    if(ls->type == IS_I2C) {
-        return I2CLineSensorRead(ls->sensorData, threshold);
-		} else if(ls->type == IS_GPIO) {
-        return GPIOLineSensorRead(ls->sensorData, threshold);
-    } else {
-        return 0;
-    }
+    return ls->Read(ls, threshold);
 }
 
 /**
@@ -96,13 +106,7 @@ unsigned char LineSensorRead(tLineSensor *ls, float threshold) {
  * Note: if the line sensor is not continously reading, then the function will busy wait for the results
  */
 tBoolean LineSensorReadArray(tLineSensor *ls, float *array) {
-    if(ls->type == IS_I2C) {
-        return I2CLineSensorReadArray(ls->sensorData, array);
-		} else if(ls->type == IS_GPIO) {
-        return GPIOLineSensorReadArray(ls->sensorData, array);
-    } else {
-        return false;
-    }
+    return ls->ReadArray(ls, array);
 }
 
 /**
@@ -112,11 +116,7 @@ tBoolean LineSensorReadArray(tLineSensor *ls, float *array) {
  * @param data Argument sent to the provided callback function whenever it is called
  */
 void LineSensorBackgroundRead(tLineSensor *ls, tCallback callback, void *data) {
-    if(ls->type == IS_I2C) {
-        I2CLineSensorBackgroundRead(ls->sensorData, callback, data);
-		} else if(ls->type == IS_GPIO) {
-        GPIOLineSensorBackgroundRead(ls->sensorData, callback, data);
-    }
+    ls->BackgroundRead(ls, callback, data);
 }
 
 /**
@@ -127,11 +127,7 @@ void LineSensorBackgroundRead(tLineSensor *ls, tCallback callback, void *data) {
  * Note: If the passed time between calls is less than the time it takes for the line sensor read to complete, the line sensor will fire as fast as possible without overlap
  */
 void LineSensorReadContinuouslyUS(tLineSensor *ls, tTime us) {
-    if(ls->type == IS_I2C) {
-        I2CLineSensorReadContinuously(ls->sensorData, us);
-		} else if(ls->type == IS_GPIO) {
-        GPIOLineSensorReadContinuously(ls->sensorData, us);
-    }
+    ls->ReadContinuously(ls, us);
 }
 
 /**
@@ -142,9 +138,5 @@ void LineSensorReadContinuouslyUS(tLineSensor *ls, tTime us) {
  * Note: If the passed time between calls is less than the time it takes for the line sensor read to complete, the line sensor will fire as fast as possible without overlap
  */
 void LineSensorReadContinuously(tLineSensor *ls, float s) {
-    if(ls->type == IS_I2C) {
-        I2CLineSensorReadContinuously(ls->sensorData, s);
-		} else if(ls->type == IS_GPIO) {
-        GPIOLineSensorReadContinuously(ls->sensorData, s);
-    }
+    ls->ReadContinuously(ls, s);
 }
