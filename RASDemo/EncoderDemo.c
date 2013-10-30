@@ -7,8 +7,8 @@
 tEncoder *demoEncoder[2];
 
 void initEncoders(void) {
-    demoEncoder[0] = InitializeEncoder(PIN_D0, PIN_D1, false);
-    demoEncoder[1] = InitializeEncoder(PIN_D2, PIN_D3, false);
+    demoEncoder[0] = InitializeEncoder0(false);
+    demoEncoder[1] = InitializeEncoder1(false);
 }
 
 void encoderDemo(void) {
