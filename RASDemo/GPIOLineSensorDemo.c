@@ -3,14 +3,13 @@
 #include <RASLib/inc/common.h>
 #include <RASLib/inc/linesensor.h>
 
-tLineSensor *ls;
+tLineSensor *gls;
 
-void initI2CLineSensor(void) {
-    tI2C *bus = InitializeI2C(PIN_B3, PIN_B2);
-    ls = InitializeI2CLineSensor(bus, 0);
+void initGPIOLineSensor(void) {
+    gls = InitializeGPIOLineSensor(PIN_B5, PIN_D0, PIN_D1, PIN_D2, PIN_D3, PIN_E0, PIN_C6, PIN_C7);
 }
 
-void i2cLineSensorDemo(void) {
+void gpioLineSensorDemo(void) {
     Printf("Press:\nany key-read line sensor\n");
     Printf("any key after read begins-quit\n");
   
@@ -18,7 +17,7 @@ void i2cLineSensorDemo(void) {
         int i;
         float line[8];
     
-        LineSensorReadArray(ls, line);
+        LineSensorReadArray(gls, line);
         Printf("Line Sensor: [");
     
         for (i=0; i < 8; i++) {

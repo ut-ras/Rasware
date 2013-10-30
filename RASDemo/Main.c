@@ -20,9 +20,9 @@ int main(void) {
     while(1) {
         Printf("\nRAS Demo for Robotathon 2013\n");
         Printf("  0=UART Demo\n  1=Motor Demo\n");
-        Printf("  2=Servo Demo\n  3=Line Sensor\n");
+        Printf("  2=Servo Demo\n  3=I2C Line Sensor Demo\n");
         Printf("  4=IR Sensor Demo\n  5=Encoders Demo\n");
-        Printf("  6=GPIO Demo\n");
+        Printf("  6=GPIO Demo\n  7=GPIO Line Sensor Demo\n");
         
         Printf(">> ");
         // Read input from User
@@ -47,8 +47,8 @@ int main(void) {
                 break;
             case '3':
                 Printf("\nLine Sensor Demo\n");
-                initLineSensor();          
-                lineSensorDemo();    
+                initI2CLineSensor();          
+                i2cLineSensorDemo();    
                 break;
             case '4':                            
                    Printf("\nIR Sensor Demo\n");
@@ -63,6 +63,11 @@ int main(void) {
             case '6':
                 Printf("\nGPIO Demo\n");
                 gpioDemo();
+                break;
+            case '7':
+                Printf("\nGPIO Line Sensor Demo\n");
+                initGPIOLineSensor();
+                gpioLineSensorDemo();
                 break;
         }
     }
