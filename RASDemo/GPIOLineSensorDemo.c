@@ -1,9 +1,9 @@
 #include "RASDemo.h"
 
 #include <RASLib/inc/common.h>
-#include <RASLib/inc/gpiolinesensor.h>
+#include <RASLib/inc/linesensor.h>
 
-tGPIOLineSensor *gls;
+tLineSensor *gls;
 
 void initGPIOLineSensor(void) {
     gls = InitializeGPIOLineSensor(PIN_B5, PIN_D0, PIN_D1, PIN_D2, PIN_D3, PIN_E0, PIN_C6, PIN_C7);
@@ -17,7 +17,7 @@ void gpioLineSensorDemo(void) {
         int i;
         float line[8];
     
-        GPIOLineSensorReadArray(gls, line);
+        LineSensorReadArray(gls, line);
         Printf("Line Sensor: [");
     
         for (i=0; i < 8; i++) {

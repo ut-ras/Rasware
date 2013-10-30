@@ -31,6 +31,9 @@
 extern "C" {
 #endif
 
+typedef enum {
+    IS_I2C, IS_GPIO,
+} tLineType;
 
 typedef struct LineSensor tLineSensor;
 

@@ -8,8 +8,8 @@ void initServo(void);
 void servoDemo(void);
 
 // Functions in LineSensorDemo
-void initLineSensor(void);
-void lineSensorDemo(void);
+void initI2CLineSensor(void);
+void i2cLineSensorDemo(void);
 
 // Function in IRDemo
 void initIRSensor(void);

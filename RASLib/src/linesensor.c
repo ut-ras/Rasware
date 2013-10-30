@@ -25,11 +25,8 @@
 #include "i2clinesensor.h"
 #include "gpiolinesensor.h"
 
-#define IS_I2C 0
-#define IS_GPIO 1
-
 struct LineSensor {
-    int type;
+    tLineType type;
     void *sensorData;
 };
 

@@ -5,12 +5,12 @@
 
 tLineSensor *ls;
 
-void initLineSensor(void) {
+void initI2CLineSensor(void) {
     tI2C *bus = InitializeI2C(PIN_B3, PIN_B2);
-    ls = InitializeLineSensor(bus, 0);
+    ls = InitializeI2CLineSensor(bus, 0);
 }
 
-void lineSensorDemo(void) {
+void i2cLineSensorDemo(void) {
     Printf("Press:\nany key-read line sensor\n");
     Printf("any key after read begins-quit\n");
   
