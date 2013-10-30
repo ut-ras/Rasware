@@ -349,7 +349,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\;C:\;..\StellarisWare;..\..\StellarisWare;C:\StellarisWare;inc</IncludePath>
+              <IncludePath>..\;..\..\;C:\;..\StellarisWare;..\..\StellarisWare;C:\StellarisWare;inc;..\Boosterpacks</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
