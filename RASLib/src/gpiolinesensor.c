@@ -294,7 +294,7 @@ static void GPIOLineSensorReadContinuously(tGPIOLineSensor *ls, float s) {
 
 // Function to initialize a line sensor on the provided pins
 // The returned pointer can be used by the GPIOLineSensorRead functions
-tGPIOLineSensor *hiddenInitializeGPIOLineSensor(tPin p0, tPin p1, tPin p2, tPin p3, tPin p4, tPin p5, tPin p6, tPin p7) {
+tGPIOLineSensor *_InitializeGPIOLineSensor(tPin p0, tPin p1, tPin p2, tPin p3, tPin p4, tPin p5, tPin p6, tPin p7) {
     int i;
     
     // Grab the next line sensor

@@ -211,7 +211,7 @@ static void I2CLineSensorReadContinuously(tI2CLineSensor *ls, float s) {
 
 // Function to initialize a line sensor on a pair of pins
 // The returned pointer can be used by the LineSensorRead functions
-tI2CLineSensor *hiddenInitializeI2CLineSensor(tI2C *i2c, unsigned int address) {
+tI2CLineSensor *_InitializeI2CLineSensor(tI2C *i2c, unsigned int address) {
     // Grab the next line sensor
     tI2CLineSensor *ls = &lineSensorBuffer[lineSensorCount++];
     

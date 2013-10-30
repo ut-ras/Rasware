@@ -38,7 +38,7 @@ typedef struct GPIOLineSensor tGPIOLineSensor;
  * @param p7 Pin plugged into sensor 7
  * @return Pointer to an initialized tGPIOLineSensor, can be used by the GPIOLineSensorRead functions
  */
-tGPIOLineSensor *hiddenInitializeGPIOLineSensor(tPin p0, tPin p1, tPin p2, tPin p3, tPin p4, tPin p5, tPin p6, tPin p7);
+tGPIOLineSensor *_InitializeGPIOLineSensor(tPin p0, tPin p1, tPin p2, tPin p3, tPin p4, tPin p5, tPin p6, tPin p7);
 
 
 typedef struct I2CLineSensor tI2CLineSensor;
@@ -49,7 +49,7 @@ typedef struct I2CLineSensor tI2CLineSensor;
  * @param address 2-bit value determined by the solder jumpers on the board
  * @return Pointer to an initialized tLineSensor, can be used by the LineSensorRead functions
  */
-tI2CLineSensor *hiddenInitializeI2CLineSensor(tI2C *i2c, unsigned int address);
+tI2CLineSensor *_InitializeI2CLineSensor(tI2C *i2c, unsigned int address);
 
 struct LineSensor {
     unsigned char (*Read)(tLineSensor *ls, float threshold);
@@ -67,7 +67,7 @@ struct LineSensor {
  * @return Pointer to an initialized tLineSensor, can be used by the LineSensorRead functions
  */
 tLineSensor *InitializeI2CLineSensor(tI2C *i2c, unsigned int address) {
-    return (tLineSensor *) hiddenInitializeI2CLineSensor(i2c, address);
+    return (tLineSensor *) _InitializeI2CLineSensor(i2c, address);
 }
 
 /**
@@ -83,7 +83,7 @@ tLineSensor *InitializeI2CLineSensor(tI2C *i2c, unsigned int address) {
  * @return Pointer to an initialized tGPIOLineSensor, can be used by the GPIOLineSensorRead functions
  */
 tLineSensor *InitializeGPIOLineSensor(tPin p0, tPin p1, tPin p2, tPin p3, tPin p4, tPin p5, tPin p6, tPin p7) {
-    return (tLineSensor *) hiddenInitializeGPIOLineSensor(p0, p1, p2, p3, p4, p5, p6, p7);
+    return (tLineSensor *) _InitializeGPIOLineSensor(p0, p1, p2, p3, p4, p5, p6, p7);
 }
 
 /**
