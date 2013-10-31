@@ -401,11 +401,6 @@
               <FilePath>.\IRSensorDemo.c</FilePath>
             </File>
             <File>
-              <FileName>LineSensorDemo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\LineSensorDemo.c</FilePath>
-            </File>
-            <File>
               <FileName>Main.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Main.c</FilePath>
@@ -444,6 +439,11 @@
               <FileName>GPIOLineSensorDemo.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\GPIOLineSensorDemo.c</FilePath>
+            </File>
+            <File>
+              <FileName>I2CLineSensorDemo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\I2CLineSensorDemo.c</FilePath>
             </File>
           </Files>
         </Group>

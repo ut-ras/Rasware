@@ -51,7 +51,7 @@ tLineSensor *InitializeI2CLineSensor(tI2C *i2c, unsigned int address);
  * @param p5 Pin plugged into sensor 5
  * @param p6 Pin plugged into sensor 6
  * @param p7 Pin plugged into sensor 7
- * @return Pointer to an initialized tGPIOLineSensor, can be used by the GPIOLineSensorRead functions
+ * @return Pointer to an initialized tLineSensor, can be used by the LineSensorRead functions
  */
 tLineSensor *InitializeGPIOLineSensor(tPin p0, tPin p1, tPin p2, tPin p3, tPin p4, tPin p5, tPin p6, tPin p7);
 
