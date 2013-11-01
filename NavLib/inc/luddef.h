@@ -13,17 +13,10 @@ function will place its output in the pose struct provided.
 
 For example usage, see the LuddefTest project.
 */
+#include "common.h"
 
 #ifndef __LUDDEF_H__
 #define __LUDDEF_H__
-
-typedef struct {
-    float x;        // position in units
-    float y;        // position in units
-    float heading;  // direction in radians
-    float v;        // linear velocity in units/second
-    float w;        // angular velocity in radians/second
-} tPose;
 
 typedef struct {
     float unitsAxisWidth;

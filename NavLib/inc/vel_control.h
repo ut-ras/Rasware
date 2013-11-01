@@ -1,18 +1,23 @@
+#include "common.h"
+
 #ifndef __VEL_CONTROL_H__
 #define __VEL_CONTROL_H__
 
-struct {
-    float p, i d;
-    float prevErr, accumErr;
-} typedef tPID;
+typedef struct {
+    tPID right;
+    tPID left;
+    
+    // are these needed too?
+    float unitsAxisWidth; 
+    float ticksPerUnit; 
+} tVC;
 
-struct {
-    tPID right, left;
-    float outputRight, outputLeft;
-} typedef tVelControl;
+typedef struct {
+    float rightMotorPower, leftMotorPower;
+} tVCAction;
 
-void VelControlIterate(tVelControl *vc, float inputRight, float inputLeft);
+tVCAction VCRun(tVC *vc, tVels *desired, tVels *current);
 
-InitializeVelControl(tVelControl *vc, float p, float i, float d);
+InitializeVC(tVC *vc, float p, float i, float d);
 
 #endif // __VEL_CONTROL_H__
