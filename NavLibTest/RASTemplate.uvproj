@@ -410,6 +410,11 @@
               <FileType>4</FileType>
               <FilePath>..\RASLib\output\RASLib.lib</FilePath>
             </File>
+            <File>
+              <FileName>NavLib.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>..\NavLib\NavLib.lib</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
