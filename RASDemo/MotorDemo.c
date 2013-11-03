@@ -7,7 +7,7 @@ tMotor *motors[2];
 
 void initMotors(void) {
     motors[0] = InitializeMotor(PIN_B7, PIN_B6, true, false);
-    motors[1] = InitializeMotor(PIN_E5, PIN_E4, true, false);
+    motors[1] = InitializeMotor(PIN_C5, PIN_C4, true, false);
 }
 
 void motorDemo(void) {
@@ -15,7 +15,7 @@ void motorDemo(void) {
     Printf("d-right\n  space-stop\n  enter-quit\n");
   
     {
-        float left = 0, right = 0, speed = 0.75;
+        float left = 0, right = 0, speed = 0.2;
         char newline = 13;
         char ch = Getc();
         while(ch != newline) {
