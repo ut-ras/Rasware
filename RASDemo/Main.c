@@ -13,9 +13,9 @@ void blink(void) {
 }
 
 int main(void) {  
-    char ch;       
+    char ch;
     InitializeMCU();
-    CallEvery(blink, 0, 0.25f);
+    // CallEvery(blink, 0, 0.25f);
 
     while(1) {
         Printf("\nRAS Demo for Robotathon 2013\n");
