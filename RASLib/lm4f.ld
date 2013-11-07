@@ -14,9 +14,6 @@ MEMORY
   RAM (xrw) : ORIGIN = 0x20000000, LENGTH = 0x00008000
 }
 
-_estack = 0x20008000; /* Upper stack boundary */
-_sstack = (_estack - 512); /* Lower stack boundary */
-
 SECTIONS {
   .isr_vector :
   {
@@ -58,8 +55,6 @@ SECTIONS {
     . = ALIGN(4);
       _ebss = . ;
   } >RAM
-  _heap_bottom = .;
-  _heap_top = _sstack;
 }
 
 . = ALIGN(4);
