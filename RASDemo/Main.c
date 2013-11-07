@@ -1,6 +1,7 @@
 #include "RASDemo.h"
 
 #include <RASLib/inc/common.h>
+#include <RASLib/inc/time.h>
 
 
 int main(void)
@@ -8,6 +9,9 @@ int main(void)
 	char ch;	  	 
 
 	InitializeMCU();
+    
+    Printf("Go\n");
+    Wait(2.0f);
 
 	while(1) {
 		Printf("\nRAS Demo for Robotathon 2013\n");

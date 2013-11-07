@@ -254,13 +254,13 @@ void (* const __Vectors[])(void) = {
     #define BSS_START   &(Image$$ER_ZI$$ZI$$Base)
     #define BSS_END     &(Image$$ER_ZI$$ZI$$Limit)
 #else
-    extern unsigned long _etext;
+    extern unsigned long _sidata;
     extern unsigned long _data;
     extern unsigned long _edata;
     extern unsigned long _bss;
     extern unsigned long _ebss;
 
-    #define DATA_LOAD   &_etext
+    #define DATA_LOAD   &_sidata
     #define DATA_START  &_data
     #define DATA_END    &_edata
     #define BSS_START   &_bss
@@ -305,14 +305,15 @@ void ResetHandler(void) {
 
     // Call the application's entry point.
     main();
+
+    // Enter an infinite loop if we leave main
+    while (1) {}
 }
 
 // This is the code that gets called when the processor receives a NMI.  This
-// simply enters an infinite loop, preserving the system state for examination
-// by a debugger.
+// must pass through to avoid a race condition during startup
 static void NmiHandler(void) {
-    // Enter an infinite loop
-    while (1) {}
+    // Pass through
 }
 
 // This is the code that gets called when the processor receives a fault
