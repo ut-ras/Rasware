@@ -6,18 +6,31 @@
 typedef struct {
     tPID right;
     tPID left;
-    
-    float ticksPerLinearVel;
-    float ticksPerAngularVel; 
+    tRobot *r;
 } tVC;
 
 typedef struct {
-    float rightMotor, leftMotor;
+    float rightMotor;
+    float leftMotor;
 } tVCAction;
 
-tVCAction VCRun(tVC *vc, tVels *desired, signed long deltaRightTicks, signed long deltaLeftTicks);
+tVCAction VCRun(
+    tVC *vc, 
+    tVels *desired, 
+    signed long deltaRightTicks, 
+    signed long deltaLeftTicks,
+    float timeStep // seconds
+    );
 
-InitializeVC(tVC *vc, float p, float i, float d, float min, float max);
+InitializeVC(
+    tVC *vc, 
+    tRobot *r, 
+    float p, 
+    float i, 
+    float d, 
+    float min, 
+    float max
+    );
 
 #endif // __VEL_CONTROL_H__
 

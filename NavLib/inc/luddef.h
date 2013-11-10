@@ -19,15 +19,14 @@ For example usage, see the LuddefTest project.
 #define __LUDDEF_H__
 
 typedef struct {
-    float unitsAxisWidth;
-    float ticksPerUnit;
+    tRobot *r;
     float oldLeftDist;
     float oldRightDist;
 } tLUDDEF;
 
 void UpdateLUDDEFPose(
     tLUDDEF *luddef,
-    tPose *pose,
+    tRobot *r,
     signed long leftTicks,
     signed long rightTicks,
     float timeStep // seconds
@@ -35,8 +34,8 @@ void UpdateLUDDEFPose(
 
 void InitializeLUDDEF(
     tLUDDEF *luddef,
-    float unitsAxisWidth, // where 'units' could be inches, meters, etc.
-    float ticksPerUnit    // units must be consistent with axis width
+    tRobot *r
     );
 
 #endif // __LUDDEF_H__
+

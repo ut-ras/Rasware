@@ -1,9 +1,19 @@
 #include "vel_control.h"
 
-tVCAction VCRun(tVC *vc, tVels *desired, signed long deltaRightTicks, signed long deltaLeftTicks) {
+tVCAction VCRun(
+    tVC *vc, 
+    tVels *desired, 
+    signed long deltaRightTicks, 
+    signed long deltaLeftTicks,
+    float timeStep // seconds
+    )
+{
+    float ticksPerLinearVel = timeStep / vc->r->ticksPerUnit,
+          ticksPerAngularVel = timeStep / (vc->r->ticksPerUnit/vc->r->unitsAxisWidth);
+    
     // convert angular and linear velocities into encoder ticks
-    float desiredLinearTicks = desired->v * vc->ticksPerLinearVel,
-          desiredAngularTicks = desired->w * vc->ticksPerAngularVel;
+    float desiredLinearTicks = desired->v * ticksPerLinearVel,
+          desiredAngularTicks = desired->w * ticksPerAngularVel;
 
     // convert desired and current into left and right encoder ticks
     float desiredLeftTicks = desiredLinearTicks + desiredAngularTicks,
@@ -17,11 +27,18 @@ tVCAction VCRun(tVC *vc, tVels *desired, signed long deltaRightTicks, signed lon
     return output;
 }
 
-InitializeVC(tVC *vc, tRobot *r, float p, float i, float d) {
-    InitializePID(&(vc->right), p, i, d, -1.0, 1.0);
-    InitializePID(&(vc->left), p, i, d, -1.0, 1.0);
-
-    vc->ticksPerLinearVel = r->secsLooprate / r->ticksPerUnit,
-    vc->ticksPerAngularVel = r->secsLooprate / (r->ticksPerUnit/r->unitsAxisWidth);
+InitializeVC(
+    tVC *vc, 
+    tRobot *r, 
+    float p, 
+    float i, 
+    float d, 
+    float min, 
+    float max
+    )
+{
+    vc->r = r;
+    InitializePID(&(vc->right), p, i, d, min, max);
+    InitializePID(&(vc->left), p, i, d, min, max);
 }
 

@@ -7,9 +7,20 @@ typedef struct {
     float prevErr, accumErr;
 } tPID;
 
-float RunPID(tPID *pid, float desired, float current);
+float RunPID(
+    tPID *pid, 
+    float desired, 
+    float current
+    );
 
-InitializePID(tPID* pid, float p, float i, float d, float min, float max) {
+InitializePID(
+    tPID* pid, 
+    float p, 
+    float i, 
+    float d, 
+    float min, 
+    float max
+    );
 
 #endif // __PID_H__
 
