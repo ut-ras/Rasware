@@ -7,17 +7,17 @@ typedef struct {
     tPID right;
     tPID left;
     
-    // are these needed too?
-    float unitsAxisWidth; 
-    float ticksPerUnit; 
+    float ticksPerLinearVel;
+    float ticksPerAngularVel; 
 } tVC;
 
 typedef struct {
-    float rightMotorPower, leftMotorPower;
+    float rightMotor, leftMotor;
 } tVCAction;
 
-tVCAction VCRun(tVC *vc, tVels *desired, tVels *current);
+tVCAction VCRun(tVC *vc, tVels *desired, signed long deltaRightTicks, signed long deltaLeftTicks);
 
-InitializeVC(tVC *vc, float p, float i, float d);
+InitializeVC(tVC *vc, float p, float i, float d, float min, float max);
 
 #endif // __VEL_CONTROL_H__
+

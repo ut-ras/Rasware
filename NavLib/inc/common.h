@@ -17,4 +17,10 @@ typedef struct {
     float x, y;
 } tPoint;
 
+typedef struct {
+    float ticksPerUnit;
+    float unitsAxisWidth;
+    float secsLoopRate;
+} tRobot;
+
 #endif // __COMMON_H__
