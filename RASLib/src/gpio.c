@@ -91,11 +91,11 @@ void InitializeGPIO(void) {
     
     // Special workarounds for PF0 and PD7
     // For more info lookup NMI mux issue on the LM4F
-    HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
+    HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY_DD;
     HWREG(GPIO_PORTD_BASE + GPIO_O_CR) = GPIO_PIN_7;
     HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = 0;
     
-    HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
+    HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY_DD;
     HWREG(GPIO_PORTF_BASE + GPIO_O_CR) = GPIO_PIN_0;
     HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = 0;
         
