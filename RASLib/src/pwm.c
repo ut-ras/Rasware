@@ -147,7 +147,9 @@ static void InitializePWMModule(tPWMModule *mod, tPWM *pwm) {
     
     // Setup the timer
     TimerLoadSet(mod->BASE, mod->TIMER, pwm->up.timing);
-    TimerEnable(mod->BASE, mod->TIMER);
+    // This is a bit hacky and assumes the order of pwm modules
+    // By editing the config register both timers are disabled
+    TimerEnable(mod->BASE, mod->TIMER | TIMER_A);
     
     // Enable the interrupt
     IntEnable(mod->INT);
