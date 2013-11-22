@@ -400,6 +400,16 @@
               <FileType>1</FileType>
               <FilePath>.\src\luddef.c</FilePath>
             </File>
+            <File>
+              <FileName>pid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\pid.c</FilePath>
+            </File>
+            <File>
+              <FileName>vel_control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\vel_control.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

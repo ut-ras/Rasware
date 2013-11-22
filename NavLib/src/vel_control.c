@@ -26,7 +26,7 @@ tVCAction RunVC(
           desiredRightTicks = desiredLinearTicks - desiredAngularTicks;
 
     float deltaLeftTicks = (float)diffTicks(leftTicks, vc->prevLeftTicks),
-          deltaRightTicks = (float)diffTicks(rightTicks - vc->prevRightTicks);
+          deltaRightTicks = (float)diffTicks(rightTicks, vc->prevRightTicks);
 
     // run left and right PID loops to decide left and right motor powers 
     tVCAction output;
@@ -49,7 +49,7 @@ void InitializeVC(
     vc->r = r;
     InitializePID(&(vc->right), p, i, d, min, max);
     InitializePID(&(vc->left), p, i, d, min, max);
-    prevLeftTicks = 0;
-    prevRightTicks = 0;
+    vc->prevLeftTicks = 0;
+    vc->prevRightTicks = 0;
 }
 
