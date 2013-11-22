@@ -1,7 +1,8 @@
-#include "common.h"
-
 #ifndef __VEL_CONTROL_H__
 #define __VEL_CONTROL_H__
+
+#include "common.h"
+#include "pid.h"
 
 typedef struct {
     tPID right;
@@ -22,7 +23,7 @@ tVCAction VCRun(
     float timeStep // seconds
     );
 
-InitializeVC(
+void InitializeVC(
     tVC *vc, 
     tRobot *r, 
     float p, 
@@ -33,4 +34,3 @@ InitializeVC(
     );
 
 #endif // __VEL_CONTROL_H__
-

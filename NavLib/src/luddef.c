@@ -15,6 +15,7 @@ int floatBasicallyEqual(float a, float b) {
     return fabs(a - b) < 1.0e-6f;
 }
 
+/*
 void UpdateLUDDEFPose(
     tLUDDEF *luddef,
     tPose *pose,
@@ -24,9 +25,17 @@ void UpdateLUDDEFPose(
     float timeStep
     )
 {
+*/
+void UpdateLUDDEFPose(
+    tLUDDEF *luddef,
+    signed long leftTicks,
+    signed long rightTicks,
+    float timeStep // seconds
+    )
+{
     // convenience variables
-    tPose *pose = luddef->r->pose;
-    tVels *vels = luddef->r->vels;
+    tPose *pose = &(luddef->r->pose);
+    tVels *vels = &(luddef->r->vels);
     float ticksPerUnit = luddef->r->ticksPerUnit,
           unitsAxisWidth = luddef->r->unitsAxisWidth,
           heading = pose->heading;

@@ -3,11 +3,12 @@
 float RunPID(tPID *pid, float desired, float current) {
     float error = desired - current;
     float diff = error - pid->prevError;
+    float output;
 
-    pid->accumErr += error;
+    pid->accumError += error;
     pid->prevError = error;
 
-    float output = (pid->p) * error + (pid->d) * diff + (pid->i) * pid->accumError;
+    output = (pid->p) * error + (pid->d) * diff + (pid->i) * pid->accumError;
 
     if (output < pid->minOutput) {
         output = pid->minOutput;
@@ -18,13 +19,21 @@ float RunPID(tPID *pid, float desired, float current) {
     return output;
 }
 
-InitializePID(tPID* pid, float p, float i, float d, float min, float max) {
+void InitializePID(
+    tPID* pid, 
+    float p, 
+    float i, 
+    float d, 
+    float min, 
+    float max
+    )
+{
     pid->p = p;
     pid->i = i;
     pid->d = d;
     pid->minOutput = min;
     pid->maxOutput = max;
-    pid->prevErr = 0;
-    pid->accumErr = 0;
+    pid->prevError = 0;
+    pid->accumError = 0;
 }
 

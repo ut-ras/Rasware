@@ -21,13 +21,13 @@ tVCAction VCRun(
 
     // run left and right PID loops to decide left and right motor powers 
     tVCAction output;
-    output.rightMotor = RunPID(vc->right, desiredRight, deltaRightTicks);
-    output.leftMotor = RunPID(vc->left, desiredLeft, deltaLeftTicks); 
+    output.rightMotor = RunPID(&(vc->right), desiredRightTicks, deltaRightTicks);
+    output.leftMotor = RunPID(&(vc->left), desiredLeftTicks, deltaLeftTicks); 
 
     return output;
 }
 
-InitializeVC(
+void InitializeVC(
     tVC *vc, 
     tRobot *r, 
     float p, 

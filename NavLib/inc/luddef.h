@@ -26,7 +26,6 @@ typedef struct {
 
 void UpdateLUDDEFPose(
     tLUDDEF *luddef,
-    tRobot *r,
     signed long leftTicks,
     signed long rightTicks,
     float timeStep // seconds

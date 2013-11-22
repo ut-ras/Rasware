@@ -1,10 +1,10 @@
 #ifndef __PID_H__
 #define __PID_H__
 
-typedef struct {
-    float p, i d;
+typedef struct tPID {
+    float p, i, d;
     float maxOutput, minOutput;
-    float prevErr, accumErr;
+    float prevError, accumError;
 } tPID;
 
 float RunPID(
@@ -13,7 +13,7 @@ float RunPID(
     float current
     );
 
-InitializePID(
+void InitializePID(
     tPID* pid, 
     float p, 
     float i, 
