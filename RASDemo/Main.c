@@ -13,7 +13,7 @@ void blink(void) {
 }
 
 int main(void) {  
-    char ch;       
+    char ch;
     InitializeMCU();
     CallEvery(blink, 0, 0.25f);
 
