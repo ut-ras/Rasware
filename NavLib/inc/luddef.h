@@ -13,10 +13,10 @@ function will place its output in the pose struct provided.
 
 For example usage, see the LuddefTest project.
 */
-#include "common.h"
-
 #ifndef __LUDDEF_H__
 #define __LUDDEF_H__
+
+#include "common.h"
 
 typedef struct {
     tRobot *r;
@@ -24,13 +24,34 @@ typedef struct {
     float oldRightDist;
 } tLUDDEF;
 
-void UpdateLUDDEFPose(
+// ------------
+// UpdateLUDDEF
+// ------------
+
+/**
+ * Updates the luddef pose and velocity estimate given left and right encoder ticks
+ * @param luddef pointer to a luddef struct where the output of this function is placed
+ * @param leftTicks current encoder tick count returned by reading the left encoder
+ * @param rightTicks current encoder tick count returned by reading the right encoder
+ * @param timeStep how much time (in seconds) that has passed since the last call to this function
+ * Note: timeStep must not be zero
+ */
+void UpdateLUDDEF(
     tLUDDEF *luddef,
     signed long leftTicks,
     signed long rightTicks,
-    float timeStep // seconds
+    float timeStep
     );
 
+// ----------------
+// InitializeLUDDEF
+// ----------------
+
+/**
+ * Initializes a new luddef struct
+ * @param luddef pointer to a luddef struct (allocated by caller)
+ * @param luddef pointer to initialized robot struct
+ */
 void InitializeLUDDEF(
     tLUDDEF *luddef,
     tRobot *r

@@ -1,11 +1,16 @@
 #include "pid.h"
 
-float RunPID(tPID *pid, float desired, float current) {
+float RunPID(
+    tPID *pid, 
+    float desired, 
+    float current
+    )
+{
     float error = desired - current;
     float diff = error - pid->prevError;
     float output;
 
-    pid->accumError += error;
+    pid->accumError += error; // TODO: check and correct for overflow
     pid->prevError = error;
 
     output = (pid->p) * error + (pid->d) * diff + (pid->i) * pid->accumError;

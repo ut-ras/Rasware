@@ -15,18 +15,7 @@ int floatBasicallyEqual(float a, float b) {
     return fabs(a - b) < 1.0e-6f;
 }
 
-/*
-void UpdateLUDDEFPose(
-    tLUDDEF *luddef,
-    tPose *pose,
-    tVels *vels,
-    signed long leftTicks,
-    signed long rightTicks,
-    float timeStep
-    )
-{
-*/
-void UpdateLUDDEFPose(
+void UpdateLUDDEF(
     tLUDDEF *luddef,
     signed long leftTicks,
     signed long rightTicks,

@@ -1,13 +1,19 @@
 #include "vel_control.h"
 
-tVCAction VCRun(
+static signed long diffTicks(signed long cur, signed long old) {
+    // TODO: check and correct for over/underflow
+    return cur - old;
+}
+
+tVCAction RunVC(
     tVC *vc, 
     tVels *desired, 
-    signed long deltaRightTicks, 
-    signed long deltaLeftTicks,
+    signed long leftTicks,
+    signed long rightTicks, 
     float timeStep // seconds
     )
 {
+    // calculate conversion constants (maybe timeStep should be in the vc struct?)
     float ticksPerLinearVel = timeStep / vc->r->ticksPerUnit,
           ticksPerAngularVel = timeStep / (vc->r->ticksPerUnit/vc->r->unitsAxisWidth);
     
@@ -18,6 +24,9 @@ tVCAction VCRun(
     // convert desired and current into left and right encoder ticks
     float desiredLeftTicks = desiredLinearTicks + desiredAngularTicks,
           desiredRightTicks = desiredLinearTicks - desiredAngularTicks;
+
+    float deltaLeftTicks = (float)diffTicks(leftTicks, vc->prevLeftTicks),
+          deltaRightTicks = (float)diffTicks(rightTicks - vc->prevRightTicks);
 
     // run left and right PID loops to decide left and right motor powers 
     tVCAction output;
@@ -40,5 +49,7 @@ void InitializeVC(
     vc->r = r;
     InitializePID(&(vc->right), p, i, d, min, max);
     InitializePID(&(vc->left), p, i, d, min, max);
+    prevLeftTicks = 0;
+    prevRightTicks = 0;
 }
 
