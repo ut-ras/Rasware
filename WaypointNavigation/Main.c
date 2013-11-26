@@ -1,6 +1,3 @@
-#include <math.h>
-
-#include <RASLib/inc/common.h>
 #include <RASLib/inc/encoder.h>
 #include <RASLib/inc/motor.h>
 #include <RASLib/inc/time.h>
@@ -20,8 +17,8 @@ int main(void) {
     tEncoder *rightEnc;
     tMotor *leftMotor;
     tMotor *rightMotor;
-    
-    tRobot robotData = {0};
+
+    tRobotData robotData = {0};
     LuddefData luddefData = {0};
     ControlData controlData = {0};
 
@@ -31,7 +28,7 @@ int main(void) {
     };
     int numWaypoints = sizeof(waypoints)/sizeof(tPoint);
     int waypointIndex = 0;
-    
+
     //
     // Initialize uController components
     //
@@ -45,7 +42,7 @@ int main(void) {
 
     leftEnc = InitializeEncoder(PIN_B0, PIN_B1, true);
     rightEnc = InitializeEncoder(PIN_E4, PIN_E5, false);
-    
+
     //
     // Localization settup
     //
@@ -56,7 +53,7 @@ int main(void) {
     luddefData.rightEnc = rightEnc;
 
     InitializeLUDDEF(&(luddefData.luddef), &robotData);
-    
+
     CallEvery(updateLuddefIteration, &luddefData, LOOP_PERIOD);
 
     //
@@ -66,9 +63,9 @@ int main(void) {
     controlData.pose = &(robotData.pose);
     controlData.leftMotor = leftMotor;
     controlData.rightMotor = rightMotor;
-    
+
     CallEvery(controlIteration, &controlData, LOOP_PERIOD);
-    
+
     //
     // Waypoint supervisor
     //
@@ -79,9 +76,11 @@ int main(void) {
             robotData.pose.x, robotData.pose.y
             )) 
         {
-            // if we are, set goal to next waypoint
+            // if we are close enough, set the goal to next waypoint
             waypointIndex = (waypointIndex + 1)%numWaypoints;
             controlData.goal = &(waypoints[waypointIndex]);
         }
+
+        Wait(LOOP_PERIOD);
     }
 }

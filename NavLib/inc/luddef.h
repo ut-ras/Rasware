@@ -19,7 +19,7 @@ For example usage, see the LuddefTest project.
 #include "common.h"
 
 typedef struct {
-    tRobot *r;
+    tRobotData *r;
     float oldLeftDist;
     float oldRightDist;
 } tLUDDEF;
@@ -54,7 +54,7 @@ void UpdateLUDDEF(
  */
 void InitializeLUDDEF(
     tLUDDEF *luddef,
-    tRobot *r
+    tRobotData *r
     );
 
 #endif // __LUDDEF_H__

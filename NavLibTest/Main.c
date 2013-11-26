@@ -41,7 +41,7 @@ int main(void) {
     unsigned long prevLeftTicks = 0,
                   prevRightTicks = 0;
     
-    tRobot robot = {0};
+    tRobotData robot = {0};
     robot.unitsAxisWidth = 6.5; // inches
     robot.ticksPerUnit = 1457;  // ticks per inch
     

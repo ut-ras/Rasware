@@ -7,7 +7,7 @@
 typedef struct {
     tPID left;
     tPID right;
-    tRobot *r;
+    tRobotData *r;
     signed long prevLeftTicks;
     signed long prevRightTicks;
 } tVC;
@@ -54,7 +54,7 @@ tVCAction RunVC(
  */
 void InitializeVC(
     tVC *vc, 
-    tRobot *r, 
+    tRobotData *r, 
     float p, 
     float i, 
     float d, 

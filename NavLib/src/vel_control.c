@@ -38,7 +38,7 @@ tVCAction RunVC(
 
 void InitializeVC(
     tVC *vc, 
-    tRobot *r, 
+    tRobotData *r, 
     float p, 
     float i, 
     float d, 

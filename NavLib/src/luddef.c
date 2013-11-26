@@ -66,7 +66,7 @@ void UpdateLUDDEF(
 
 void InitializeLUDDEF(
     tLUDDEF *luddef,
-    tRobot *r
+    tRobotData *r
     )
 {
     luddef->r = r;
