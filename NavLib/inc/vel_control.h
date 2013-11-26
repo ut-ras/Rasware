@@ -28,7 +28,7 @@ typedef struct {
  * @param leftTicks current encoder tick count returned by reading the left encoder
  * @param rightTicks current encoder tick count returned by reading the right encoder
  * @param timeStep how much time (in seconds) that has passed since the last call to this function
- * @return 
+ * @return VCAction representing what value the left and right motors should be set to
  */
 tVCAction RunVC(
     tVC *vc, 
