@@ -1,6 +1,7 @@
 #include <RASLib/inc/encoder.h>
 #include <RASLib/inc/motor.h>
 #include <RASLib/inc/time.h>
+
 #include <NavLib/inc/luddef.h>
 #include <NavLib/inc/extra_math.h>
 
@@ -13,18 +14,20 @@
 #define LOOP_PERIOD              0.1f     // seconds
 
 int main(void) {
-    tEncoder *leftEnc;
-    tEncoder *rightEnc;
-    tMotor *leftMotor;
-    tMotor *rightMotor;
+    tEncoder* leftEnc = 0;
+    tEncoder* rightEnc = 0;
+    tMotor* leftMotor = 0;
+    tMotor* rightMotor = 0;
 
     tRobotData robotData = {0};
     LuddefData luddefData = {0};
     ControlData controlData = {0};
 
-    tPoint waypoints[2] = {
+    tPoint waypoints[] = {
         {0.0f, 0.0f}, 
-        {10.0f, 0.0f}
+        {10.0f, 0.0f}, 
+        {10.0f, 10.0f}, 
+        {0.0f, 10.0f}
     };
     int numWaypoints = sizeof(waypoints)/sizeof(tPoint);
     int waypointIndex = 0;

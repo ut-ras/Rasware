@@ -10,8 +10,12 @@
 struct ControlData {
     tPoint* goal; 
     tPose* pose;
+
     tMotor* leftMotor;
     tMotor* rightMotor;
+
+    int count;
+    float time;
 } typedef ControlData;
 
 void controlIteration(ControlData* data);

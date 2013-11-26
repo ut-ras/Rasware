@@ -1,7 +1,10 @@
+#include <RASLib/inc/time.h>
 #include <NavLib/inc/extra_math.h>
 #include "control.h"
 
 void controlIteration(ControlData* data) {
+    float start = GetTime();
+
     // compute desired heading towards goal
     float goalHeading = safe_atan2(
         data->goal->y - data->pose->y, 
@@ -18,4 +21,7 @@ void controlIteration(ControlData* data) {
     // TODO: fix these to be a function of min and max motor speeds
     SetMotor(data->leftMotor, .5f - error); 
     SetMotor(data->rightMotor, .5f + error);
+
+    data->time = GetTime() - start;
+    (data->count)++;
 }
