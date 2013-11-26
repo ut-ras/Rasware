@@ -23,6 +23,7 @@ int main(void) {
     LuddefData luddefData = {0};
     ControlData controlData = {0};
 
+    // waypoints defined here in inches
     tPoint waypoints[] = {
         {0.0f, 0.0f}, 
         {10.0f, 0.0f}, 
