@@ -9,8 +9,8 @@
 #include "localization.h"
 #include "control.h"
 
-#define UNITS_AXIS_WIDTH 6.5f
-#define TICKS_PER_UNIT 1457.0f
+#define UNITS_AXIS_WIDTH         6.5f
+#define TICKS_PER_UNIT           1457.0f
 #define CLOSE_ENOUGH_TO_WAYPOINT 0.1f
 
 float eulerDistance(float x1, float y1, float x2, float y2) {
