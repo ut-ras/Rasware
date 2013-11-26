@@ -53,10 +53,10 @@ void controlIteration(ControlData* data) {
         data->goal->x - data->pose->x
         );
     
-    // compute error between our current heading and the desired
+    // compute error between our current heading and the goal heading
     float error = diffAngles(goalHeading, data->pose->heading);
     
-    // normalize from -.5 to .5
+    // bound from -.5 to .5
     error = error/(2*PI);
     
     // set motors as a linear function of the error

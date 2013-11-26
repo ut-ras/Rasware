@@ -9,9 +9,10 @@
 #include "localization.h"
 #include "control.h"
 
-#define UNITS_AXIS_WIDTH         6.5f
-#define TICKS_PER_UNIT           1457.0f
-#define CLOSE_ENOUGH_TO_WAYPOINT 0.1f
+#define UNITS_AXIS_WIDTH         6.5f     // inches
+#define TICKS_PER_UNIT           1457.0f  // ticks per inch
+#define CLOSE_ENOUGH_TO_WAYPOINT 0.1f     // inches
+#define LOOP_PERIOD              0.1f     // seconds
 
 float eulerDistance(float x1, float y1, float x2, float y2) {
     float dx = x2 - x1,
@@ -21,17 +22,19 @@ float eulerDistance(float x1, float y1, float x2, float y2) {
 }
 
 int main(void) {
-    tRobot robotData = {0};
-    LuddefData luddefData = {0};
-
     tEncoder *leftEnc;
     tEncoder *rightEnc;
     tMotor *leftMotor;
     tMotor *rightMotor;
-
+    
+    tRobot robotData = {0};
+    LuddefData luddefData = {0};
     ControlData controlData = {0};
 
-    tPoint waypoints[2] = {{0.0f, 0.0f}, {10.0f, 0.0f}};
+    tPoint waypoints[2] = {
+        {0.0f, 0.0f}, 
+        {10.0f, 0.0f}
+    };
     int numWaypoints = sizeof(waypoints)/sizeof(tPoint);
     int waypointIndex = 0;
     
@@ -40,8 +43,8 @@ int main(void) {
     //
     InitializeMCU();
 
-    rightMotor = InitializeMotor(PIN_C5, PIN_C4, true, true);
     leftMotor = InitializeMotor(PIN_F3, PIN_F2, true, false);
+    rightMotor = InitializeMotor(PIN_C5, PIN_C4, true, true);
 
     SetMotor(leftMotor, 0.0);
     SetMotor(rightMotor, 0.0);
@@ -52,28 +55,28 @@ int main(void) {
     //
     // Localization settup
     //
-    robotData.unitsAxisWidth = UNITS_AXIS_WIDTH; // inches
-    robotData.ticksPerUnit = TICKS_PER_UNIT;     // ticks per inch
+    robotData.unitsAxisWidth = UNITS_AXIS_WIDTH; 
+    robotData.ticksPerUnit = TICKS_PER_UNIT;     
 
     luddefData.leftEnc = leftEnc;
     luddefData.rightEnc = rightEnc;
 
     InitializeLUDDEF(&(luddefData.luddef), &robotData);
     
-    CallEvery(updateLuddefIteration, &luddefData, .1);
+    CallEvery(updateLuddefIteration, &luddefData, LOOP_PERIOD);
 
     //
     // Control loop settup
     //
-    controlData.goal = &waypoints[0];
+    controlData.goal = &waypoints[waypointIndex];
     controlData.pose = &(robotData.pose);
     controlData.leftMotor = leftMotor;
     controlData.rightMotor = rightMotor;
     
-    CallEvery(controlIteration, &controlData, .1);
+    CallEvery(controlIteration, &controlData, LOOP_PERIOD);
     
     //
-    // Waypoint supervision
+    // Waypoint supervisor
     //
     while (1) {
         // check to see if we're close enough to the current waypoint
