@@ -8,18 +8,12 @@
 
 #include "localization.h"
 #include "control.h"
+#include "mymath.h"
 
 #define UNITS_AXIS_WIDTH         6.5f     // inches
 #define TICKS_PER_UNIT           1457.0f  // ticks per inch
 #define CLOSE_ENOUGH_TO_WAYPOINT 0.1f     // inches
 #define LOOP_PERIOD              0.1f     // seconds
-
-float eulerDistance(float x1, float y1, float x2, float y2) {
-    float dx = x2 - x1,
-          dy = y2 - y1;
-    
-    return sqrt(dx*dx + dy*dy);
-}
 
 int main(void) {
     tEncoder *leftEnc;
