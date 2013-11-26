@@ -1,6 +1,10 @@
 #include <math.h>
+#include "extra_math.h"
 
-static float PI = 3.14159265359f;
+// deals with small floating-point errors
+int fequals(float a, float b) {
+    return fabs(a - b) < 1.0e-6f;
+}
 
 // expects angle to be unbounded
 // returns angle bounded from 0 to 2PI

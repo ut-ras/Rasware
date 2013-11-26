@@ -2,10 +2,10 @@
 #include <RASLib/inc/motor.h>
 #include <RASLib/inc/time.h>
 #include <NavLib/inc/luddef.h>
+#include <NavLib/inc/extra_math.h>
 
 #include "localization.h"
 #include "control.h"
-#include "mymath.h"
 
 #define UNITS_AXIS_WIDTH         6.5f     // inches
 #define TICKS_PER_UNIT           1457.0f  // ticks per inch

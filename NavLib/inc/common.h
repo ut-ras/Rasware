@@ -1,8 +1,6 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
-#define PI 3.14159265358979323846f
-
 typedef struct Pose {
     float x;        // position in units
     float y;        // position in units

@@ -410,6 +410,11 @@
               <FileType>1</FileType>
               <FilePath>.\src\vel_control.c</FilePath>
             </File>
+            <File>
+              <FileName>extra_math.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\extra_math.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

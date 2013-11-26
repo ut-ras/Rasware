@@ -1,4 +1,4 @@
-#include "mymath.h"
+#include <NavLib/inc/extra_math.h>
 #include "control.h"
 
 void controlIteration(ControlData* data) {

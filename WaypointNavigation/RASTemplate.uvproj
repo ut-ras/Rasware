@@ -410,11 +410,6 @@
               <FileType>1</FileType>
               <FilePath>.\localization.c</FilePath>
             </File>
-            <File>
-              <FileName>mymath.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\mymath.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>

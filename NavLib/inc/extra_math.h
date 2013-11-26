@@ -1,5 +1,10 @@
-#ifndef __MYMATH_H__
-#define __MYMATH_H__
+#ifndef __EXTRAMATH_H__
+#define __EXTRAMATH_H__
+
+#define PI 3.14159265359f
+
+// deals with small floating-point errors
+int fequals(float a, float b);
 
 // expects angle to be unbounded
 // returns angle bounded from 0 to 2PI
@@ -16,4 +21,4 @@ float safe_atan2(float y, float x);
 
 float eulerDistance(float x1, float y1, float x2, float y2);
 
-#endif // __MYMATH_H__
+#endif // __EXTRAMATH_H__
