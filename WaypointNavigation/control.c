@@ -14,13 +14,20 @@ void controlIteration(ControlData* data) {
     // compute error between our current heading and the goal heading
     float error = diffAngles(goalHeading, data->pose->heading);
     
-    // bound from -.5 to .5
-    error = error/(2*PI);
+    // bound from -1 to 1
+    error = error/PI;
     
     // set motors as a linear function of the error
-    // TODO: fix these to be a function of min and max motor speeds
-    SetMotor(data->leftMotor, .5f - error); 
-    SetMotor(data->rightMotor, .5f + error);
+    if (error <= 0) {
+        data->leftMotorValue = MAX_MOTOR_SPEED;
+        data->rightMotorValue = MOTOR_EQUALIZER*error*(MAX_MOTOR_SPEED - MIN_MOTOR_SPEED) + MAX_MOTOR_SPEED;
+    } else if (error > 0) {
+        data->leftMotorValue = error*(MIN_MOTOR_SPEED - MAX_MOTOR_SPEED) + MAX_MOTOR_SPEED;
+        data->rightMotorValue = MOTOR_EQUALIZER*MAX_MOTOR_SPEED;
+    }
+    
+    SetMotor(data->leftMotor, data->leftMotorValue);
+    SetMotor(data->rightMotor, data->rightMotorValue);
 
     data->time = GetTime() - start;
     (data->count)++;

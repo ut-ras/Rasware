@@ -4,8 +4,9 @@
 #include <RASLib/inc/motor.h>
 #include <NavLib/inc/common.h>
 
-#define MAX_MOTOR_SPEED 1
-#define MIN_MOTOR_SPEED 0
+#define MAX_MOTOR_SPEED .3f
+#define MIN_MOTOR_SPEED .0f
+#define MOTOR_EQUALIZER .5f
 
 struct ControlData {
     tPoint* goal; 
@@ -13,6 +14,9 @@ struct ControlData {
 
     tMotor* leftMotor;
     tMotor* rightMotor;
+    
+    float leftMotorValue;
+    float rightMotorValue;
 
     int count;
     float time;

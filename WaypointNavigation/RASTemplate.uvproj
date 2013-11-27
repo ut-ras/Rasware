@@ -410,6 +410,11 @@
               <FileType>1</FileType>
               <FilePath>.\localization.c</FilePath>
             </File>
+            <File>
+              <FileName>test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\test.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
