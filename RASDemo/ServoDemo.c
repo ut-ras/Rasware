@@ -10,10 +10,6 @@ void initServo(void) {
 }
 
 void servoDemo(void) {
-    /**************************************************
-    * Servo takes position argument 0.00f-1.00f
-    *
-    **************************************************/
     float position = 0;
     char newline = 13;
     char ch;
@@ -21,11 +17,10 @@ void servoDemo(void) {
     Printf("Press:\n  a-'up' 0.10\n  w-'up' 0.01\n  s-'down' 0.01\n");
     Printf("  d-'down' 0.10\n  enter-quit\n");
 
-    Printf("position: %f ", position);
     ch = Getc();
         
-       while(ch != newline) {
-        switch(ch) {
+    while (ch != newline) {
+        switch (ch) {
             case 'w':
                 position += 0.01f;
                 break;
@@ -41,18 +36,20 @@ void servoDemo(void) {
             default:
                 position = position;
         }
-        // Update from 2012, includes bounds checking (done with SetServo,
-        //   but makes user function easier to decrease.
-        if(position > 1.00f) {
-             position = 1.00f;
-        } else if(position < 0.00f) {
-             position = 0.00f;
+        
+        // bounds checking (done in SetServo, but also useful to bound it for the demo)
+        if (position > 1.0f) {
+             position = 1.0f;
+        } else if (position < 0.0f) {
+             position = 0.0f;
         }
 
         SetServo(servo, position);
-           
-        Printf("\rposition: %f ",position);     
+        Printf("%c  set servo to %1.2f\r",position);
+        
         ch = Getc();
     }         
+    
     Printf("\n");
 }
+
