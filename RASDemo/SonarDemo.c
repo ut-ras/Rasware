@@ -4,8 +4,16 @@
 #include <RASLib/inc/sonar.h>
 
 tSonar *demoSonar;
+tBoolean initialized = false;
 
 void initSonar(void) {
+    // don't initialize this if we've already done so
+    if (initialized) {
+        return;
+    }
+    
+    initialized = true;
+
     demoSonar = InitializeSonar(PIN_A3, PIN_A4);
 }
 

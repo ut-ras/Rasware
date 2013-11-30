@@ -5,8 +5,16 @@
 
 tEncoder *leftEncoder;
 tEncoder *rightEncoder;
+tBoolean initialized = false;
 
 void initEncoders(void) {
+    // don't initialize this if we've already done so
+    if (initialized) {
+        return;
+    }
+    
+    initialized = true;
+
     leftEncoder = InitializeEncoder(PIN_D0, PIN_D1, false);
     rightEncoder = InitializeEncoder(PIN_D2, PIN_D3, false);
 }

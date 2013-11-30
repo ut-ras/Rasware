@@ -4,8 +4,16 @@
 #include <RASLib/inc/servo.h>
 
 tServo *servo;
+tBoolean initialized = false;
 
 void initServo(void) {
+    // don't initialize this if we've already done so
+    if (initialized) {
+        return;
+    }
+    
+    initialized = true;
+
     servo = InitializeServo(PIN_B0);
 }
 

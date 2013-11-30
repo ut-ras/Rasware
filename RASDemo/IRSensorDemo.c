@@ -4,8 +4,16 @@
 #include <RASLib/inc/adc.h>
 
 tADC *adc[4];
+tBoolean initialized = false;
 
 void initIRSensor(void) {
+    // don't initialize this if we've already done so
+    if (initialized) {
+        return;
+    }
+    
+    initialized = true;
+
     adc[0] = InitializeADC(PIN_D0);
     adc[1] = InitializeADC(PIN_D1);
     adc[2] = InitializeADC(PIN_D2);

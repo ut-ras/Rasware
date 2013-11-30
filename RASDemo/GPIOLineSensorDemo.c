@@ -4,8 +4,16 @@
 #include <RASLib/inc/linesensor.h>
 
 tLineSensor *gls;
+tBoolean initialized = false;
 
 void initGPIOLineSensor(void) {
+    // don't initialize this if we've already done so
+    if (initialized) {
+        return;
+    }
+    
+    initialized = true;
+
     gls = InitializeGPIOLineSensor(
         PIN_B5, 
         PIN_D0, 
