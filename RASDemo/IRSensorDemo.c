@@ -15,15 +15,14 @@ void initIRSensor(void) {
 void IRSensorDemo(void) {
     Printf("Press any key to quit\n");
         
-      while(!KeyWasPressed()) {
-        float ADCValue = ADCRead(adc[0]);
-        Printf("IR values: %d\t", (int)(1000 * ADCValue));
-        ADCValue = ADCRead(adc[1]);
-        Printf(" %d\t", (int)(1000 * ADCValue));
-        ADCValue = ADCRead(adc[2]);
-        Printf(" %d\t", (int)(1000 * ADCValue));
-        ADCValue = ADCRead(adc[3]);
-        Printf(" %d\r", (int)(1000 * ADCValue));
+    while (!KeyWasPressed()) {
+        Printf(
+            "IR values:  %1.3f  %1.3f  %1.3f  %1.3f\r",
+            ADCRead(adc[0]),
+            ADCRead(adc[1]),
+            ADCRead(adc[2]),
+            ADCRead(adc[3])
+            );
     }
   
     Printf("\n");

@@ -12,15 +12,17 @@ void initEncoders(void) {
 }
 
 void encoderDemo(void) {
-    Printf("Press:\n  any key after read begins-quit\n");
+    Printf("Press any key to quit\n");
     
     ResetEncoder(leftEncoder);
     ResetEncoder(rightEncoder);
 
     while (!KeyWasPressed()) {
-        Printf("enc0:%d  enc1:%d\r",
+        Printf(
+            "Encoder values:  %10d  %10d\r",
             GetEncoder(leftEncoder),
-            GetEncoder(rightEncoder));
+            GetEncoder(rightEncoder)
+            );
     }
     
     Printf("\n");
