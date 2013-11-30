@@ -22,7 +22,7 @@ void initEncoders(void) {
 void encoderDemo(void) {
     Printf("Press any key to quit\n");
    
-    // ? 
+    // clear any encoder ticks that have accumulated
     ResetEncoder(leftEncoder);
     ResetEncoder(rightEncoder);
 
