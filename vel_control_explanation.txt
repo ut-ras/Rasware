@@ -1,0 +1,39 @@
+copied from http://www.chiefdelphi.com/forums/showthread.php?t=62888
+
+The standard POSITION PID loop might look something like this:
+
+output = Kp*e_pos + Ki*e_pos_sum + Kd*e_pos_delta;
+
+Where output is the output.
+e_pos is the error in position = desired_pos - actual_pos
+e_pos_sum is the sum of the position errors = e_pos_sum + e_pos
+e_pos_delta is the derivative of the error = e_pos - e_pos_last
+
+This loop, if well tuned, should provide pretty good position control. But what about VELOCITY? Speed is the first derivative of position - so we could differentiate the position loop with respect to time to obtain a velocity controller.
+
+I will use the D() operator to represent taking the time derivative.
+
+D(output) = Kp*D(e_pos) + Ki*D(e_pos_sum) + Kd*D(e_pos_delta);
+
+So far so good. What's the derivative of the output? Well, that's the change in output over time, so D(output) = output - output_last.
+
+Whats the derivative of e_pos? Remember that e_pos itself is (desired_pos - actual_pos). It's derivative would simply replace "pos" with "vel".
+
+e_vel = D(e_pos) = desired_vel - actual_vel.
+e_vel_sum = D(e_pos_sum) = e_vel_sum + e_vel.
+e_vel_delta = D(e_pos_delta) = e_vel - e_vel_last.
+
+Putting it all together, you get:
+
+output - output_last = Kp*e_vel + Ki*e_vel_sum + Kd*e_vel_delta;
+
+Let's rearrange...
+
+output = output_last + Kp*e_vel + Ki*e_vel_sum + Kd*e_vel_delta;
+
+or...
+
+output += Kp*e_vel + Ki*e_vel_sum + Kd*e_vel_delta;
+(assuming output is global or static and persists between loop iterations)
+
+So that's how you'd make a velocity controller. Note that the constants will be different than from the positional case (obviously).
