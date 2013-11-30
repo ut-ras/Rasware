@@ -3,8 +3,8 @@
 #include <RASLib/inc/common.h>
 #include <RASLib/inc/motor.h>
 
-tMotor* leftMotor;
-tMotor* rightMotor;
+tMotor *leftMotor;
+tMotor *rightMotor;
 
 void initMotors(void) {
     leftMotor = InitializeTLEMotor(PIN_B7, PIN_B6, true, false);
