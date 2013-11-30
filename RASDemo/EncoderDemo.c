@@ -27,3 +27,4 @@ void encoderDemo(void) {
     
     Printf("\n");
 }
+
