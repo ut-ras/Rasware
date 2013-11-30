@@ -14,25 +14,26 @@ void blink(void) {
 
 int main(void) {  
     char ch;
+    
     InitializeMCU();
     CallEvery(blink, 0, 0.25f);
 
-    while(1) {
+    while (1) {
         Printf("\nRAS Demo for Robotathon 2013\n");
         Printf("  0=UART Demo\n  1=Motor Demo\n");
         Printf("  2=Servo Demo\n  3=I2C Line Sensor Demo\n");
         Printf("  4=IR Sensor Demo\n  5=Encoders Demo\n");
         Printf("  6=GPIO Demo\n  7=GPIO Line Sensor Demo\n");
-        
+        Printf("  8=Sonar Demo\n");
         Printf(">> ");
-        // Read input from User
+        
+        // Read input from user
         ch = Getc();
-        Printf("%c", ch);
-        Printf("\n");
+        Printf("%c\n", ch);
 
         switch(ch) {
             case '0':
-                Printf("\n UART Demo\n");
+                Printf("\nUART Demo\n");
                 uartDemo();                 
                 break;
             case '1':
@@ -68,6 +69,11 @@ int main(void) {
                 Printf("\nGPIO Line Sensor Demo\n");
                 initGPIOLineSensor();
                 gpioLineSensorDemo();
+                break;
+            case '8':
+                Printf("\nSonar Demo\n");
+                initSonar();
+                sonarDemo();
                 break;
         }
     }
