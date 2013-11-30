@@ -25,3 +25,4 @@ StellarisWare/
 *.hex
 *._ia
 .DS_Store
+*.swp
