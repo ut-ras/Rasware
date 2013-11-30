@@ -1,6 +1,5 @@
 #include "RASDemo.h"
 
-
 #include <RASLib/inc/common.h>
 #include <RASLib/inc/sonar.h>
 
@@ -15,8 +14,8 @@ void sonarDemo(void) {
     
     SonarReadContinuously(demoSonar, 0);
   
-    while(!KeyWasPressed()) {
-        Printf("Sonar value: %d\r", (int)(1000 * SonarRead(demoSonar)));
+    while (!KeyWasPressed()) {
+        Printf("Sonar value: %1.3f\r", SonarRead(demoSonar));
     }
   
     Printf("\n");
