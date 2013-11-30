@@ -24,7 +24,8 @@ void servoDemo(void) {
 
     Printf("Press:\n  a-'up' 0.10\n  w-'up' 0.01\n  s-'down' 0.01\n");
     Printf("  d-'down' 0.10\n  enter-quit\n");
-
+    
+    // wait for the user to enter a character
     ch = Getc();
         
     while (ch != newline) {
@@ -45,7 +46,7 @@ void servoDemo(void) {
                 position = position;
         }
         
-        // bounds checking (done in SetServo, but also useful to bound it for the demo)
+        // bounds checking (done in SetServo, but also useful to bound it here for the demo)
         if (position > 1.0f) {
              position = 1.0f;
         } else if (position < 0.0f) {

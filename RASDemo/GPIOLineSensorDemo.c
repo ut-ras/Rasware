@@ -14,6 +14,7 @@ void initGPIOLineSensor(void) {
     
     initialized = true;
 
+    // use 8 I/O pins to initialize a GPIO line sensor
     gls = InitializeGPIOLineSensor(
         PIN_B5, 
         PIN_D0, 
@@ -29,10 +30,12 @@ void initGPIOLineSensor(void) {
 void gpioLineSensorDemo(void) {
     Printf("Press any key to quit\n");
   
+    // loop as long as the user doesn't press a key 
     while (!KeyWasPressed()) {
         int i;
         float line[8];
-    
+   
+        // put the values of the line sensor into the 'line' array 
         LineSensorReadArray(gls, line);
         Printf("Line Sensor: [");
     

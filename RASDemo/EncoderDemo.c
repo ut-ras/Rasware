@@ -21,10 +21,12 @@ void initEncoders(void) {
 
 void encoderDemo(void) {
     Printf("Press any key to quit\n");
-    
+   
+    // ? 
     ResetEncoder(leftEncoder);
     ResetEncoder(rightEncoder);
 
+    // loop as long as the user doesn't press a key 
     while (!KeyWasPressed()) {
         Printf(
             "Encoder values:  %10d  %10d\r",
