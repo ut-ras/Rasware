@@ -11,22 +11,22 @@ void initI2CLineSensor(void) {
 }
 
 void i2cLineSensorDemo(void) {
-    Printf("Press:\nany key-read line sensor\n");
-    Printf("any key after read begins-quit\n");
+    Printf("Press any key to quit\n");
   
-    while(!KeyWasPressed()) {
+    while (!KeyWasPressed()) {
         int i;
         float line[8];
     
         LineSensorReadArray(ls, line);
         Printf("Line Sensor: [");
     
-        for (i=0; i < 8; i++) {
+        for (i = 0; i < 8; i++) {
             Printf("%01.4f ", line[i]);
         }
     
         Printf("\b]\r");
-      }
+    }
   
-      Printf("\n"); 
+    Printf("\n"); 
 }
+
