@@ -44,22 +44,26 @@ counter = 0
 connection.flush()
 
 while True:
-    # send message
-    msg = json.dumps({"counter":str(counter)})
-    print "sent: %s" % msg
+    try:
+        # send message
+        msg = json.dumps({"counter":str(counter)})
+        print "sent: %s" % msg
+        
+        connection.write(msg + '\n')
+        connection.flushOutput()
     
-    connection.write(msg + '\n')
-    connection.flushOutput()
-
-    # read response
-    connection.flushInput()
-    line = connection.readline()
-
-    if len(line) == 0:
-        printError("ERROR: timeout")
-    else:
-        parseLine(line)
-
-    counter += 1
+        # read response
+        connection.flushInput()
+        line = connection.readline()
+    
+        if len(line) == 0:
+            printError("ERROR: timeout")
+        else:
+            parseLine(line)
+    
+        counter += 1
+    except:
+        # on error, close port 
+        break
 
 connection.close()
