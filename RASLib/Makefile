@@ -4,6 +4,7 @@ TARGET = output/libras.a
 # Library Locations
 STELLARIS = ../../StellarisWare
 RASLIB = ../RASLib
+CORTEXM4 = ../../CortexM4Libs
 ARMCLIB = $(dir $(shell which $(CC)))..
 
 # Command Definitions
@@ -29,9 +30,8 @@ ASM := $(SRC:.c=.s)
 LDDIR += $(RASLIB)/output
 LDDIR += $(STELLARIS)/driverlib/gcc-cm4f
 LDDIR += $(ARMCLIB)/$(PREFIX)/lib/thumb/cortex-m4
-LDDIR += $(ARMCLIB)/$(PREFIX)/lib/thumb
 LDDIR += $(wildcard $(ARMCLIB)/lib/gcc/$(PREFIX)/*/thumb/cortex-m4)
-LDDIR += $(wildcard $(ARMCLIB)/lib/gcc/$(PREFIX)/*/thumb)
+LDDIR += $(CORTEXM4)
 
 # Flag Definitions
 CFLAGS += -g
