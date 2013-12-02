@@ -29,7 +29,7 @@ void encoderDemo(void) {
     // loop as long as the user doesn't press a key 
     while (!KeyWasPressed()) {
         Printf(
-            "Encoder values:  %10d  %10d\r",
+            "Encoder values:  %10d  %10d  \r",
             GetEncoder(leftEncoder),
             GetEncoder(rightEncoder)
             );
