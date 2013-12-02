@@ -130,12 +130,17 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
         cd ../..
         rm -rf lm4flash
 
-### Download StellarisWare ###
-1. Download [StellarisWare](http://ras.ece.utexas.edu/drivers/SW-EK-LM4F120XL-9453.zip), the TI library and move it to your ras directory.
-2. Uncompress the file (twice) and compile StellarisWare.
+### Download the Cortex-M4 Libraries ###
+1. Due to an issue in the ARM libraries provided by the cross-compiler, you will need to download the [correct libraries](http://toast.projectgeky.com/rasware/CortexM4Libs.tar.bz2) for the Cortex-M4.
+2. Move the libraries to your ras directory and uncompress the file.
 
-        unzip SW-EK-LM4F120XL-9453.zip
-        unzip SW-EK-LM4F120XL-9453.exe -d StellarisWare
+        tar vfxj CortexM4Libs.tar.bz2
+
+### Download StellarisWare ###
+1. Download [StellarisWare](http://toast.projectgeky.com/rasware/StellarisWare.tar.bz2), the TI library and move it to your ras directory.
+2. Uncompress the file and compile StellarisWare.
+
+        tar vfxj StellarisWare.tar.bz2
         cd StellarisWare
         make
         cd ..
