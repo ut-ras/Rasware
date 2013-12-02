@@ -3,9 +3,9 @@
 #include <RASLib/inc/common.h>
 #include <RASLib/inc/motor.h>
 
-tMotor *leftMotor;
-tMotor *rightMotor;
-tBoolean initialized = false;
+static tMotor *leftMotor;
+static tMotor *rightMotor;
+static tBoolean initialized = false;
 
 void initMotors(void) {
     // don't initialize this if we've already done so

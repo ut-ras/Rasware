@@ -3,8 +3,8 @@
 #include <RASLib/inc/common.h>
 #include <RASLib/inc/adc.h>
 
-tADC *adc[4];
-tBoolean initialized = false;
+static tADC *adc[4];
+static tBoolean initialized = false;
 
 void initIRSensor(void) {
     // don't initialize this if we've already done so

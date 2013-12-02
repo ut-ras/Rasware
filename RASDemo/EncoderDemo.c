@@ -3,9 +3,9 @@
 #include <RASLib/inc/common.h>
 #include <RASLib/inc/encoder.h>
 
-tEncoder *leftEncoder;
-tEncoder *rightEncoder;
-tBoolean initialized = false;
+static tEncoder *leftEncoder;
+static tEncoder *rightEncoder;
+static tBoolean initialized = false;
 
 void initEncoders(void) {
     // don't initialize this if we've already done so

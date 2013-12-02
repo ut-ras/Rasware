@@ -3,19 +3,21 @@
 #include <RASLib/inc/common.h>
 #include <RASLib/inc/linesensor.h>
 
-tLineSensor *ls;
-tBoolean initialized = false;
+static tLineSensor *ls;
+static tBoolean initialized = false;
 
 void initI2CLineSensor(void) {
+    tI2C *bus;
+    
     // don't initialize this if we've already done so
     if (initialized) {
         return;
-    }
+    } 
     
     initialized = true;
 
     // initialize an I2C bus with a couple of pins
-    tI2C *bus = InitializeI2C(PIN_B3, PIN_B2);
+    bus = InitializeI2C(PIN_B3, PIN_B2);
     
     // intialize a line sensor to be on the I2C bus at address 0
     ls = InitializeI2CLineSensor(bus, 0);

@@ -3,8 +3,8 @@
 #include <RASLib/inc/common.h>
 #include <RASLib/inc/linesensor.h>
 
-tLineSensor *gls;
-tBoolean initialized = false;
+static tLineSensor *gls;
+static tBoolean initialized = false;
 
 void initGPIOLineSensor(void) {
     // don't initialize this if we've already done so

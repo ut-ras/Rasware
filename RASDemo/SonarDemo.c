@@ -3,8 +3,8 @@
 #include <RASLib/inc/common.h>
 #include <RASLib/inc/sonar.h>
 
-tSonar *demoSonar;
-tBoolean initialized = false;
+static tSonar *demoSonar;
+static tBoolean initialized = false;
 
 void initSonar(void) {
     // don't initialize this if we've already done so

@@ -3,8 +3,8 @@
 #include <RASLib/inc/common.h>
 #include <RASLib/inc/servo.h>
 
-tServo *servo;
-tBoolean initialized = false;
+static tServo *servo;
+static tBoolean initialized = false;
 
 void initServo(void) {
     // don't initialize this if we've already done so
