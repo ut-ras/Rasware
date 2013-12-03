@@ -7,7 +7,12 @@ tMotor *motors[2];
 
 void initMotors(void) {
     motors[0] = InitializeMotor(PIN_B7, PIN_B6, true, false);
-    motors[1] = InitializeMotor(PIN_E5, PIN_E4, true, false);
+    motors[1] = InitializeMotor(PIN_C5, PIN_C4, true, false);
+    //motors[0] = InitializeMotor(PIN_F1, PIN_F0, true, false);
+    //motors[1] = InitializeMotor(PIN_F3, PIN_F2, true, false);
+
+    SetMotor(motors[0], 0);
+    SetMotor(motors[1], 0);
 }
 
 void motorDemo(void) {
@@ -15,7 +20,7 @@ void motorDemo(void) {
     Printf("d-right\n  space-stop\n  enter-quit\n");
   
     {
-        float left = 0, right = 0, speed = 0.75;
+        float left = 0, right = 0, speed = 0.75f, accel = 0.01f;
         char newline = 13;
         char ch = Getc();
         while(ch != newline) {
@@ -37,6 +42,22 @@ void motorDemo(void) {
                 case 'd':
                     left = speed;
                     right = -speed;
+                    break;
+                case 'i':
+                    right += accel;
+                    left += accel;
+                    break;
+                case 'k':
+                    right -= accel;
+                    left -= accel;
+                    break;
+                case 'j':
+                    right -= accel;
+                    left += accel;
+                    break;
+                case 'l':
+                    right += accel;
+                    left -= accel;
                     break;
                 default:
                     left = 0; 

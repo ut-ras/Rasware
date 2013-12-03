@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// linesensor - I2C based line sensor
+// linesensor - Provides polymorphism for line sensor implementations
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -31,8 +31,6 @@
 extern "C" {
 #endif
 
-
-// Definition of struct LineSensor in linesensor.c
 typedef struct LineSensor tLineSensor;
 
 /**
@@ -41,7 +39,21 @@ typedef struct LineSensor tLineSensor;
  * @param address 2-bit value determined by the solder jumpers on the board
  * @return Pointer to an initialized tLineSensor, can be used by the LineSensorRead functions
  */
-tLineSensor *InitializeLineSensor(tI2C *i2c, unsigned int address);
+tLineSensor *InitializeI2CLineSensor(tI2C *i2c, unsigned int address);
+
+/**
+ * Initializes a GPIO line sensor on the provided pins
+ * @param p0 Pin plugged into sensor 0
+ * @param p1 Pin plugged into sensor 1
+ * @param p2 Pin plugged into sensor 2
+ * @param p3 Pin plugged into sensor 3
+ * @param p4 Pin plugged into sensor 4
+ * @param p5 Pin plugged into sensor 5
+ * @param p6 Pin plugged into sensor 6
+ * @param p7 Pin plugged into sensor 7
+ * @return Pointer to an initialized tLineSensor, can be used by the LineSensorRead functions
+ */
+tLineSensor *InitializeGPIOLineSensor(tPin p0, tPin p1, tPin p2, tPin p3, tPin p4, tPin p5, tPin p6, tPin p7);
 
 /**
  * Returns the line sensor value measured as a bit-packed byte

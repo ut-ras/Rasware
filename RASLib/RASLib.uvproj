@@ -333,7 +333,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>0</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>0</OneElfS>
@@ -380,7 +380,7 @@
             <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc>--entry=ResetHandler --first=__Vectors --datacompressor=off</Misc>
+            <Misc></Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
@@ -390,6 +390,11 @@
         <Group>
           <GroupName>Source</GroupName>
           <Files>
+            <File>
+              <FileName>Startup.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\src\Startup.s</FilePath>
+            </File>
             <File>
               <FileName>motor.c</FileName>
               <FileType>1</FileType>
@@ -441,9 +446,9 @@
               <FilePath>.\src\i2c.c</FilePath>
             </File>
             <File>
-              <FileName>linesensor.c</FileName>
+              <FileName>i2clinesensor.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\linesensor.c</FilePath>
+              <FilePath>.\src\i2clinesensor.c</FilePath>
             </File>
             <File>
               <FileName>common.c</FileName>
@@ -451,9 +456,14 @@
               <FilePath>.\src\common.c</FilePath>
             </File>
             <File>
-              <FileName>Startup.c</FileName>
+              <FileName>gpiolinesensor.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\Startup.c</FilePath>
+              <FilePath>.\src\gpiolinesensor.c</FilePath>
+            </File>
+            <File>
+              <FileName>linesensor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\linesensor.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -463,7 +473,7 @@
             <File>
               <FileName>driverlib-cm4f.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>..\..\StellarisWare\driverlib\rvmdk-cm4f\driverlib-cm4f.lib</FilePath>
+              <FilePath>C:\StellarisWare\driverlib\rvmdk-cm4f\driverlib-cm4f.lib</FilePath>
             </File>
           </Files>
         </Group>
