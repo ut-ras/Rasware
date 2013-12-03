@@ -178,7 +178,7 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
         cd Rasware2013/RASDemo
         make
 
-3. The lm4flash utility can be used to load your program on the board.
+3. The lm4flash utility can be used to load your program on the board. There is a slight issue in Debian that may require running the command with sudo.
 
         lm4flash RASDemo.axf
 
