@@ -95,8 +95,11 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
         cd ras
 
 ### Install Dependencies ###
+1. First install the basic dependencies
  * Archlinux : `sudo pacman -S git screen libusb`
- * Ubuntu/Debian : `sudo apt-get install git screen libusb libusb-dev pkg-config build-essential`
+ * Ubuntu/Debian : `sudo apt-get install git screen libusb-dev pkg-config build-essential`
+2. If your computer is 64-bits, you will also need to install `ia32-libs`
+3. If libusb-dev is not available, you may be able just use `libusb`
 
 ### Install the Cross Compiler ###
 1. Cross Compilers for the LM4F can be found [here](https://launchpad.net/gcc-arm-embedded)
@@ -144,7 +147,7 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
         cd StellarisWare
         make
         cd ..
-        rm SW-EK-LM4F120XL*
+        rm StellarisWare.tar.bz2
 
 ### Download Rasware ###
 1. You can now use git to create a copy of your forked repo with the clone command.
