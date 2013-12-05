@@ -52,7 +52,7 @@ int main(void) {
                 i2cLineSensorDemo();    
                 break;
             case '4':                            
-                   Printf("\nIR Sensor Demo\n");
+                Printf("\nIR Sensor Demo\n");
                 initIRSensor();
                 IRSensorDemo();     
                 break;

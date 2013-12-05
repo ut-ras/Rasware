@@ -25,7 +25,7 @@ void sonarDemo(void) {
   
     // loop as long as the user doesn't press a key 
     while (!KeyWasPressed()) {
-        Printf("Sonar value: %1.3f\r", SonarRead(demoSonar));
+        Printf("Sonar value: %1.3f  \r", SonarRead(demoSonar));
     }
   
     Printf("\n");

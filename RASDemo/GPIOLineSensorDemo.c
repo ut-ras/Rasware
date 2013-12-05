@@ -40,10 +40,10 @@ void gpioLineSensorDemo(void) {
         Printf("Line Sensor: [");
     
         for (i = 0; i < 8; i++) {
-            Printf("%01.4f ", line[i]);
+            Printf("%.2f ", line[i]);
         }
     
-        Printf("\b]\r");
+        Printf("\b]        \r");
     }
   
     Printf("\n"); 

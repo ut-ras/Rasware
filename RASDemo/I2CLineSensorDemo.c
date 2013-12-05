@@ -39,7 +39,7 @@ void i2cLineSensorDemo(void) {
             Printf("%01.4f ", line[i]);
         }
     
-        Printf("\b]\r");
+        Printf("\b]        \r");
     }
   
     Printf("\n"); 
