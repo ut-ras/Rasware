@@ -14,6 +14,7 @@ CC := $(PREFIX)-gcc
 LD := $(PREFIX)-ld
 OBJCOPY := $(PREFIX)-objcopy
 SIZE := $(PREFIX)-size
+AR := $(PREFIX)-ar
 
 FLASH := lm4flash
 SCREEN := screen
