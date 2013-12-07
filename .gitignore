@@ -1,5 +1,6 @@
 StellarisWare/
 *.bak
+*.a
 *.o
 *.d
 *.dep
@@ -8,7 +9,7 @@ StellarisWare/
 *.plg
 *.__i
 *.axf
-.DS_Store
+*.out
 *.exe
 *.htm
 *.iex
@@ -23,3 +24,4 @@ StellarisWare/
 *.xls
 *.hex
 *._ia
+.DS_Store

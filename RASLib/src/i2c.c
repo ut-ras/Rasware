@@ -28,6 +28,7 @@
 #include <StellarisWare/driverlib/i2c.h>
 #include <StellarisWare/driverlib/gpio.h>
 #include <StellarisWare/driverlib/interrupt.h>
+#include <StellarisWare/driverlib/sysctl.h>
 
 
 // Definition of struct I2C

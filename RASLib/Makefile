@@ -1,5 +1,5 @@
 # Makefile for RASWare 2013
-TARGET = RASDemo.axf
+TARGET = output/libras.a
 
 # Library Locations
 STELLARIS = ../../StellarisWare
@@ -14,6 +14,7 @@ CC := $(PREFIX)-gcc
 LD := $(PREFIX)-ld
 OBJCOPY := $(PREFIX)-objcopy
 SIZE := $(PREFIX)-size
+AR := $(PREFIX)-ar
 
 FLASH := lm4flash
 SCREEN := screen
@@ -21,7 +22,7 @@ SCREEN := screen
 # File Definitions
 SRC := $(wildcard src/*.c *.c)
 INC = inc $(RASLIB)/.. $(STELLARIS)/.. $(STELLARIS)
-LIB = ras driver-cm4f m c gcc
+LIB = driver-cm4f m c gcc
 LDS = lm4f.ld
 
 OBJ := $(SRC:.c=.o)

@@ -66,7 +66,6 @@ static tTask *pendingQueue;
 // Queue of unused tasks also a linked list
 // The end is identified for efficiency
 static tTask *unusedQueue;
-static tTask **unusedEnd;
 
 // Buffer of tasks to use
 static tTask taskBuffer[TASK_COUNT];
@@ -89,7 +88,6 @@ void InitializeSystemTime(void) {
         taskBuffer[i].next = &taskBuffer[i+1];
 
     taskBuffer[TASK_COUNT-1].next = 0;
-    unusedEnd = &taskBuffer[TASK_COUNT-1].next;
 
     // Reset the pending queue as well
     pendingQueue = 0;
@@ -222,9 +220,8 @@ void Timer5Handler(void) {
 
         } else {
             // Otherwise we stick it back in the available tasks
-            *unusedEnd = task;
-            unusedEnd = &task->next;
-            task->next = 0;
+            task->next = unusedQueue;
+            unusedQueue = task;
         }
     }
     
@@ -246,10 +243,6 @@ int CallInUS(tCallback callback, void *data, tTime us) {
     task = unusedQueue;
     unusedQueue = task->next;
 
-    // Update the end if nescessary
-    if (!unusedQueue)
-        unusedEnd = &unusedQueue;
-  
     // Claim the next task id
     task->id = nextID++;
     
@@ -286,10 +279,6 @@ int CallEveryUS(tCallback callback, void *data, tTime us) {
     task = unusedQueue;
     unusedQueue = task->next;
 
-    // Update the end if nescessary
-    if (!unusedQueue)
-        unusedEnd = &unusedQueue;
-    
     // Claim the next task id
     task->id = nextID++;
     
@@ -324,9 +313,8 @@ void CallStop(int id) {
             tTask *task = *p;
             *p = task->next;
             
-            *unusedEnd = task;
-            unusedEnd = &task->next;
-            task->next = 0;
+            task->next = unusedQueue;
+            unusedQueue = task;
         }
     }
 }
