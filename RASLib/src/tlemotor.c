@@ -94,7 +94,7 @@ static void SetTLEMotor(tTLEMotor *mtr, float input) {
 
 // Function to initialize a motor on a pair of pins
 // The returned pointer can be used by the SetMotor function
-tTLEMotor *_InitializeMotor(tPin a, tPin b, tBoolean brake, tBoolean invert) {
+tTLEMotor *_InitializeTLEMotor(tPin a, tPin b, tBoolean brake, tBoolean invert) {
     // Grab the next motor
     tTLEMotor *mtr = &tleMotorBuffer[tleMotorCount++];
     
