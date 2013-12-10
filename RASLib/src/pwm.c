@@ -280,8 +280,10 @@ TIMER_HANDLER(3, A);
 TIMER_HANDLER(3, B);
 TIMER_HANDLER(4, A);
 TIMER_HANDLER(4, B);
-TIMER_HANDLER(5, A);
-TIMER_HANDLER(5, B);
+
+// Used in timer.h
+//TIMER_HANDLER(5, A);
+//TIMER_HANDLER(5, B);
 
 
 // This is an internally used function to move an 
