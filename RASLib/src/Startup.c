@@ -53,7 +53,6 @@ extern void PortDHandler(void);
 extern void PortEHandler(void);
 extern void PortFHandler(void);
 extern void SysTickHandler(void);
-extern void Timer5Handler(void);
 extern void WTimer0AHandler(void);
 extern void WTimer0BHandler(void);
 extern void WTimer1AHandler(void);
@@ -64,8 +63,7 @@ extern void WTimer3AHandler(void);
 extern void WTimer3BHandler(void);
 extern void WTimer4AHandler(void);
 extern void WTimer4BHandler(void);
-extern void WTimer5AHandler(void);
-extern void WTimer5BHandler(void);
+extern void WTimer5Handler(void);
 extern void I2C0Handler(void);
 extern void I2C1Handler(void);
 extern void I2C2Handler(void);
@@ -186,7 +184,7 @@ void (* const __Vectors[])(void) = {
     0,                                      // Reserved
     0,                                      // Reserved
     0,                                      // Reserved
-    Timer5Handler,                          // Timer 5 subtimer A
+    IntDefaultHandler,                      // Timer 5 subtimer A
     IntDefaultHandler,                      // Timer 5 subtimer B
     WTimer0AHandler,                        // Wide Timer 0 subtimer A
     WTimer0BHandler,                        // Wide Timer 0 subtimer B
@@ -198,8 +196,8 @@ void (* const __Vectors[])(void) = {
     WTimer3BHandler,                        // Wide Timer 3 subtimer B
     WTimer4AHandler,                        // Wide Timer 4 subtimer A
     WTimer4BHandler,                        // Wide Timer 4 subtimer B
-    WTimer5AHandler,                        // Wide Timer 5 subtimer A
-    WTimer5BHandler,                        // Wide Timer 5 subtimer B
+    WTimer5Handler,                         // Wide Timer 5 subtimer A
+    IntDefaultHandler,                      // Wide Timer 5 subtimer B
     IntDefaultHandler,                      // FPU
     IntDefaultHandler,                      // PECI 0
     IntDefaultHandler,                      // LPC 0
