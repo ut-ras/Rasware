@@ -5,17 +5,18 @@
 #include "pid.h"
 
 typedef struct {
+    float leftMotor;
+    float rightMotor;
+} tVCAction;
+
+typedef struct {
     tPID left;
     tPID right;
     tRobotData *r;
     signed long prevLeftTicks;
     signed long prevRightTicks;
+    tVCAction prevOutput;
 } tVC;
-
-typedef struct {
-    float leftMotor;
-    float rightMotor;
-} tVCAction;
 
 // -----
 // RunVC
@@ -46,18 +47,24 @@ tVCAction RunVC(
  * Initializes a new velocity control struct
  * @param vc pointer to velocity control struct (allocated by caller)
  * @param r pointer to robot struct
- * @param p proportional constant of each motor's PID loop
- * @param i integral term of each motor's PID loop
- * @param d differential term of each motor's PID loop
+ * @param leftP proportional constant of left motor's PID loop
+ * @param leftI integral term of left motor's PID loop
+ * @param leftD differential term of left motor's PID loop
+ * @param rightP proportional constant of right motor's PID loop
+ * @param rightI integral term of right motor's PID loop
+ * @param rightD differential term of right motor's PID loop
  * @param min lower bound of action outputs
  * @param max upper bound of action outputs
  */
 void InitializeVC(
     tVC *vc, 
     tRobotData *r, 
-    float p, 
-    float i, 
-    float d, 
+    float leftP, 
+    float leftI, 
+    float leftD, 
+    float rightP, 
+    float rightI, 
+    float rightD, 
     float min, 
     float max
     );
