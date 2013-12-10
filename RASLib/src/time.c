@@ -178,14 +178,15 @@ static void SetNextTaskInt(void) {
         until = 1;
     } else {
         // Calculate the next task's eta
-        until -= time;
+        until = (until-time) * ticksInUS;
 
-        // Check for 64bit overflow in which case we can just
-        // interrupt as late as possible. The handler will do nothing.
-        if (until > (0xffffffffffffffffULL/ticksInUS))
-            until = 0xffffffffffffffffULL;
-        else
-            until *= ticksInUS;
+// Uncomment to support tasks running more than
+// 36 thousand years by checking for 64bit overflow
+//
+//        if (((until >> 32) * ticksInUS) >> 32)
+//            until = 0xffffffffffffffffULL;
+//        else
+//            until *= ticksInUS;
     }
     
     // Load the timer
