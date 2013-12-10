@@ -29,7 +29,62 @@ void updateLuddefIteration(LuddefData* data) {
     (data->count)++;
 }
 
+
+void runControlLoop(tEncoder *enc, tMotor *motor) {
+    signed long goalDeltaTicks = 2000;
+    
+    float prevCommand = 0;
+    signed long prevTicks = 0;
+    tPID pid = {0};
+
+    InitializePID(&pid, .0001, 0, 0, -1, 1);
+    
+    while (true) {
+        signed long ticks = GetEncoder(enc);
+        signed long deltaTicks = ticks - prevTicks;
+        
+        float motorCommand = prevCommand + RunPID(&pid, goalDeltaTicks, deltaTicks);
+        SetMotor(motor, motorCommand);
+        
+        prevTicks = ticks;
+        prevCommand = motorCommand;
+        
+        Printf("command: %1.2f   deltaTicks: %08d\n", motorCommand, deltaTicks);
+        
+        Wait(.1);
+    }
+}
+
 int main(void) {
+    tEncoder *rightEnc;
+    tMotor *rightMotor;
+    
+    InitializeMCU();
+    
+    rightEnc = InitializeEncoder(PIN_D3, PIN_D2, false);
+    rightMotor = InitializeMotor(PIN_F3, PIN_F2, true, true);
+    
+    SetMotor(rightMotor, .2);
+    
+    /*
+    {
+    signed long prevTicks = 0;
+    
+    while (true) {
+        signed long ticks = GetEncoder(rightEnc);
+        signed long deltaTicks = ticks - prevTicks;
+        Printf("deltaTicks: %08d\n", deltaTicks);
+        prevTicks = ticks;
+        
+        Wait(.1);
+    }
+    }
+    */
+    
+    runControlLoop(rightEnc, rightMotor);
+}
+
+int oldmain(void) {
     LuddefData luddefData = {0};
     tEncoder *leftEnc;
     tEncoder *rightEnc;
