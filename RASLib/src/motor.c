@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// motor - Software PWM drivers for the TLE5205-2
+// motor - Provides polymorphism for motor implementations
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -22,90 +22,51 @@
 //*****************************************************************************
 
 #include "motor.h"
-#include "pwm.h"
 
+// Definition of struct TLEMotor in tlemotor.c
+typedef struct TLEMotor tTLEMotor;
+
+tTLEMotor *_InitializeTLEMotor(tPin a, tPin b, tBoolean brake, tBoolean invert);
+
+// Definition of struct ServoMotor in servomotor.c
+typedef struct ServoMotor tServoMotor;
+
+tServoMotor *_InitializeServoMotor(tPin pin, tBoolean invert);
 
 // Definition of struct Motor
 // Defined to tMotor in motor.h
 struct Motor {
-    // PWM signals used by motors
-    tPWM *pwm0;
-    tPWM *pwm1;
-
-    // True if braking is applied
-    tBoolean brake;
-
-    // Set to switch motor direction
-    tBoolean invert;
+    void (*SetMotor)(tMotor *mtr, float value);
 };
 
-// Buffer of motor structs to use
-// There can only be the total count of pins/2 since each
-// motor needs 2 pins
-tMotor motorBuffer[PIN_COUNT / 2];
 
-int motorCount = 0;
-
-
-// Function to initialize a motor on a pair of pins
-// The returned pointer can be used by the SetMotor function
-tMotor *InitializeMotor(tPin a, tPin b, tBoolean brake, tBoolean invert) {
-    // Grab the next motor
-    tMotor *mtr = &motorBuffer[motorCount++];
-    
-    // Setup the initial data
-    mtr->brake = brake;
-    mtr->invert = invert;
-    
-    // Initialize pwm on both pins
-    mtr->pwm0 = InitializePWM(a, 1600.0f);
-    mtr->pwm1 = InitializePWM(b, 1600.0f);
-    
-    // Return the new motor
-    return mtr;
+/**
+ * Initializes a motor on a pair of pins for the TLE5205-2
+ * @param a Pin that should plug into the IN1 motor line
+ * @param b Pin that should plug into the IN2 motor line
+ * @param brake Flag to enable breaking when the motor is set to 0 speed
+ * @param invert Flag to switch the direction that the motor will turn
+ * @return Pointer to an initialized tMotor, can be used by the SetMotor function
+ */
+tMotor *InitializeTLEMotor(tPin a, tPin b, tBoolean brake, tBoolean invert) {
+    return (tMotor *)_InitializeTLEMotor(a, b, brake, invert);
 }
 
-// This function sets a motor speed
-void SetMotor(tMotor *mtr, float input) { 
-    // Check the input range
-    if(input > 1 || input < -1)
-        return;
-    
-    // invert if set
-    if (mtr->invert) {
-        input *= -1;
-    }
+/**
+ * Initializes a motor on a single pin using rc pwm input
+ * @param pin PWM signal line to motor
+ * @param invert Flag to switch the direction that the motor will turn
+ * @return Pointer to an initialized tMotor, can be used by the SetMotor function
+ */
+tMotor *InitializeServoMotor(tPin pin, tBoolean invert) {
+    return (tMotor *)_InitializeServoMotor(pin, invert);
+}
 
-    // Operate the motor controller
-    // Motor controller operation is specific 
-    // to the TLE5205-2
-    if (mtr->brake) {
-        if (input < 0) {
-            // CCW (P, ~P)
-            SetPWM(mtr->pwm0, 1.0f+input, 0.0f);
-            SetPWM(mtr->pwm1, -input, 1.0f+input);
-        } else if (input > 0) {
-            // CW (P, 0)
-            SetPWM(mtr->pwm0, 1.0f-input, 0.0f);
-            SetPWM(mtr->pwm1, 0.0f, 0.0f);
-        } else {
-            // S (1, 0)
-            SetPWM(mtr->pwm0, 1.0f, 0.0f);
-            SetPWM(mtr->pwm1, 0.0f, 0.0f);
-        }
-    } else {
-        if (input < 0) {
-            // CCW (P, 1)
-            SetPWM(mtr->pwm0, 1.0f+input, 0.0f);
-            SetPWM(mtr->pwm1, 1.0f, 0.0f);
-        } else if (input > 0) {
-            // CW (P, P)
-            SetPWM(mtr->pwm0, 1.0f-input, 0.0f);
-            SetPWM(mtr->pwm1, 1.0f-input, 0.0f);
-        } else {
-            // S (1, 1)
-            SetPWM(mtr->pwm0, 1.0f, 0.0f);
-            SetPWM(mtr->pwm1, 1.0f, 0.0f);
-        }
-    }
+/**
+ * Sets a motor speed
+ * @param mtr Pointer to an initialized tMotor, returned by InitializeMotor
+ * @param speed Float on range [-1, 1] where -1 means maximum backward speed and 1 means maximum forward speed
+ */
+void SetMotor(tMotor *mtr, float speed) {
+    mtr->SetMotor(mtr, speed);
 }
