@@ -64,7 +64,6 @@ typedef struct Task {
 static tTask *pendingQueue;
 
 // Queue of unused tasks also a linked list
-// The end is identified for efficiency
 static tTask *unusedQueue;
 
 // Buffer of tasks to use
@@ -102,16 +101,16 @@ void InitializeSystemTime(void) {
 
   
     // Enable the task handling timer
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER5);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_WTIMER5);
   
     // We use Timer 5 as a one shot to trigger pending tasks
-    TimerConfigure(TIMER5_BASE, TIMER_CFG_ONE_SHOT);    
+    TimerConfigure(WTIMER5_BASE, TIMER_CFG_ONE_SHOT);
   
     // Only enable the timer interrupt when it is needed
-    TimerIntDisable(TIMER5_BASE, TIMER_TIMA_TIMEOUT);
+    TimerIntDisable(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
     
     // Enable the interrupt
-    IntEnable(INT_TIMER5A);
+    IntEnable(INT_WTIMER5A);
 
 
     // Setup the SysTick
@@ -148,7 +147,7 @@ static void RegisterTask(tTask *task) {
     tTask **p;
     
     // Disable any incoming tasks temporarily
-    TimerIntDisable(TIMER5_BASE, TIMER_TIMA_TIMEOUT);
+    TimerIntDisable(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
     
     // Iterate through the queue until we find a 
     // later task or hit the end
@@ -162,7 +161,7 @@ static void RegisterTask(tTask *task) {
     *p = task;
 }
 
-// Setup timer B to trigger an interrupt for the next task
+// Setup timer to trigger an interrupt for the next task
 static void SetNextTaskInt(void) {
     tTime until, time;
   
@@ -179,31 +178,34 @@ static void SetNextTaskInt(void) {
         until = 1;
     } else {
         // Calculate the next task's eta
-        until = (until - time) * ticksInUS;
-        
-        // Check for 32bit overflow in which case we can just 
-        // interrupt as late as possible. The handler will do nothing.
-        if (until > 0xffffffff)
-            until = 0xffffffff;
+        until = (until-time) * ticksInUS;
+
+// Uncomment to support tasks running more than
+// 36 thousand years by checking for 64bit overflow
+//
+//        if (((until >> 32) * ticksInUS) >> 32)
+//            until = 0xffffffffffffffffULL;
+//        else
+//            until *= ticksInUS;
     }
     
     // Load the timer
-    TimerLoadSet(TIMER5_BASE, TIMER_A, until);
+    TimerLoadSet64(WTIMER5_BASE, until);
       
     // Enable the interrupt and timer
     // interrupt might have been disabled to prevent race conditions
     // and timer is disabled after one_shot
-    TimerIntEnable(TIMER5_BASE, TIMER_TIMA_TIMEOUT);
-    TimerEnable(TIMER5_BASE, TIMER_A);
+    TimerIntEnable(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
+    TimerEnable(WTIMER5_BASE, TIMER_A);
 }
 
 
 // Handler used to manage waiting tasks
-void Timer5Handler(void) {
+void WTimer5Handler(void) {
     // Get the current time with US precision
     tTime time = GetTimeUS();
     
-    TimerIntClear(TIMER5_BASE, TIMER_TIMA_TIMEOUT);
+    TimerIntClear(WTIMER5_BASE, TIMER_TIMA_TIMEOUT);
 
     // Handling any waiting tasks
     while (pendingQueue && time >= pendingQueue->target) {
@@ -327,7 +329,7 @@ static void WaitHandler(int *flag) {
 
 void WaitUS(tTime us) {
     volatile int waitFlag = 0;
-    CallInUS(WaitHandler, (void *)&waitFlag, us);
+    CallInUS(WaitHandler, (void*)&waitFlag, us);
     while(!waitFlag);
 }
   

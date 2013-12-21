@@ -51,6 +51,7 @@ CFLAGS += -DTARGET_IS_BLIZZARD_RA1
 
 LDFLAGS += --entry ResetHandler
 LDFLAGS += --gc-sections
+LDFLAGS += --no-check-sections
 
 CFLAGS += $(addprefix -I, $(INC))
 LDFLAGS += $(addprefix -L, $(LDDIR))
