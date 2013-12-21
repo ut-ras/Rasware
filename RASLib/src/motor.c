@@ -28,10 +28,10 @@ typedef struct TLEMotor tTLEMotor;
 
 tTLEMotor *_InitializeTLEMotor(tPin a, tPin b, tBoolean brake, tBoolean invert);
 
-// Definition of struct PWMMotor in pwmmotor.c
-typedef struct PWMMotor tPWMMotor;
+// Definition of struct ServoMotor in servomotor.c
+typedef struct ServoMotor tServoMotor;
 
-tPWMMotor *_InitializePWMMotor(tPin pin, tBoolean invert);
+tServoMotor *_InitializeServoMotor(tPin pin, tBoolean invert);
 
 // Definition of struct Motor
 // Defined to tMotor in motor.h
@@ -58,8 +58,8 @@ tMotor *InitializeTLEMotor(tPin a, tPin b, tBoolean brake, tBoolean invert) {
  * @param invert Flag to switch the direction that the motor will turn
  * @return Pointer to an initialized tMotor, can be used by the SetMotor function
  */
-tMotor *InitializePWMMotor(tPin pin, tBoolean invert) {
-    return (tMotor *)_InitializePWMMotor(pin, invert);
+tMotor *InitializeServoMotor(tPin pin, tBoolean invert) {
+    return (tMotor *)_InitializeServoMotor(pin, invert);
 }
 
 /**

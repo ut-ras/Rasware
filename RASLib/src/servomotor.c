@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// pwmmotor - PWM based motor (RC PWM) driver
+// servomotor - RC PWM based motor driver
 // 
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
@@ -23,28 +23,28 @@
 
 #include "pwm.h"
 
-// Definition of struct PWMMotor
-typedef struct PWMMotor {
+// Definition of struct ServoMotor
+typedef struct ServoMotor {
     // Motor 'abstract' function
-    void (*SetMotor)(struct PWMMotor *mtr, float input);
+    void (*SetMotor)(struct ServoMotor *mtr, float input);
 
     // Pointer to pwm module
     tPWM *pwm;
 
     // Set to switch motor direction
     tBoolean invert;
-} tPWMMotor;
+} tServoMotor;
 
 // Buffer of motor structs to use
 // There can only be as many pwm signals as pins
-static tPWMMotor pwmMotorBuffer[PIN_COUNT];
+static tServoMotor servoMotorBuffer[PIN_COUNT];
 
-static int pwmMotorCount = 0;
+static int servoMotorCount = 0;
 
 
 // Servo output is 50hz with 3% to 12% duty cycle, centered at 7.5%
 // This function sets a motor value, with -1 being 3% and 1 being 12%
-static void SetPWMMotor(tPWMMotor *mtr, float value) { 
+static void SetServoMotor(tServoMotor *mtr, float value) { 
     // Bind to the valid range of inputs
     if (value > 1 || value < -1)
         return;
@@ -59,9 +59,9 @@ static void SetPWMMotor(tPWMMotor *mtr, float value) {
 
 // Function to initialize a motor on a pin
 // The returned pointer can be used by the SetMotor function
-tPWMMotor *_InitializePWMMotor(tPin pin, tBoolean invert) {
+tServoMotor *_InitializeServoMotor(tPin pin, tBoolean invert) {
     // Grab the next motor
-    tPWMMotor *mtr = &pwmMotorBuffer[pwmMotorCount++];
+    tServoMotor *mtr = &servoMotorBuffer[servoMotorCount++];
 
     // Setup initial data
     mtr->invert = invert;
@@ -69,10 +69,10 @@ tPWMMotor *_InitializePWMMotor(tPin pin, tBoolean invert) {
     // Create the pwm signal at 50Hz
     mtr->pwm = InitializePWM(pin, 50.0f);
     // Set it to the center point
-    SetPWMMotor(mtr, 0);
+    SetServoMotor(mtr, 0);
     
     // Set parent methods
-    mtr->SetMotor = SetPWMMotor;
+    mtr->SetMotor = SetServoMotor;
 
     // Pass on the module
     return mtr;
