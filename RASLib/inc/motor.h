@@ -50,7 +50,7 @@ tMotor *InitializeTLEMotor(tPin a, tPin b, tBoolean brake, tBoolean invert);
  * @param invert Flag to switch the direction that the motor will turn
  * @return Pointer to an initialized tMotor, can be used by the SetMotor function
  */
-tMotor *InitializePWMMotor(tPin pin, tBoolean invert);
+tMotor *InitializeServoMotor(tPin pin, tBoolean invert);
 
 /**
  * Sets a motor speed
