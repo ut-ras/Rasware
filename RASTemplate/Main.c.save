@@ -1,0 +1,128 @@
+#include <RASLib/inc/common.h>
+#include <RASLib/inc/time.h>
+#include <RASLib/inc/servo.h>
+
+tServo *m0;
+tServo *m1;
+tServo *m2;
+tServo *m3;
+
+tServo *c;
+
+#define halfspeed 0.6
+#define fullspeed 0.9
+
+float f = 0;
+float F = fullspeed;
+
+
+void mecanum_go(float vx, float vy, float r) {
+
+
+
+    	SetServo(m0, (vy/2 + 0.5) - (vx/2 + 0.5);
+    	SetServo(m1, (-vy/2 + 0.5) - (vx/2 + 0.5);
+    	SetServo(m2, (vy/2 + 0.5) - (vx/2 + 0.5);
+    	SetServo(m3, (-vx/2 + 0.5) - (vx/2 + 0.5);
+}
+
+
+
+// The 'main' function is the entry point of the program int main(void) {
+    InitializeMCU();
+    
+    m0 = InitializeServo(PIN_D0);
+    m1 = InitializeServo(PIN_D1);
+    m2 = InitializeServo(PIN_D2);
+    m3 = InitializeServo(PIN_D3);
+    c = InitializeServo(PIN_C4);
+
+    // Initialization code can go here
+
+    while (1) {
+
+        switch (Getc()) {
+            case 'D':
+            SetServo(m0, F);
+            SetServo(m1, 1.0-F);
+            SetServo(m2, 1.0-F);
+            SetServo(m3, F);
+            break;
+
+            case 'A':
+            SetServo(m0, 1.0-F);
+            SetServo(m1, F);
+            SetServo(m2, F);
+            SetServo(m3, 1.0-F);
+            break;
+            
+            case 'W':
+            SetServo(m0, F);
+            SetServo(m1, F);
+            SetServo(m2, F);
+            SetServo(m3, F);
+            break;
+
+            case 'S':
+            SetServo(m0, 1.0-F);
+            SetServo(m1, 1.0-F);
+            SetServo(m2, 1.0-F);
+            SetServo(m3, 1.0-F);
+            break;
+
+            case 'd':
+            SetServo(m0, f);
+            SetServo(m1, 1.0-f);
+            SetServo(m2, 1.0-f);
+            SetServo(m3, f);
+            break;
+
+            case 'a':
+            SetServo(m0, 1.0-f);
+            SetServo(m1, f);
+            SetServo(m2, f);
+            SetServo(m3, 1.0-f);
+            break;
+            
+            case 'w':
+            SetServo(m0, f);
+            SetServo(m1, f);
+            SetServo(m2, f);
+            SetServo(m3, f);
+            break;
+
+            case 's':
+            SetServo(m0, 1.0-f);
+            SetServo(m1, 1.0-f);
+            SetServo(m2, 1.0-f);
+            SetServo(m3, 1.0-f);
+            break;
+
+            case ' ':
+            SetServo(m0, 0.5);
+            SetServo(m1, 0.5);
+            SetServo(m2, 0.5);
+            SetServo(m3, 0.5);
+            SetServo(c, 0.5);
+            break;
+            
+
+            case 'q':
+            SetServo(c, 0.7);
+            break;
+
+            case 'e':
+            SetServo(c, 0.3);
+            break;
+
+            default: ;
+        }
+        
+        Printf("Y");
+
+        Wait(0.2);
+        f = halfspeed;
+        // Runtime code can go here
+       
+    }
+}
