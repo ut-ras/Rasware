@@ -2,9 +2,9 @@
 TARGET = RASTemplate.axf
 
 # Library Locations
-STELLARIS = ../../StellarisWare
+STELLARIS = ../StellarisWare
 RASLIB = ../RASLib
-CORTEXM4 = ../../CortexM4Libs
+CORTEXM4 = ../CortexM4Libs
 ARMCLIB = $(dir $(shell which $(CC)))..
 
 # Command Definitions
