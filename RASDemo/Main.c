@@ -155,16 +155,6 @@ void setArm (int dir) {
 	else //down
 		arm_pos-= 0.01f;
 	
-	if (arm_pos>10.0f)
-	{ 
-		arm_pos=10.0f;
-	}
-	
-	else if (arm_pos< 0.0f)
-	{
-		arm_pos=0.0f;
-	}
-	
 	SetMotor(Arm, arm_pos);
 	
 }
