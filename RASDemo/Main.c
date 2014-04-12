@@ -127,33 +127,33 @@ void setClaw (int dir){
 // MOTORS
 void setWheel_Left (int dir){
   if (dir==1){ //forward
-		left_wheel_pos+= 0.01f;
+		left_wheel_pos+= 0.075f;
 	}
 	
 	else //backward
-		left_wheel_pos-= 0.01f;
+		left_wheel_pos-= 0.075f;
 	
 	SetMotor(Left_Wheel, left_wheel_pos);
 }
 
 void setWheel_Right (int dir){
   if (dir==1){ //forward
-		right_wheel_pos-= 0.01f;
+		right_wheel_pos-= 0.075f;
 	}
 	
 	else //backward
-		right_wheel_pos+= 0.01f;
+		right_wheel_pos+= 0.075f;
 	
 	SetMotor(Right_Wheel, right_wheel_pos);
 }
 
 void setArm (int dir) {
 	if (dir==1){ //up
-		 arm_pos+= 0.01f;
+		 arm_pos+= 0.2f;
 	}
 	
 	else //down
-		arm_pos-= 0.01f;
+		arm_pos-= 0.2f;
 	
 	SetMotor(Arm, arm_pos);
 	
