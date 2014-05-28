@@ -2,8 +2,9 @@
 #include <RASLib/inc/encoder.h>
 #include <RASLib/inc/motor.h>
 #include <RASLib/inc/time.h>
-#include <NavLib/inc/luddef.h>
-#include <NavLib/inc/vel_control.h>
+#include "../NavLib/inc/luddef.h"
+#include "../NavLib/inc/vel_control.h"
+#include "../NavLib/inc/pid.h"
 
 struct LuddefData {
     tLUDDEF luddef;
@@ -30,41 +31,60 @@ void updateLuddefIteration(LuddefData* data) {
 }
 
 
-void runControlLoop(tEncoder *enc, tMotor *motor) {
-    signed long goalDeltaTicks = 2000;
+void runControlLoop(tEncoder *encLeft,tEncoder *encRight,tMotor *motorLeft, tMotor *motorRight) {
+    signed long goalDeltaTicks = 750;
     
-    float prevCommand = 0;
-    signed long prevTicks = 0;
-    tPID pid = {0};
+    float prevCommandLeft = 0;
+    float prevCommandRight = 0;
+    signed long prevTicksLeft = 0;
+    signed long prevTicksRight = 0;
+    tPID pidLeft = {0};
+    tPID pidRight = {0};
 
-    InitializePID(&pid, .0001, 0, 0, -1, 1);
+    InitializePID(&pidLeft, .0001, 0.000, 0.0001, -0.15, 0.15);
+
+    InitializePID(&pidRight, .0001, 0.000, 0.0001, -0.15, 0.15);
     
     while (true) {
-        signed long ticks = GetEncoder(enc);
-        signed long deltaTicks = ticks - prevTicks;
+        signed long ticksLeft = GetEncoder(encLeft);
+        signed long ticksRight = GetEncoder(encRight);
+        signed long deltaTicksLeft = ticksLeft - prevTicksLeft;
+        signed long deltaTicksRight = ticksRight - prevTicksRight;
         
-        float motorCommand = prevCommand + RunPID(&pid, goalDeltaTicks, deltaTicks);
-        SetMotor(motor, motorCommand);
+        float motorCommandLeft = prevCommandLeft + RunPID(&pidLeft, goalDeltaTicks, deltaTicksLeft);
+        float motorCommandRight = prevCommandRight + RunPID(&pidRight, goalDeltaTicks, deltaTicksRight);
+
+        SetMotor(motorLeft, motorCommandLeft);
+        SetMotor(motorRight, motorCommandRight);
         
-        prevTicks = ticks;
-        prevCommand = motorCommand;
+        prevTicksLeft = ticksLeft;
+        prevTicksRight = ticksRight;
+        prevCommandLeft = motorCommandLeft;
+        prevCommandRight = motorCommandRight;
         
-        Printf("command: %1.2f   deltaTicks: %08d\n", motorCommand, deltaTicks);
-        
-        Wait(.1);
+        Printf("command: %1.2f   deltaTicks: %08d\n", motorCommandRight, deltaTicksRight);
+      
+        Wait(.05);
     }
 }
 
 int main(void) {
-    tEncoder *rightEnc;
-    tMotor *rightMotor;
-    
+    tEncoder *rightEnc, *leftEnc;
+    tMotor *rightMotor, *leftMotor;
+        
     InitializeMCU();
     
-    rightEnc = InitializeEncoder(PIN_D3, PIN_D2, false);
-    rightMotor = InitializeMotor(PIN_F3, PIN_F2, true, true);
+    rightEnc = InitializeEncoder(PIN_E4, PIN_E5, false);
+    rightMotor = InitializeServoMotor(PIN_A7, false);
     
-    SetMotor(rightMotor, .2);
+    leftEnc = InitializeEncoder(PIN_B0, PIN_B1, false);
+    leftMotor = InitializeServoMotor(PIN_A6, false);
+
+    ResetEncoder(leftEnc);
+    ResetEncoder(rightEnc);
+
+    SetMotor(rightMotor, .1);
+    SetMotor(leftMotor, .1);
     
     /*
     {
@@ -81,10 +101,10 @@ int main(void) {
     }
     */
     
-    runControlLoop(rightEnc, rightMotor);
+    runControlLoop(leftEnc, rightEnc, leftMotor, rightMotor);
 }
 
-int oldmain(void) {
+/*int oldmain(void) {
     LuddefData luddefData = {0};
     tEncoder *leftEnc;
     tEncoder *rightEnc;
@@ -135,4 +155,4 @@ int oldmain(void) {
         
         Wait(.1);
     }
-}
+}*/
