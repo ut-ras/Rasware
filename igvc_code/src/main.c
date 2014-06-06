@@ -1,8 +1,7 @@
 #include <stdlib.h>                     // atoi
 #include <inc/hw_types.h>		        // tBoolean
-#include <RASLib/inc/init.h>            // InitializeMCU
+#include <RASLib/inc/common.h>            // InitializeMCU
 #include <RASLib/inc/uart.h>            // InitializeUART, Printf
-#include <RASLib/inc/rasstring.h>       // SPrintf
 #include <RASLib/inc/encoder.h>
 #include <RASLib/inc/time.h>
 #include <RASLib/inc/gpio.h>
@@ -14,12 +13,6 @@
 #include <StellarisWare/driverlib/sysctl.h>
 #include <StellarisWare/inc/hw_watchdog.h>
 #include <StellarisWare/driverlib/watchdog.h>
-
-#include "luddef.h"
-#include "pid.h"
-#include "vel_control.h"
-#include "handlers.h"
-#include "atospf.h"
 
 tMotor *left_motor, *right_motor;
 tEncoder *left_encoder, *right_encoder;
