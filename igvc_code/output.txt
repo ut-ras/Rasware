@@ -1,0 +1,244 @@
+make: Entering directory `/home/ras/code/igvc2014/embedded/lm4f/lm4f_node'
+lm4flash igvc_vel_cmd.axf
+Found ICDI device with serial: 0E10AE20
+ICDI version: 9270
+make: Leaving directory `/home/ras/code/igvc2014/embedded/lm4f/lm4f_node'
+comm initialized...
+Flashing board...
+board reset, output: 
+0
+printing debug info...
+[INFO] [WallTime: 1398454517.355547] /lm4f_node_4456_1398454514825: LM4F response: bug":"-","SVLXdebug":"L:51.458324 R:0.158899","SVAXdebug":"0.54"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"L:51.458324 R:0.158899","SVAXdebug":"0.54"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"L:51.458324 R:0.158899","SVAXdebug":"0.54"}
+{"SPLM{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+
+[INFO] [WallTime: 1398454517.433627] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"-","SPRMde
+[INFO] [WallTime: 1398454517.536459] /lm4f_node_4456_1398454514825: LM4F response: bug":"-","SVLXdebug":"-","SVAXdebug":"-"}
+{"error":"jsmn parse error","code":-3,"extra:":'{"SVAX": 0.12, "{"SVAX": 0.13, "}'}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXde
+[INFO] [WallTime: 1398454517.635622] /lm4f_node_4456_1398454514825: LM4F response: bug":"-"}
+{"error":"jsmn parse error","code":-3,"extra:":'{"SVAX": 0.14, "}'}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-"
+[INFO] [WallTime: 1398454517.735888] /lm4f_node_4456_1398454514825: LM4F response: ,"SVAXdebug":"-"}
+{"error":"jsmn parse error","code":-3,"extra:":'{"SVAX": 0.15, "}'}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-"
+[INFO] [WallTime: 1398454517.835879] /lm4f_node_4456_1398454514825: LM4F response: ,"SVAXdebug":"-"}
+{"error":"jsmn parse error","code":-3,"extra:":'{"SVAX": 0.16, "06}'}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-"
+[INFO] [WallTime: 1398454517.935874] /lm4f_node_4456_1398454514825: LM4F response: ,"SVAXdebug":"-"}
+{"error":"jsmn parse error","code":-3,"extra:":'{"SVAX": 0.17, "07}'}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-"
+[INFO] [WallTime: 1398454518.035883] /lm4f_node_4456_1398454514825: LM4F response: ,"SVAXdebug":"-"}
+{"error":"jsmn parse error","code":-3,"extra:":'{"SVAX": 0.18, "08}'}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-"
+[INFO] [WallTime: 1398454518.136115] /lm4f_node_4456_1398454514825: LM4F response: ,"SVAXdebug":"-"}
+{"error":"jsmn parse error","code":-3,"extra:":'{"SVAX": 0.19, ".09}'}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXde
+[INFO] [WallTime: 1398454518.235648] /lm4f_node_4456_1398454514825: LM4F response: bug":"-"}
+{"error":"jsmn parse error","code":-3,"extra:":'{"SVAX": 0.2, "S}'}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-"
+[INFO] [WallTime: 1398454518.336135] /lm4f_node_4456_1398454514825: LM4F response: ,"SVAXdebug":"-"}
+{"error":"jsmn parse error","code":-3,"extra:":'{"SVAX": 0.21, "11}'}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXde
+[INFO] [WallTime: 1398454518.436363] /lm4f_node_4456_1398454514825: LM4F response: bug":"-"}
+{"error":"jsmn parse error","code":-3,"extra:":'{"SVAX": 0.22, ".12}'}
+{"SPLMdebug":"-","SPRMdebug":"-","SVLXdebug":"-","SVAXde
+[INFO] [WallTime: 1398454518.534459] /lm4f_node_4456_1398454514825: LM4F response: bug":"-"}
+{"SPLMdebug":"0.100000","SPRMdeb
+[INFO] [WallTime: 1398454518.635947] /lm4f_node_4456_1398454514825: LM4F response: ug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","
+[INFO] [WallTime: 1398454518.735741] /lm4f_node_4456_1398454514825: LM4F response: SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","
+[INFO] [WallTime: 1398454518.835865] /lm4f_node_4456_1398454514825: LM4F response: SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","
+[INFO] [WallTime: 1398454518.935718] /lm4f_node_4456_1398454514825: LM4F response: SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","
+[INFO] [WallTime: 1398454519.035857] /lm4f_node_4456_1398454514825: LM4F response: SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","
+[INFO] [WallTime: 1398454519.135691] /lm4f_node_4456_1398454514825: LM4F response: SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","
+[INFO] [WallTime: 1398454519.235906] /lm4f_node_4456_1398454514825: LM4F response: SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","
+[INFO] [WallTime: 1398454519.335707] /lm4f_node_4456_1398454514825: LM4F response: SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","
+[INFO] [WallTime: 1398454519.435669] /lm4f_node_4456_1398454514825: LM4F response: SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","
+[INFO] [WallTime: 1398454519.535700] /lm4f_node_4456_1398454514825: LM4F response: SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","
+[INFO] [WallTime: 1398454519.635836] /lm4f_node_4456_1398454514825: LM4F response: SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","
+[INFO] [WallTime: 1398454519.735870] /lm4f_node_4456_1398454514825: LM4F response: SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","
+[INFO] [WallTime: 1398454519.835646] /lm4f_node_4456_1398454514825: LM4F response: SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","
+[INFO] [WallTime: 1398454519.935847] /lm4f_node_4456_1398454514825: LM4F response: SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","
+[INFO] [WallTime: 1398454520.035702] /lm4f_node_4456_1398454514825: LM4F response: SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","
+[INFO] [WallTime: 1398454520.135702] /lm4f_node_4456_1398454514825: LM4F response: SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","
+[INFO] [WallTime: 1398454524.831805] /lm4f_node_4456_1398454514825: LM4F response: SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 {"SPLMde
+[INFO] [WallTime: 1398454524.890552] /lm4f_node_4456_1398454514825: LM4F response: bug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.050099 R:0.049999","SVAXdebug":"0.13"}
+
+[INFO] [WallTime: 1398454524.991000] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.099999 R:0.099899","SVAXdebug":"0.13"}
+
+[INFO] [WallTime: 1398454525.091114] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.146499 R:0.147499","SVAXdebug":"0.14"}
+
+[INFO] [WallTime: 1398454525.191283] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.170999 R:0.174099","SVAXdebug":"0.15"}
+
+[INFO] [WallTime: 1398454525.291111] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.160399 R:0.174099","SVAXdebug":"0.16"}
+
+[INFO] [WallTime: 1398454525.389499] /lm4f_node_4456_1398454514825: LM4F response: 
+[INFO] [WallTime: 1398454525.489498] /lm4f_node_4456_1398454514825: LM4F response: 
+[INFO] [WallTime: 1398454525.592434] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.160399 R:0.174099","SVAXdebug":"0.16"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebu
+[INFO] [WallTime: 1398454525.693850] /lm4f_node_4456_1398454514825: LM4F response: g":"L:0.160399 R:0.174099","SVAXdebug":"0.16"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.160399 R:0.174099","SVAXdebug":"0.16"}
+{"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.160399 R:0.174099","SVAXdebug":"0.16"}
+
+[INFO] [WallTime: 1398454525.791116] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.160399 R:0.174099","SVAXdebug":"0.17"}
+
+[INFO] [WallTime: 1398454525.891110] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:0.010399 R:0.174099","SVAXdebug":"0.22"}
+
+[INFO] [WallTime: 1398454525.991128] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.030400 R:0.174099","SVAXdebug":"0.23"}
+
+[INFO] [WallTime: 1398454526.091162] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.24"}
+
+[INFO] [WallTime: 1398454526.191060] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.25"}
+
+[INFO] [WallTime: 1398454526.291033] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.26"}
+
+[INFO] [WallTime: 1398454526.390929] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.27"}
+
+[INFO] [WallTime: 1398454526.490908] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.28"}
+
+[INFO] [WallTime: 1398454526.591153] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.29"}
+
+[INFO] [WallTime: 1398454526.691282] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.3"}
+
+[INFO] [WallTime: 1398454526.791300] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.31"}
+
+[INFO] [WallTime: 1398454526.891305] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.32"}
+
+[INFO] [WallTime: 1398454526.991162] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.33"}
+
+[INFO] [WallTime: 1398454527.091279] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.34"}
+
+[INFO] [WallTime: 1398454527.191275] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.35"}
+
+[INFO] [WallTime: 1398454527.291145] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.36"}
+
+[INFO] [WallTime: 1398454527.391082] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.37"}
+
+[INFO] [WallTime: 1398454527.491127] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.38"}
+
+[INFO] [WallTime: 1398454527.591256] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.39"}
+
+[INFO] [WallTime: 1398454527.691270] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.4"}
+
+[INFO] [WallTime: 1398454527.791350] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.41"}
+
+[INFO] [WallTime: 1398454527.891059] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.42"}
+
+[INFO] [WallTime: 1398454527.991120] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.43"}
+
+[INFO] [WallTime: 1398454528.091151] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.44"}
+
+[INFO] [WallTime: 1398454528.191135] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.45"}
+
+[INFO] [WallTime: 1398454528.291275] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.46"}
+
+[INFO] [WallTime: 1398454528.391165] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.47"}
+
+[INFO] [WallTime: 1398454528.491143] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.48"}
+
+[INFO] [WallTime: 1398454528.591292] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.49"}
+
+[INFO] [WallTime: 1398454528.691133] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.5"}
+
+[INFO] [WallTime: 1398454528.791267] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.51"}
+
+[INFO] [WallTime: 1398454528.891136] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.52"}
+
+[INFO] [WallTime: 1398454528.991143] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.53"}
+
+[INFO] [WallTime: 1398454529.091283] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.54"}
+
+[INFO] [WallTime: 1398454529.191130] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.55"}
+
+[INFO] [WallTime: 1398454529.291291] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.56"}
+
+[INFO] [WallTime: 1398454529.391257] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.57"}
+
+[INFO] [WallTime: 1398454529.491131] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.58"}
+
+[INFO] [WallTime: 1398454529.591266] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.59"}
+
+[INFO] [WallTime: 1398454529.691244] /lm4f_node_4456_1398454514825: LM4F response: {"SPLMdebug":"0.100000","SPRMdebug":"0.100000","SVLXdebug":"L:-0.057700 R:0.174099","SVAXdebug":"0.6"}
+
