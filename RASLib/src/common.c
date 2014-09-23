@@ -55,7 +55,7 @@ void InitializeMCU(void)
     InitializeGPIO();
     
     //Initialize UART for communication
-    InitializeUART();
+    InitializeUART(115200);
     
     //Enable global interrupts
     IntMasterEnable();    

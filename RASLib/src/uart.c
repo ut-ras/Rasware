@@ -40,12 +40,11 @@
 #include <StellarisWare/driverlib/uart.h>
 
 
-static const char * const g_pcHex_U = "0123456789ABCDEF";
-static const char * const g_pcHex_L = "0123456789abcdef";
+static const char * const g_pcHex_L = "0123456789ABCDEF";
+static const char * const g_pcHex_U = "0123456789abcdef";
 
 // Sets up a simple console through UART0
-void InitializeUART(void)
-{
+void InitializeUART(int baud) {
   // Enable GPIO port A which is used for UART0 pins.
   SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
   SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
@@ -58,68 +57,69 @@ void InitializeUART(void)
   GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
 
   SysCtlPeripheralEnable(UART0_BASE);
+
   // Initialize the UART for console I/O.
-  UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 115200,
+  UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), baud,
 			  (UART_CONFIG_PAR_NONE | UART_CONFIG_STOP_ONE |
 			   UART_CONFIG_WLEN_8));
 }
 
-// The following block of funcitons are wrappers for StellarisWare UART functions
-void UARTwrite(const char *pucBuffer, unsigned long ulCount)
-{
-    //
-    // Loop while there are more characters to send.
-    //
-    while(ulCount--)
-    {
-        //
-        // Write the next character to the UART.
-        //
-	if (*pucBuffer == '\n') {
-	    UARTCharPut(UART0_BASE, '\r');
-	}
-        UARTCharPut(UART0_BASE, *pucBuffer++);
+// Busy-waits for an input character and then returns it
+unsigned char Getc(void) {
+    return UARTCharGet(UART0_BASE);
+}
+
+// Busy-waits for input characters over UART and places them into the provided buffer
+int Gets(char *buffer, int count) {
+    int i;
+    
+    // Loop while there are more characters.
+    for (i = 0; i < count; i++) {
+        // Read the next character from the UART.
+        buffer[i] = UARTCharGet(UART0_BASE);
+        
+        // Handle new lines
+        if (buffer[i] == '\r' || buffer[i] == '\0') {
+            UARTCharPut(UART0_BASE, '\r');
+            UARTCharPut(UART0_BASE, '\n');
+            buffer[i] = 0;
+            return i;
+        }
+        
+        // Echo to the user
+        UARTCharPut(UART0_BASE, buffer[i]);
     }
+    
+    return count;
 }
 
+// Outputs a single character over UART
+void Putc(char ch) {
+    UARTCharPut(UART0_BASE, ch);
+}
 
-int UARTgets(char *pucBuffer, unsigned long ulCount)
-{
-    //
+// Outputs the characters of a null-terminated string over UART
+int Puts(const char *buffer, int count) {
+    int i;
+    
     // Loop while there are more characters to send.
-    //
-  unsigned long ulTemp = ulCount;
-    while(ulTemp--)
-    {
-        //
-        // Write the next character to the UART.
-        //
-        *pucBuffer = UARTCharGet(UART0_BASE);
-	UARTCharPut(UART0_BASE, *pucBuffer);
-	if( *pucBuffer == '\r') {
-	  return ulCount - ulTemp;
-	}
-	pucBuffer++;
+    for (i = 0; i < count; i++) {
+        // Handle new lines
+        if (buffer[i] == '\n') {
+            UARTCharPut(UART0_BASE, '\r');
+        } else if (buffer[i] == '\0') {
+            return i;
+        }
+        
+        UARTCharPut(UART0_BASE, buffer[i]);
     }
-    return ulCount;
+    
+    return count;
 }
 
-int Gets(char *pcBuf, unsigned long ulLen)
-{
-  return UARTgets(pcBuf, ulLen);
-}
-
-unsigned char Getc(void)
-{
-  return UARTCharGet(UART0_BASE);
-}
-
-// Pulled out of RASDemo Code
+// Checks to see if a character has been received in the UART buffer
 int KeyWasPressed(void) {
-  if (UARTCharsAvail(UART0_BASE))  
-    return 1;
-  else
-    return 0;
+    return (UARTCharsAvail(UART0_BASE) > 0);
 }
 
 // Function to print the value of a unsigned long using the formatting gathered by printf
@@ -179,7 +179,7 @@ static void convert(unsigned long ulValue, unsigned long ulCount, const char *pc
   }
 
   // Write the string.
-  UARTwrite(pcBuf, ulPos);
+  Puts(pcBuf, ulPos);
 }
 
 // printf taken from StellarisWare with additional flag support
@@ -206,7 +206,7 @@ void Printf(const char *pcString, ...)
     }
 
     // Write this portion of the string.
-    UARTwrite(pcString, ulIdx);
+    Puts(pcString, ulIdx);
 
     // Skip the portion of the string that was written.
     pcString += ulIdx;
@@ -286,7 +286,7 @@ again:
           ulValue = va_arg(vaArgP, unsigned long);
 
           // Print out the character.
-          UARTwrite((char *)&ulValue, 1);
+          Puts((char *)&ulValue, 1);
 
           // This command has been handled.
           break;
@@ -361,7 +361,7 @@ again:
           }
 
           // Write the string.
-          UARTwrite(pcStr, ulIdx);
+          Puts(pcStr, ulIdx);
 
           // Write any required padding spaces
           if(ulCount > ulIdx)
@@ -369,7 +369,7 @@ again:
             ulCount -= ulIdx;
             while(ulCount--)
             {
-              UARTwrite(" ", 1);
+              Puts(" ", 1);
             }
           }
           // This command has been handled.
@@ -432,17 +432,17 @@ again:
           // Check for out of range constants
           if(isnan(dValue))
           {
-            UARTwrite("NaN", 3);
+            Puts("NaN", 3);
           }
           else if(dValue == INFINITY)
           {
             if(cNeg)
             {
-              UARTwrite("-INF", 4);
+              Puts("-INF", 4);
             }
             else
             {
-              UARTwrite("INF", 3);
+              Puts("INF", 3);
             }
           }
           else
@@ -456,7 +456,7 @@ again:
             {
               dValue *= 10;
             }
-            UARTwrite(".", 1);
+            Puts(".", 1);
             convert((unsigned long)dValue, ulDecCount, pcHex, 0, '0', 10);
           }
           break;
@@ -475,18 +475,18 @@ again:
           // Check if the value is negative
           if(dValue < 0)
           {
-            UARTwrite("-", 1);
+            Puts("-", 1);
             dValue = 0 - dValue;
           }
                               
           // Check for out of range constants
           if(isnan(dValue))
           {
-            UARTwrite("NaN", 3);
+            Puts("NaN", 3);
           }
           else if(dValue == INFINITY)
           {
-            UARTwrite("INF", 3);
+            Puts("INF", 3);
           }
           else 
           {
@@ -504,19 +504,19 @@ again:
               dTmp = dValue / pow(10, (long) dExp);
               cNeg = 0;
             }
-            UARTwrite(&pcHex[(int)dTmp], 1);
-            UARTwrite(".", 1);
+            Puts(&pcHex[(int)dTmp], 1);
+            Puts(".", 1);
             
             // Print ulDecCount following digits
             while(ulDecCount --> 0)
             {
                 dTmp -= (long) dTmp;
                 dTmp *= 10;
-                UARTwrite(&pcHex[(int)dTmp], 1);
+                Puts(&pcHex[(int)dTmp], 1);
             }
             
             // Write the exponent
-            UARTwrite(&pcHex[14], 1);
+            Puts(&pcHex[14], 1);
             
             convert((unsigned long)dExp, 0, pcHex, cNeg, cFill, 10);
           }
@@ -527,7 +527,7 @@ again:
         case '%':
         {
           // Simply write a single %.
-          UARTwrite(pcString - 1, 1);
+          Puts(pcString - 1, 1);
 
           // This command has been handled.
           break;
@@ -537,7 +537,7 @@ again:
         default:
         {
           // Indicate an error.
-          UARTwrite("ERROR", 5);
+          Puts("ERROR", 5);
 
           // This command has been handled.
           break;
@@ -548,19 +548,3 @@ again:
 }
 
 
-void Putc(char ch)
-{
-  UARTwrite(&ch, 1);
-}
-
-void Puts(const char *pcString)
-{
-  unsigned long ulIdx;
-  
-  // Count the length of the string
-  for(ulIdx = 0; pcString[ulIdx] != '\0'; ulIdx++)
-  {
-  }
-  
-  UARTwrite(pcString, ulIdx);
-}
