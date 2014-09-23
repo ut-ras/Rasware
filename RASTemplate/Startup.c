@@ -32,14 +32,17 @@
 static unsigned long pulStack[STACK];
 
 
+// Initialization entry point for RASLib
+extern void InitializeMCU(void);
+
 // The entry point for the application
 extern int main(void);
 
 // Forward declaration of the default fault handlers
 void ResetHandler(void);
-static void NmiHandler(void);
-static void FaultHandler(void);
-static void IntDefaultHandler(void);
+void NmiHandler(void);
+void FaultHandler(void);
+void IntDefaultHandler(void);
 
 // Declaration of interrupt service routines
 extern void ADC0SS0Handler(void);
@@ -300,6 +303,9 @@ void ResetHandler(void) {
     HWREG(NVIC_CPAC) = ((HWREG(NVIC_CPAC) &
                          ~(NVIC_CPAC_CP10_M | NVIC_CPAC_CP11_M)) |
                         NVIC_CPAC_CP10_FULL | NVIC_CPAC_CP11_FULL);
+    
+    // Initialize RASLib
+    InitializeMCU();
 
     // Call the application's entry point.
     main();
