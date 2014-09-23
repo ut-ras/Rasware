@@ -56,17 +56,164 @@ void InitializeUART(int baud) {
   // Select the alternate (UART) function for these pins.
   GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
 
-  SysCtlPeripheralEnable(UART0_BASE);
-
   // Initialize the UART for console I/O.
   UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), baud,
 			  (UART_CONFIG_PAR_NONE | UART_CONFIG_STOP_ONE |
 			   UART_CONFIG_WLEN_8));
 }
 
+
+static unsigned char ungotten = 0;
 // Busy-waits for an input character and then returns it
 unsigned char Getc(void) {
+  unsigned char tmp;
+  if( ungotten == 0)
     return UARTCharGet(UART0_BASE);
+  else {
+    tmp = ungotten;
+    ungotten = 0;
+    return tmp;
+  }
+}
+
+void unGetC (unsigned char unGetThis) {
+  ungotten = unGetThis;
+}
+
+unsigned char whiteSpaceP ( const char toCheck ) {
+  switch (toCheck) {
+  case ' ':
+  case '\t':
+  case '\n':
+    return true;
+  default:
+    return false;
+  }
+}
+
+unsigned char matchCharP (const char toCheck, const char * possible, const int len) {
+  int i;
+  for (i = 0; i < len; i++) 
+    if (toCheck == possible[i])
+      return true;
+  return false;
+}
+
+unsigned int GetAToI () {
+  unsigned char tmp;
+  unsigned int toRet = 0;
+  unsigned char negativeP = false;
+  if ((tmp = Getc()) == '-')
+    negativeP = true;
+  else if (tmp != '+')
+    unGetC(tmp);
+  while (matchCharP( (tmp = Getc()), "0123456789", 10))
+    toRet = (toRet * 10) + (tmp - '0');
+  unGetC(tmp);
+  if (negativeP) toRet = -toRet;
+  return toRet;
+}
+
+unsigned int GetXToI () {
+  unsigned char tmp;
+  unsigned int toRet = 0;
+  unsigned char negativeP = false;
+  if ((tmp = Getc()) == '-')
+    negativeP = true;
+  else if (tmp != '+')
+    unGetC(tmp);
+  while (matchCharP( (tmp = Getc()), "0123456789abcdefABCDEF", 22))
+    switch (tmp) {
+    case '0': case '1': case '2':
+    case '3': case '4': case '5':
+    case '6': case '7': case '8':
+    case '9': 
+      toRet = (toRet * 16) + (tmp - '0');
+      break;
+    case 'a': case 'b': case 'c':
+    case 'd': case 'e': case 'f':
+      toRet = (toRet * 16) + 10 + (tmp - 'a');
+      break;
+    case 'A': case 'B': case 'C':
+    case 'D': case 'E': case 'F':
+      toRet = (toRet * 16) + 10 + (tmp - 'A');
+      break;
+    default :
+      return 0;
+    }
+  unGetC(tmp);
+  if (negativeP) toRet = -toRet;
+  return toRet;
+}
+
+unsigned int Scanf(const char * formatString, ... ) {
+  int ret = 0;
+  int i = -1;
+  unsigned char tmp;
+  char * s_ptr;
+  const char * braket_ptr;
+  unsigned int braket_len;
+  unsigned int * i_ptr;
+  va_list ap;
+  va_start(ap, formatString);
+  while (formatString[++i] != '\0') {
+    switch (formatString[i]) {
+    case ' ':
+    case '\t':
+      while (whiteSpaceP( (tmp = Getc()) ));
+      unGetC(tmp);
+      break;
+    case '%':
+    fmtTop:
+      switch (formatString[++i]) {
+      case '%' :
+	if (Getc() == '%') break;
+	else goto exit;
+      case 'c' :
+	*(va_arg(ap, char *)) = Getc();
+	break;
+      case 's' :
+	s_ptr = va_arg(ap, char*);
+	while ( ! whiteSpaceP( (*(s_ptr++) = Getc()) ));
+	unGetC(s_ptr[-1]);
+	s_ptr[-1] = '\0';
+	break;
+      case '[':
+	braket_ptr = &formatString[i+1];
+	s_ptr = va_arg(ap, char*);
+	while (formatString[++i] != ']' && formatString[i] != '\0');
+	braket_len = &formatString[i] - braket_ptr;
+	if  (*braket_ptr == '^') {
+	  braket_len--;
+	  braket_ptr++;
+	  while (!matchCharP( (*(s_ptr++) = Getc()), braket_ptr, braket_len));
+	}
+	else 
+	  while (matchCharP( (*(s_ptr++) = Getc()), braket_ptr, braket_len));
+	unGetC(s_ptr[-1]);
+	s_ptr[-1] = '\0';
+	break;
+      case 'i':
+	i_ptr = va_arg(ap, unsigned int *);
+	*i_ptr = GetAToI();
+	break;
+      case 'x':
+	i_ptr = va_arg(ap, unsigned int *);
+	*i_ptr = GetXToI();
+	break;
+      default :
+	goto exit;
+      }
+      ret++;
+      break;
+    default:
+      tmp = Getc();
+      if (tmp != formatString[i] ) goto exit;
+    }
+  }
+ exit: 
+  va_end(ap);
+  return ret;
 }
 
 // Busy-waits for input characters over UART and places them into the provided buffer

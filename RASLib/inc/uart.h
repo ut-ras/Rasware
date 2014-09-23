@@ -57,6 +57,13 @@ unsigned char Getc(void);
 int Gets(char *buffer, int count);
 
 /**
+ * TODO: write
+ * @param pcBuf
+ * @return
+ */
+  unsigned int Scanf(const char * formatString, ... );
+
+/**
  * Outputs a single character over UART
  * @param ch Character to output
  */
