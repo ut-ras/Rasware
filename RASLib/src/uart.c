@@ -40,8 +40,9 @@
 #include <StellarisWare/driverlib/uart.h>
 
 
-static const char * const g_pcHex_L = "0123456789ABCDEF";
-static const char * const g_pcHex_U = "0123456789abcdef";
+// Character lookup tables for numbers
+static const char *upper = "0123456789ABCDEF";
+static const char *lower = "0123456789abcdef";
 
 // Sets up a simple console through UART0
 void InitializeUART(int baud) {
@@ -269,429 +270,291 @@ int KeyWasPressed(void) {
     return (UARTCharsAvail(UART0_BASE) > 0);
 }
 
-// Function to print the value of a unsigned long using the formatting gathered by printf
-static void convert(unsigned long ulValue, unsigned long ulCount, const char *pcHex, char cNeg, char cFill, unsigned long ulBase)
-{
-  char pcBuf[16];
-  unsigned long ulIdx, ulPos = 0;
-  
-  for(ulIdx = 1;
-      (((ulIdx * ulBase) <= ulValue) &&
-      (((ulIdx * ulBase) / ulBase) == ulIdx));
-      ulIdx *= ulBase, ulCount--)
-  {
-  }
-  
-  // If the value is negative, reduce the count of padding
-  // characters needed.
-  if(cNeg)
-  {
-    ulCount--;
-  }
 
-  // If the value is negative and the value is padded with
-  // zeros, then place the minus sign before the padding.
-  if(cNeg && (cFill == '0'))
-  {
-    // Place the minus sign in the output buffer.
-    pcBuf[ulPos++] = '-';
+// Unfortunately varargs wreaks havoc on how floating point is passed. 
+// We get a 64bit double and have to decode it ourselves.
+#define va_d2f(args) DoubleFloat(&args.__ap)
 
-    // The minus sign has been placed, so turn off the
-    // negative flag.
-    cNeg = 0;
-  }
+static float DoubleFloat(void **args) {
+    unsigned int a, b;
+    int exp;
 
-  // Provide additional padding at the beginning of the
-  // string conversion if needed.
-  if((ulCount > 1) && (ulCount < 16))
-  {
-    for(ulCount--; ulCount; ulCount--)
-    {
-      pcBuf[ulPos++] = cFill;
-    }
-  }
-
-  // If the value is negative, then place the minus sign
-  // before the number.
-  if(cNeg)
-  {
-    // Place the minus sign in the output buffer.
-    pcBuf[ulPos++] = '-';
-  }
-
-  // Convert the value into a string.
-  for(; ulIdx; ulIdx /= ulBase)
-  {
-    pcBuf[ulPos++] = pcHex[(ulValue / ulIdx) % ulBase];
-  }
-
-  // Write the string.
-  Puts(pcBuf, ulPos);
-}
-
-// printf taken from StellarisWare with additional flag support
-void Printf(const char *pcString, ...)
-{
-  unsigned long ulValue, ulIdx, ulCount, ulDecCount;
-  char *pcStr, cNeg, cDec, cFill;
-  const char *pcHex;
-  va_list vaArgP;
-
-  // Check the arguments.
-  ASSERT(pcString != 0);
-
-  // Start the varargs processing.
-  va_start(vaArgP, pcString);
-
-  // Loop while there are more characters in the string.
-  while(*pcString)
-  {
-    // Find the first non-% character, or the end of the string.
-    for(ulIdx = 0; (pcString[ulIdx] != '%') && (pcString[ulIdx] != '\0');
-        ulIdx++)
-    {
-    }
-
-    // Write this portion of the string.
-    Puts(pcString, ulIdx);
-
-    // Skip the portion of the string that was written.
-    pcString += ulIdx;
-
-    // See if the next character is a %.
-    if(*pcString == '%')
-    {
-      // Skip the %.
-      pcString++;
-
-      // Set the digit count to zero, and the fill character to space
-      // (i.e. to the defaults).
-      ulCount = 0;
-      ulDecCount = 6;
-      cDec = 0;
-      cFill = ' ';
+    union {
+        float f;
+        unsigned int i;
+    } num;
     
-      // Presets the template string to lowercase
-      pcHex = g_pcHex_L;
-          
-again:
-
-      // Determine how to handle the next character.
-      switch(*pcString++)
-      {
-        // Handle the digit characters.
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
-        {
-          // If this is a zero, and it is the first digit, then the
-          // fill character is a zero instead of a space.
-          if((pcString[-1] == '0') && (ulCount == 0))
-          {
-            cFill = '0';
-          }
-
-          // See if we're after the decimal point
-          if(cDec)
-          {
-            // Update the digit count
-            // Can only print one decimal digit worth of precision
-            ulDecCount = pcString[-1] - '0';
-          }
-          else
-          {
-            // Update the digit count.
-            ulCount *= 10;
-            ulCount += pcString[-1] - '0';
-          }
-
-          // Get the next character.
-          goto again;
-        }
-                
-        // Handle the . character
-        case '.' :
-        {
-          // Now we're looking at precision value
-          cDec = 1;
-          
-          // Get the next character.
-          goto again;
-        }
-
-        // Handle the %c command.
-        case 'c':
-        {
-          // Get the value from the varargs.
-          ulValue = va_arg(vaArgP, unsigned long);
-
-          // Print out the character.
-          Puts((char *)&ulValue, 1);
-
-          // This command has been handled.
-          break;
-        }
-
-        // Handle the %d and %i commands.
-        case 'd':
-        case 'i':
-        {
-          // Get the value from the varargs.
-          ulValue = va_arg(vaArgP, unsigned long);
-        
-          // If the value is negative, make it positive and indicate
-          // that a minus sign is needed.
-          if((long)ulValue < 0)
-          {
-            // Make the value positive.
-            ulValue = -(long)ulValue;
-
-            // Indicate that the value is negative.
-            cNeg = 1;
-          }
-          else
-          {
-            // Indicate that the value is positive so that a minus
-            // sign isn't inserted.
-            cNeg = 0;
-          }
-
-          // Convert the value to ASCII.
-          convert(ulValue, ulCount, pcHex, cNeg, cFill, 10);
-          break;
-        }
-                
-        // Handle the %o command.
-        case 'o':
-        {
-          // Get the value from the varargs.
-          ulValue = va_arg(vaArgP, unsigned long);
-
-          // If the value is negative, make it positive and indicate
-          // that a minus sign is needed.
-          if((long)ulValue < 0)
-          {
-              // Make the value positive.
-              ulValue = -(long)ulValue;
-
-              // Indicate that the value is negative.
-              cNeg = 1;
-          }
-          else
-          {
-              // Indicate that the value is positive so that a minus
-              // sign isn't inserted.
-              cNeg = 0;
-          }
-
-          // Convert the value to ASCII.
-          convert(ulValue, ulCount, pcHex, cNeg, cFill, 8);
-          break;
-      }
-      
-      // Handle the %s command.
-      case 's':
-      {
-          // Get the string pointer from the varargs.
-          pcStr = va_arg(vaArgP, char *);
-
-          // Determine the length of the string.
-          for(ulIdx = 0; pcStr[ulIdx] != '\0'; ulIdx++)
-          {
-          }
-
-          // Write the string.
-          Puts(pcStr, ulIdx);
-
-          // Write any required padding spaces
-          if(ulCount > ulIdx)
-          {
-            ulCount -= ulIdx;
-            while(ulCount--)
-            {
-              Puts(" ", 1);
-            }
-          }
-          // This command has been handled.
-          break;
-        }
-
-        // Handle the %u command.
-        case 'u':
-        {
-          // Get the value from the varargs.
-          ulValue = va_arg(vaArgP, unsigned long);
-
-          // Indicate that the value is positive so that a minus sign
-          // isn't inserted.
-          cNeg = 0;
-
-          // Convert the value to ASCII.
-          convert(ulValue, ulCount, pcHex, cNeg, cFill, 10);
-          break;
-        }
-
-        // Handle the %x and %X commands.  We alias %p to %x.
-        case 'X':
-          // Make the template string uppercase
-          pcHex = g_pcHex_U;
-        case 'x':
-        case 'p':
-        {
-          // Get the value from the varargs.
-          ulValue = va_arg(vaArgP, unsigned long);
-
-          // Indicate that the value is positive so that a minus sign
-          // isn't inserted.
-          cNeg = 0;
-        
-          // Convert the value to ASCII.
-          convert(ulValue, ulCount, pcHex, cNeg, cFill, 16);
-          break;
-        }
-
-        // Handle the %f and %F commands.
-        case 'F': // Not different
-        case 'f':
-        {
-          // Declare and read a double
-          double dValue;
-          dValue = va_arg(vaArgP, double);
-        
-          // Check if the value is negative
-          if(dValue < 0)
-          {
-            cNeg = 1;
-            dValue = 0 - dValue;
-          }
-          else
-          {
-              cNeg = 0;
-          }
-                              
-          // Check for out of range constants
-          if(isnan(dValue))
-          {
-            Puts("NaN", 3);
-          }
-          else if(dValue == INFINITY)
-          {
-            if(cNeg)
-            {
-              Puts("-INF", 4);
-            }
-            else
-            {
-              Puts("INF", 3);
-            }
-          }
-          else
-          {
-            // Convert the integer value to ASCII.
-            convert((unsigned long)dValue, ulCount, pcHex, cNeg, cFill, 10);
-            // Remove the original integer value and multiply to move decimal places forward
-            dValue = (dValue - (float)((unsigned long)dValue));
-            // This loop clobbers ulCount, but it gets reset before we need it again
-            for(ulCount = 0; ulCount < ulDecCount; ulCount++)
-            {
-              dValue *= 10;
-            }
-            Puts(".", 1);
-            convert((unsigned long)dValue, ulDecCount, pcHex, 0, '0', 10);
-          }
-          break;
-        }
-                
-        // %E and %e for scientific notation
-        case 'E':
-          // Make the template string uppercase
-          pcHex = g_pcHex_U;
-        case 'e':
-        {
-          // Declare and read a double
-          double dValue, dExp, dTmp;
-          dValue = va_arg(vaArgP, double);
-        
-          // Check if the value is negative
-          if(dValue < 0)
-          {
-            Puts("-", 1);
-            dValue = 0 - dValue;
-          }
-                              
-          // Check for out of range constants
-          if(isnan(dValue))
-          {
-            Puts("NaN", 3);
-          }
-          else if(dValue == INFINITY)
-          {
-            Puts("INF", 3);
-          }
-          else 
-          {
-            // Print the most significant digit
-            dExp = log10(dValue);
-            if(dExp < 0)
-            {
-              // Handler for negative exponents
-              dTmp = dValue / pow(10, (long) dExp - 1);
-              cNeg = 1;
-              dExp = 0 - dExp;
-            }
-            else
-            {
-              dTmp = dValue / pow(10, (long) dExp);
-              cNeg = 0;
-            }
-            Puts(&pcHex[(int)dTmp], 1);
-            Puts(".", 1);
-            
-            // Print ulDecCount following digits
-            while(ulDecCount --> 0)
-            {
-                dTmp -= (long) dTmp;
-                dTmp *= 10;
-                Puts(&pcHex[(int)dTmp], 1);
-            }
-            
-            // Write the exponent
-            Puts(&pcHex[14], 1);
-            
-            convert((unsigned long)dExp, 0, pcHex, cNeg, cFill, 10);
-          }
-          break;
-        }
-                
-        // Handle the %% command.
-        case '%':
-        {
-          // Simply write a single %.
-          Puts(pcString - 1, 1);
-
-          // This command has been handled.
-          break;
-        }
-
-        // Handle all other commands.
-        default:
-        {
-          // Indicate an error.
-          Puts("ERROR", 5);
-
-          // This command has been handled.
-          break;
-        }
-      }
+    if (!(((unsigned int)(*args)) & 0x4)) {
+        a = (*(unsigned int **)args)[2];
+        b = (*(unsigned int **)args)[1];
+        (*(unsigned int **)args) += 3;
+    } else {
+        a = (*(unsigned int **)args)[1];
+        b = (*(unsigned int **)args)[0];
+        (*(unsigned int **)args) += 2;
     }
-  }
+    
+    exp = (0x7ff & (a >> 20)) - 1023 + 127;
+    if (exp > 0xff) exp = 0xff; // check range
+    if (exp < 0x00) exp = 0x00;
+    
+    num.i =  0x80000000 & a; // sign bit
+    num.i |= 0x7f800000 & (exp << 23); // exponent
+    num.i |= 0x007ffff8 & ((0xfffff & a) << 3); // high mantissa
+    num.i |= 0x00000003 & (b >> 29); // low mantissa
+    
+    return num.f;
 }
+
+
+/** Helper functions for printf **/
+static int GetInt(const char **buffer) {
+    int res = 0;
+    
+    while (**buffer >= '0' && **buffer <= '9') {
+        res *= 10;
+        res += **buffer - '0';
+        (*buffer)++;
+    }
+    
+    return res;
+}
+
+static void Pad(char c, int n) {
+    int i;
+    
+    for (i = 0; i < n; i++) {
+        Putc(c);
+    }
+}
+
+/** String printing **/
+static int SizeString(const char *buffer, int count) {
+    int i;
+    
+    for (i = 0; i < count; i++) {
+        if (buffer[i] == '\0')
+            return i;
+    }
+    
+    return count;
+}
+
+static void PutString(const char *buffer, int left, int width, int prec) {
+    int len;
+    
+    if (prec < 0) prec = 0x7fffffff;
+    
+    len = SizeString(buffer, prec);
+    
+    if (len > width) {
+        Puts(buffer, prec);
+    } else if (left) {
+        Puts(buffer, prec);
+        Pad(' ', width - len);
+    } else {
+        Pad(' ', width - len);
+        Puts(buffer, prec);
+    }
+}
+
+/** Integer printing **/
+static int SizeNum(int base, unsigned int n) {
+    int i = 0;
+    
+    while (n) {
+        i++;
+        n /= base;
+    }
+    
+    return i;
+}
+
+static void PutNum(const char *table, int base, int count, unsigned int n) {
+    if (!n && count <= 0)
+        return;
+    
+    PutNum(table, base, count-1, n/base);
+    Putc(table[n%base]);
+}
+
+static void PutBase(unsigned int n, const char *table, int base, int left, int sign, int width) {
+    if (sign == 1) {
+        Putc('+');
+        width--;
+    } else if (sign == 2) {
+        Putc(' ');
+        width--;
+    }
+    
+    if (width < 1) 
+        width = 1;
+    
+    if (left) {
+        PutNum(table, base, 1, n);
+        Pad(' ', width - SizeNum(base, n) - (n == 0));
+    } else {
+        PutNum(table, base, width, n);
+    }
+}
+
+static void PutSigned(signed int d, int left, int sign, int width) {
+    if (d < 0) {
+        Putc('-');
+        PutBase(-d, lower, 10, left, 0, width-1);
+    } else {
+        PutBase(d, lower, 10, left, sign, width);
+    }
+}
+
+/** Floating point printing **/
+static void PutNormalFloat(float f, int left, int sign, int width, int prec) {
+    if (prec < 0)
+        prec = 6;
+    
+    if (f < 0) {
+        Putc('-');
+        width--;
+        f = -f;
+    }
+    
+    if (isnan(f)) {
+        PutString("nan", left, width, 3);
+    } else if (isinf(f)) {
+        PutString("inf", left, width, 3);
+    } else {
+        int height;
+        if (left) {
+            height = 0;
+            width -= SizeNum(10, (int)f) + 1;
+        } else {
+            height = width - (prec+1);
+            width = 0;
+        }
+        
+        PutBase((int)f, lower, 10, left, 0, height);    
+        Putc('.');
+        
+        f = f - floorf(f);
+        PutBase((int)(f*powf(10, prec)), lower, 10, 0, 0, prec);
+        Pad(' ', width-prec);
+    }
+}
+
+static void PutScienceFloat(float f, const char *table, int left, int sign, int width, int prec) {
+    if (prec < 0)
+        prec = 6;
+    
+    if (f < 0) {
+        Putc('-');
+        width--;
+        f = -f;
+    }
+    
+    if (f == 0) {
+        PutString("0", left, width, 1);
+    } else if (isnan(f)) {
+        PutString("nan", left, width, 3);
+    } else if (isinf(f)) {
+        PutString("inf", left, width, 3);
+    } else {
+        float exp = floorf(log10f(f));
+        float base = f / powf(10, exp);
+        
+        int height;
+        if (left) {
+            height = 0;
+            width -= SizeNum(10, (int)f) + 1;
+        } else {
+            height = width - (prec + SizeNum(10, (int)exp) + 2);
+            width = 0;
+        }
+        
+        PutBase((int)f, lower, 10, left, 0, height);
+        Putc('.');
+        
+        f = f - floorf(f);
+        PutBase((int)(f*powf(10, prec)), lower, 10, 0, 0, prec);
+        
+        Putc(table[0xe]);
+        PutBase((int)exp, lower, 10, 1, 1, width);
+    }
+}
+
+        
+// And finally printf itself
+void Printf(const char *buffer, ...) {
+    va_list args;
+    int left, sign, width, prec;
+    
+    // Start the varargs processing.
+    va_start(args, buffer);
+    
+    while (*buffer) {
+        // Check for escape characters
+next:   if (*buffer == '%') {
+            buffer++;
+    
+            // Flags
+            left = 0; 
+            sign = 0;
+            width = -1;
+            prec = -1;
+            
+            while (true) {
+                switch (*buffer++) {
+                    // Flags
+                    case '0': break;
+                    case '-': left = 1; break;
+                    case '+': sign = 1; break;
+                    case ' ': sign = 2; break;
+                    
+                    case '1': 
+                    case '2': 
+                    case '3':
+                    case '4':
+                    case '5':
+                    case '6':
+                    case '7':
+                    case '8':
+                    case '9': buffer--; width = GetInt(&buffer); break;
+                    
+                    case '.': prec = GetInt(&buffer); break;
+                    case '*': prec = va_arg(args, int); break;
+                    
+                    // Numbers
+                    case 'i':
+                    case 'd': PutSigned(va_arg(args, signed int), left, sign, width); goto next;
+                    case 'u': PutBase(va_arg(args, unsigned int), lower, 10, left, sign, width); goto next;
+                    case 'o': PutBase(va_arg(args, unsigned int), lower, 8,  left, sign, width); goto next;
+                    case 'p':
+                    case 'x': PutBase(va_arg(args, unsigned int), lower, 16, left, sign, width); goto next;
+                    case 'X': PutBase(va_arg(args, unsigned int), upper, 16, left, sign, width); goto next;
+                    
+                    case 'f': 
+                    case 'F': PutNormalFloat(va_d2f(args), left, sign, width, prec); goto next;
+                    case 'e':
+                    case 'g': PutScienceFloat(va_d2f(args), lower, left, sign, width, prec); goto next;
+                    case 'E':
+                    case 'G': PutScienceFloat(va_d2f(args), upper, left, sign, width, prec); goto next;
+                    
+                    // Other
+                    case 's': PutString(va_arg(args, char *), left, width, prec); goto next;
+                    case 'c': Putc((char)va_arg(args, int)); goto next;
+                    default:  Putc('%'); goto next;
+                }
+            }
+        } else {
+            // Print out the next character
+            if (*buffer == '\n')
+                Putc('\r');
+            
+            Putc(*buffer++);
+        }
+    }
+    
+    va_end(args);
+}
+
 
 

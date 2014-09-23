@@ -18,6 +18,7 @@ int main(void) {
     
     while (1) {
         // Runtime code can go here
+        Printf("Hello World!\n");
         
     }
 }
