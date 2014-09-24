@@ -115,6 +115,33 @@ unsigned int GetAToI () {
   return toRet;
 }
 
+float GetAToF () {
+  unsigned char tmp;
+  unsigned int num = 0;
+  unsigned int size = 1;
+  while (matchCharP( (tmp = Getc()), "0123456789", 10)){
+    num = (num * 10) + (tmp - '0');
+    size *= 10;
+  }
+  unGetC(tmp);
+  return ((float) num) / size;
+}
+
+unsigned int GetOToI () {
+  unsigned char tmp;
+  unsigned int toRet = 0;
+  unsigned char negativeP = false;
+  if ((tmp = Getc()) == '-')
+    negativeP = true;
+  else if (tmp != '+')
+    unGetC(tmp);
+  while (matchCharP( (tmp = Getc()), "01234567", 8))
+    toRet = (toRet * 8) + (tmp - '0');
+  unGetC(tmp);
+  if (negativeP) toRet = -toRet;
+  return toRet;
+}
+
 unsigned int GetXToI () {
   unsigned char tmp;
   unsigned int toRet = 0;
@@ -155,6 +182,8 @@ unsigned int Scanf(const char * formatString, ... ) {
   const char * braket_ptr;
   unsigned int braket_len;
   unsigned int * i_ptr;
+  float * f_ptr;
+  float f_tmp;
   va_list ap;
   va_start(ap, formatString);
   while (formatString[++i] != '\0') {
@@ -195,12 +224,49 @@ unsigned int Scanf(const char * formatString, ... ) {
 	s_ptr[-1] = '\0';
 	break;
       case 'i':
+	tmp = Getc();
+	if (tmp == '0') {
+	  tmp = Getc();
+	  if (tmp == 'x')
+	    goto hex;
+	  else {
+	    unGetC(tmp);
+	    goto octal; } }
+	else
+	  goto decimal;
+	break;
+      case 'o':
+      octal:
+	i_ptr = va_arg(ap, unsigned int *);
+	*i_ptr = GetOToI();
+	break;
+      case 'd':
+      case 'u':
+      decimal:
 	i_ptr = va_arg(ap, unsigned int *);
 	*i_ptr = GetAToI();
 	break;
       case 'x':
+      hex:
 	i_ptr = va_arg(ap, unsigned int *);
 	*i_ptr = GetXToI();
+	break;
+      case 'f':
+      case 'e':
+      case 'g':
+      case 'a':
+	f_ptr = va_arg(ap, float *);
+	*f_ptr = (float) GetAToI();
+	tmp = Getc();
+	if ( tmp == '.' ) {
+	  *f_ptr += GetAToF();
+	  tmp = Getc();
+	}
+	if ( tmp == 'E' || tmp == 'e' ) {
+	  *f_ptr *= (float) pow(10, GetAToI());
+	  tmp = Getc();
+	}
+	unGetC(tmp);
 	break;
       default :
 	goto exit;
@@ -276,6 +342,7 @@ int KeyWasPressed(void) {
 #define va_d2f(args) DoubleFloat(&args.__ap)
 
 static float DoubleFloat(void **args) {
+
     unsigned int a, b;
     int exp;
 
@@ -283,7 +350,7 @@ static float DoubleFloat(void **args) {
         float f;
         unsigned int i;
     } num;
-    
+#ifdef __CC_ARM
     if (!(((unsigned int)(*args)) & 0x4)) {
         a = (*(unsigned int **)args)[2];
         b = (*(unsigned int **)args)[1];
@@ -293,6 +360,18 @@ static float DoubleFloat(void **args) {
         b = (*(unsigned int **)args)[0];
         (*(unsigned int **)args) += 2;
     }
+#else 
+    if (!(((unsigned int)(*args)) & 0x4)) {
+        b = (*(unsigned int **)args)[2];
+        a = (*(unsigned int **)args)[1];
+        (*(unsigned int **)args) += 3;
+    } else {
+        b = (*(unsigned int **)args)[1];
+        a = (*(unsigned int **)args)[0];
+        (*(unsigned int **)args) += 2;
+    }
+#endif
+
     
     exp = (0x7ff & (a >> 20)) - 1023 + 127;
     if (exp > 0xff) exp = 0xff; // check range
@@ -302,6 +381,8 @@ static float DoubleFloat(void **args) {
     num.i |= 0x7f800000 & (exp << 23); // exponent
     num.i |= 0x007ffff8 & ((0xfffff & a) << 3); // high mantissa
     num.i |= 0x00000003 & (b >> 29); // low mantissa
+
+    __asm("bkpt\n");
     
     return num.f;
 }
@@ -555,6 +636,3 @@ next:   if (*buffer == '%') {
     
     va_end(args);
 }
-
-
-
