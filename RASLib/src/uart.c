@@ -185,6 +185,7 @@ unsigned int Scanf(const char * formatString, ... ) {
   int ret = 0;
   int i = -1;
   unsigned char tmp;
+  int length;
   char * s_ptr;
   const char * braket_ptr;
   unsigned int braket_len;
@@ -201,6 +202,7 @@ unsigned int Scanf(const char * formatString, ... ) {
       unGetC(tmp);
       break;
     case '%':
+      length = 0;
     fmtTop:
       switch (formatString[++i]) {
       case '%' :
@@ -210,12 +212,14 @@ unsigned int Scanf(const char * formatString, ... ) {
 	*(va_arg(ap, char *)) = Getc();
 	break;
       case 's' :
+	if (length == 0) length =  (1<<30);
 	s_ptr = va_arg(ap, char*);
-	while ( ! whiteSpaceP( (*(s_ptr++) = Getc()) ));
+	while ( ! whiteSpaceP( (*(s_ptr++) = Getc()) ) && length-- > 0);
 	unGetC(s_ptr[-1]);
 	s_ptr[-1] = '\0';
 	break;
       case '[':
+	if (length == 0) length =  (1<<30);
 	braket_ptr = &formatString[i+1];
 	s_ptr = va_arg(ap, char*);
 	while (formatString[++i] != ']' && formatString[i] != '\0');
@@ -223,10 +227,10 @@ unsigned int Scanf(const char * formatString, ... ) {
 	if  (*braket_ptr == '^') {
 	  braket_len--;
 	  braket_ptr++;
-	  while (!matchCharP( (*(s_ptr++) = Getc()), braket_ptr, braket_len));
+	  while (!matchCharP( (*(s_ptr++) = Getc()), braket_ptr, braket_len) && length-- > 0);
 	}
 	else 
-	  while (matchCharP( (*(s_ptr++) = Getc()), braket_ptr, braket_len));
+	  while (matchCharP( (*(s_ptr++) = Getc()), braket_ptr, braket_len) && length-- > 0);
 	unGetC(s_ptr[-1]);
 	s_ptr[-1] = '\0';
 	break;
@@ -275,6 +279,12 @@ unsigned int Scanf(const char * formatString, ... ) {
 	}
 	unGetC(tmp);
 	break;
+      case '0': case '1': case '2':
+      case '5': case '4': case '3':
+      case '6': case '7': case '8':
+      case '9':
+	length = (length * 10) + (formatString[i] - '0');
+	goto fmtTop;
       default :
 	goto exit;
       }
@@ -389,7 +399,6 @@ static float DoubleFloat(void **args) {
     num.i |= 0x007ffff8 & ((0xfffff & a) << 3); // high mantissa
     num.i |= 0x00000003 & (b >> 29); // low mantissa
 
-    __asm("bkpt\n");
     
     return num.f;
 }
