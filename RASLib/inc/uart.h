@@ -58,10 +58,13 @@ int Gets(char *buffer, int count);
 
 /**
  * TODO: write
- * @param pcBuf
- * @return
  */
   unsigned int Scanf(const char * formatString, ... );
+
+/**
+ * TODO: write
+ */
+  void SetEcho(unsigned char on);
 
 /**
  * Outputs a single character over UART

@@ -65,16 +65,23 @@ void InitializeUART(int baud) {
 
 
 static unsigned char ungotten = 0;
+static unsigned char echo = true;
 // Busy-waits for an input character and then returns it
 unsigned char Getc(void) {
   unsigned char tmp;
-  if( ungotten == 0)
-    return UARTCharGet(UART0_BASE);
-  else {
+  if( ungotten == 0) {
+    tmp =  UARTCharGet(UART0_BASE);
+    if (echo == true) Putc(tmp);
+    return tmp;
+  } else {
     tmp = ungotten;
     ungotten = 0;
     return tmp;
   }
+}
+
+void SetEcho (unsigned char on) {
+  echo = on;
 }
 
 void unGetC (unsigned char unGetThis) {
