@@ -12,7 +12,7 @@ void gpioDemo(void) {
         
         // get the values of each pin in port A and display them
         Printf("port A: ");
-        for (i = PIN_A0; i <= PIN_A0; i++) {
+        for (i = PIN_A2; i <= PIN_A7; i++) {
             Printf(GetPin(i) ? "1" : "0");
         }
         
