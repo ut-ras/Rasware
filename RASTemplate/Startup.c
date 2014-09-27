@@ -32,16 +32,20 @@
 static unsigned long pulStack[STACK];
 
 
+// Initialization entry point for RASLib
+extern void InitializeMCU(void);
+
 // The entry point for the application
 extern int main(void);
 
 // Forward declaration of the default fault handlers
 void ResetHandler(void);
-static void NmiHandler(void);
-static void FaultHandler(void);
-static void IntDefaultHandler(void);
+void NmiHandler(void);
+void FaultHandler(void);
+void IntDefaultHandler(void);
 
 // Declaration of interrupt service routines
+extern void PanicHandler(void);
 extern void ADC0SS0Handler(void);
 extern void ADC0SS1Handler(void);
 extern void ADC1SS0Handler(void);
@@ -300,6 +304,9 @@ void ResetHandler(void) {
     HWREG(NVIC_CPAC) = ((HWREG(NVIC_CPAC) &
                          ~(NVIC_CPAC_CP10_M | NVIC_CPAC_CP11_M)) |
                         NVIC_CPAC_CP10_FULL | NVIC_CPAC_CP11_FULL);
+    
+    // Initialize RASLib
+    InitializeMCU();
 
     // Call the application's entry point.
     main();
@@ -310,14 +317,16 @@ void ResetHandler(void) {
 
 // This is the code that gets called when the processor receives a NMI.  This
 // must pass through to avoid a race condition during startup
-static void NmiHandler(void) {
+void NmiHandler(void) {
     // Pass through
 }
 
 // This is the code that gets called when the processor receives a fault
 // interrupt.  This simply enters an infinite loop, preserving the system state
 // for examination by a debugger.
-static void FaultHandler(void) {
+void FaultHandler(void) {
+    // Panic
+    PanicHandler();
     // Enter an infinite loop
     while (1) {}
 }
@@ -325,7 +334,9 @@ static void FaultHandler(void) {
 // This is the code that gets called when the processor receives an unexpected
 // interrupt.  This simply enters an infinite loop, preserving the system state
 // for examination by a debugger.
-static void IntDefaultHandler(void) {
+void IntDefaultHandler(void) {
+    // Panic
+    PanicHandler();
     // Go into an infinite loop
     while (1) {}
 }

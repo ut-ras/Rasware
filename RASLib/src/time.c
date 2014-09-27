@@ -126,13 +126,18 @@ void InitializeSystemTime(void) {
 
 // Outputs system time in microseconds
 tTime GetTimeUS(void) {
-    return ((SYSTICK_PERIOD - SysTickValueGet()) / ticksInUS)
-           + systemTiming;
+    tTime timing, systick;
+    
+    do {
+        timing = systemTiming;
+        systick = (SYSTICK_PERIOD - SysTickValueGet()) / ticksInUS;
+    } while (timing != systemTiming);
+    
+    return timing + systick;
 }
 
 float GetTime(void) {
-    return (((SYSTICK_PERIOD - SysTickValueGet()) / (float)ticksInUS)
-            + systemTiming) / US(1);
+    return GetTimeUS() / (float)US(1);
 }
 
 

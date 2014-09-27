@@ -14,8 +14,7 @@ void blink(void) {
 
 int main(void) {  
     char ch;
-    
-    InitializeMCU();
+
     CallEvery(blink, 0, 0.25f);
 
     while (1) {
