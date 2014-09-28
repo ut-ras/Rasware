@@ -28,7 +28,7 @@ int main(void) {
         
         // Read input from user
         ch = Getc();
-        Printf("%c\n", ch);
+        Printf("\n");
 
         switch(ch) {
             case '0':
