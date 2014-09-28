@@ -317,14 +317,14 @@ void ResetHandler(void) {
 
 // This is the code that gets called when the processor receives a NMI.  This
 // must pass through to avoid a race condition during startup
-static void NmiHandler(void) {
+void NmiHandler(void) {
     // Pass through
 }
 
 // This is the code that gets called when the processor receives a fault
 // interrupt.  This simply enters an infinite loop, preserving the system state
 // for examination by a debugger.
-static void FaultHandler(void) {
+void FaultHandler(void) {
     // Panic
     PanicHandler();
     // Enter an infinite loop
@@ -334,7 +334,7 @@ static void FaultHandler(void) {
 // This is the code that gets called when the processor receives an unexpected
 // interrupt.  This simply enters an infinite loop, preserving the system state
 // for examination by a debugger.
-static void IntDefaultHandler(void) {
+void IntDefaultHandler(void) {
     // Panic
     PanicHandler();
     // Go into an infinite loop

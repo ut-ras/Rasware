@@ -18,8 +18,8 @@ void initMotors(void) {
     
     initialized = true;
 
-    leftMotor = InitializeMotor(PIN_B7, PIN_B6, true, false);
-    rightMotor = InitializeMotor(PIN_C5, PIN_C4, true, false);
+    leftMotor = InitializeTLEMotor(PIN_B7, PIN_B6, true, false);
+    rightMotor = InitializeTLEMotor(PIN_C5, PIN_C4, true, false);
     
     // other pins can also be used for motors on the sacapuntas boosterpack:
     //leftMotor = InitializeMotor(PIN_F1, PIN_F0, true, false);
