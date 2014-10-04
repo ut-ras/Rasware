@@ -54,7 +54,7 @@ void servoDemo(void) {
         }
 
         SetServo(servo, position);
-        Printf("%c  set servo to %1.2f\r",position);
+        Printf("set servo to %1.2f\r",position);
         
         ch = Getc();
     }         

@@ -97,7 +97,7 @@ void motorDemo(void) {
 
         SetMotor(leftMotor, left);
         SetMotor(rightMotor, right);
-        Printf("%c  set motor to %1.2f %1.2f  \r", ch, left, right);
+        Printf(" set motor to %1.2f %1.2f  \r", left, right);
         
         ch = Getc();
     }                 
