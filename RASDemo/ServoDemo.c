@@ -22,8 +22,12 @@ void servoDemo(void) {
     char newline = 13;
     char ch;
 
-    Printf("Press:\n  a-'up' 0.10\n  w-'up' 0.01\n  s-'down' 0.01\n");
-    Printf("  d-'down' 0.10\n  enter-quit\n");
+    Printf("Press:\n"
+	   "  a-'up' 0.10\n"
+	   "  w-'up' 0.01\n"
+	   "  s-'down' 0.01\n"
+           "  d-'down' 0.10\n"
+	   "  enter-quit\n");
     
     // wait for the user to enter a character
     ch = Getc();

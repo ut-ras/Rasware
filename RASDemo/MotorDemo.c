@@ -35,9 +35,17 @@ void motorDemo(void) {
     char newline = 13;
     char ch;    
 
-    Printf("Press:\n  w-forward\n  s-backward\n  a-left\n  d-right\n");  
-    Printf("  i-slowly forward\n  k-backward\n  j-left\n  l-right\n");  
-    Printf("  space-stop\n  enter-quit\n");
+    Printf("Press:\n"
+	   "  w-forward\n"
+	   "  s-backward\n"
+	   "  a-left\n"
+	   "  d-right\n"    
+           "  i-slowly forward\n"
+	   "  k-slowly backward\n"
+	   "  j-slowly left\n"
+	   "  l-slowly right\n"    
+           "  space-stop\n"
+	   "  enter-quit\n");
   
     // wait for the user to enter a character
     ch = Getc();

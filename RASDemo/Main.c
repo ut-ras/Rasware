@@ -18,13 +18,17 @@ int main(void) {
     CallEvery(blink, 0, 0.25f);
 
     while (1) {
-        Printf("\nRAS Demo for Robotathon 2013\n");
-        Printf("  0=UART Demo\n  1=Motor Demo\n");
-        Printf("  2=Servo Demo\n  3=I2C Line Sensor Demo\n");
-        Printf("  4=IR Sensor Demo\n  5=Encoders Demo\n");
-        Printf("  6=GPIO Demo\n  7=GPIO Line Sensor Demo\n");
-        Printf("  8=Sonar Demo\n");
-        Printf(">> ");
+        Printf("\nRAS Demo for Robotathon 2013\n"
+               "  0=UART Demo\n"
+	       "  1=Motor Demo\n"
+               "  2=Servo Demo\n"
+	       "  3=I2C Line Sensor Demo\n"
+               "  4=IR Sensor Demo\n"
+	       "  5=Encoders Demo\n"
+               "  6=GPIO Demo\n"
+	       "  7=GPIO Line Sensor Demo\n"
+               "  8=Sonar Demo\n"
+               ">> ");
         
         // Read input from user
         ch = Getc();
