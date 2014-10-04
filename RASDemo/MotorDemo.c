@@ -48,7 +48,7 @@ void motorDemo(void) {
 	   "  enter-quit\n");
   
     // wait for the user to enter a character
-    ch = Getc();
+    ch = ' ';
     
     while (ch != newline) {
         switch (ch) {
