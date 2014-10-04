@@ -367,7 +367,7 @@ static float DoubleFloat(void **args) {
         float f;
         unsigned int i;
     } num;
-#ifdef __CC_ARM
+
     if (!(((unsigned int)(*args)) & 0x4)) {
         a = (*(unsigned int **)args)[2];
         b = (*(unsigned int **)args)[1];
@@ -377,17 +377,6 @@ static float DoubleFloat(void **args) {
         b = (*(unsigned int **)args)[0];
         (*(unsigned int **)args) += 2;
     }
-#else 
-    if (!(((unsigned int)(*args)) & 0x4)) {
-        b = (*(unsigned int **)args)[2];
-        a = (*(unsigned int **)args)[1];
-        (*(unsigned int **)args) += 3;
-    } else {
-        b = (*(unsigned int **)args)[1];
-        a = (*(unsigned int **)args)[0];
-        (*(unsigned int **)args) += 2;
-    }
-#endif
 
     
     exp = (0x7ff & (a >> 20)) - 1023 + 127;
