@@ -8,6 +8,7 @@ tBoolean led_on;
 
 void blink(void) {
     SetPin(PIN_F1, led_on);
+    SetPin(PIN_F3, !led_on);
 
     led_on = !led_on;
 }
