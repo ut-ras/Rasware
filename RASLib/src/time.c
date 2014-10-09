@@ -167,15 +167,14 @@ static void RegisterTask(tTask *task) {
 }
 
 // Setup timer to trigger an interrupt for the next task
-static void SetNextTaskInt(void) {
-    tTime until, time;
+static void SetNextTaskInt(tTime time) {
+    tTime until;
   
     // Check to make sure there even is a task
     if (!pendingQueue)
         return;
 
     until = pendingQueue->target;
-    time = GetTimeUS();
     
     // If its past the target already we should fire immediately
     if (time > until) {
@@ -233,7 +232,7 @@ void WTimer5Handler(void) {
     }
     
     // Setup the next task
-    SetNextTaskInt();
+    SetNextTaskInt(time);
 }
 
 
@@ -262,7 +261,7 @@ int CallInUS(tCallback callback, void *data, tTime us) {
       
     // Register it to be called
     RegisterTask(task);
-    SetNextTaskInt();
+    SetNextTaskInt(GetTimeUS());
     
     // Return the id we are using
     return task->id;
@@ -297,7 +296,7 @@ int CallEveryUS(tCallback callback, void *data, tTime us) {
       
     // Register it to be called
     RegisterTask(task);
-    SetNextTaskInt();
+    SetNextTaskInt(GetTimeUS());
     
     // Return the id we are using
     return task->id;
