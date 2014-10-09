@@ -191,7 +191,6 @@ unsigned int Scanf(const char * formatString, ... ) {
   unsigned int braket_len;
   unsigned int * i_ptr;
   float * f_ptr;
-  float f_tmp;
   va_list ap;
   va_start(ap, formatString);
   while (formatString[++i] != '\0') {
@@ -245,7 +244,6 @@ unsigned int Scanf(const char * formatString, ... ) {
 	    goto octal; } }
 	else
 	  goto decimal;
-	break;
       case 'o':
       octal:
 	i_ptr = va_arg(ap, unsigned int *);
@@ -545,7 +543,6 @@ static void PutScienceFloat(float f, const char *table, int left, int sign, int 
         PutString("inf", left, width, 3);
     } else {
         float exp = floorf(log10f(f));
-        float base = f / powf(10, exp);
         
         int height;
         if (left) {
