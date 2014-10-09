@@ -24,14 +24,6 @@
 #include <StellarisWare/inc/hw_nvic.h>
 #include <StellarisWare/inc/hw_types.h>
 
-
-// Size of the stack in word count
-#define STACK 128
-
-// Reserve space for the system stack
-static unsigned long pulStack[STACK];
-
-
 // Initialization entry point for RASLib
 extern void InitializeMCU(void);
 
@@ -80,7 +72,7 @@ extern void I2C5Handler(void);
 // ensure that it ends up at physical address 0x00000000
 __attribute__((section(".isr_vector")))
 void (* const __Vectors[])(void) = {
-    (void (*)())(pulStack + STACK),         // The initial stack pointer
+    (void (*)())(0x20008000),         // The initial stack pointer
     ResetHandler,                           // The reset handler
     NmiHandler,                             // The NMI handler
     FaultHandler,                           // The hard fault handler
