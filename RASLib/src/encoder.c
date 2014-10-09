@@ -32,10 +32,10 @@ typedef const struct {
 
 // The states of the mealy machine
 static const tDecoderState DecoderFSM[4] = {
-    { 0, 1,-1, 0}, //State 00
-    {-1, 0, 0, 1}, //State 01
-    { 1, 0, 0,-1}, //State 10
-    { 0,-1, 1, 0}  //State 11
+  {{ 0, 1,-1, 0}}, //State 00
+  {{-1, 0, 0, 1}}, //State 01
+  {{ 1, 0, 0,-1}}, //State 10
+  {{ 0,-1, 1, 0}}  //State 11
 };
 
 // Definition of struct Encoder

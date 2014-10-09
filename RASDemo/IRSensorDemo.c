@@ -3,9 +3,18 @@
 #include <RASLib/inc/common.h>
 #include <RASLib/inc/adc.h>
 
-tADC *adc[4];
+static tADC *adc[4];
+static tBoolean initialized = false;
 
 void initIRSensor(void) {
+    // don't initialize this if we've already done so
+    if (initialized) {
+        return;
+    }
+    
+    initialized = true;
+
+    // initialize 4 pins to be used for ADC input
     adc[0] = InitializeADC(PIN_D0);
     adc[1] = InitializeADC(PIN_D1);
     adc[2] = InitializeADC(PIN_D2);
@@ -15,16 +24,17 @@ void initIRSensor(void) {
 void IRSensorDemo(void) {
     Printf("Press any key to quit\n");
         
-      while(!KeyWasPressed()) {
-        float ADCValue = ADCRead(adc[0]);
-        Printf("IR values: %d\t", (int)(1000 * ADCValue));
-        ADCValue = ADCRead(adc[1]);
-        Printf(" %d\t", (int)(1000 * ADCValue));
-        ADCValue = ADCRead(adc[2]);
-        Printf(" %d\t", (int)(1000 * ADCValue));
-        ADCValue = ADCRead(adc[3]);
-        Printf(" %d\r", (int)(1000 * ADCValue));
+    // loop as long as the user doesn't press a key 
+    while (!KeyWasPressed()) {
+        Printf(
+            "IR values:  %1.3f  %1.3f  %1.3f  %1.3f\r",
+            ADCRead(adc[0]),
+            ADCRead(adc[1]),
+            ADCRead(adc[2]),
+            ADCRead(adc[3])
+            );
     }
   
     Printf("\n");
 }
+
