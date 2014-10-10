@@ -30,7 +30,6 @@ ASM := $(SRC:.c=.s)
 LDDIR += $(RASLIB)/output
 LDDIR += $(STELLARIS)/driverlib/gcc-cm4f
 LDDIR += $(ARMCLIB)/$(PREFIX)/lib/thumb/cortex-m4
-LDDIR += $(wildcard $(ARMCLIB)/lib/gcc/$(PREFIX)/*/thumb/cortex-m4)
 LDDIR += $(CORTEXM4)
 
 # Flag Definitions
@@ -50,6 +49,10 @@ CFLAGS += -DTARGET_IS_BLIZZARD_RA1
 
 LDFLAGS += --entry ResetHandler
 LDFLAGS += --gc-sections
+lib-search-dirs = $(shell ${CC} ${CFLAGS} -print-search-dirs | grep libraries | sed -e 's/libraries:\ =//' -e 's/:/ /g')
+LDDIR += ${lib-search-dirs}
+
+
 LDFLAGS += --no-check-sections
 
 CFLAGS += $(addprefix -I, $(INC))
