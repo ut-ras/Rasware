@@ -71,7 +71,7 @@ void InitializeUART(int baud) {
 static tBoolean DoubleTest(int, ...);
 void InitializeDoublePrintHack(void) {
     // Just try the offset and see if its wrong
-    hack_offset ^= DoubleTest(1.0f);
+    hack_offset ^= !DoubleTest(1, 1.0f);
 }
 
 
@@ -376,7 +376,7 @@ static float DoubleFloat(void **args) {
         unsigned int i;
     } num;
 
-    if ((((unsigned int)(*args)) & 0x4) ^ hack_offset) {
+    if ((((unsigned int)(*args) & 0x4) == 0x4) ^ hack_offset) {
         a = (*(unsigned int **)args)[2];
         b = (*(unsigned int **)args)[1];
         (*(unsigned int **)args) += 3;
@@ -407,7 +407,7 @@ static tBoolean DoubleTest(int eh, ...) {
     test = va_d2f(args);
     va_end(args);
     
-    return test == 1.0f;
+    return eh == (int)test;
 }
 
 
