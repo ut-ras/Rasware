@@ -34,6 +34,11 @@ extern "C" {
  * @param baud Baud rate of the UART channel
  */
 void InitializeUART(int baud);
+    
+/**
+ * Determines correct alignment for doubles passed into printf.
+ */    
+void InitializeDoublePrintHack(void);
 
 /**
  * Checks to see if a character has been received in the UART buffer

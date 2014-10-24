@@ -55,6 +55,7 @@ void InitializeMCU(void) {
     
     //Initialize UART for communication
     InitializeUART(115200);
+    InitializeDoublePrintHack();
     
     //Enable global interrupts
     IntMasterEnable();    

@@ -44,6 +44,8 @@
 static const char *upper = "0123456789ABCDEF";
 static const char *lower = "0123456789abcdef";
 
+static tBoolean hack_offset;
+
 // Sets up a simple console through UART0
 void InitializeUART(int baud) {
   // Enable GPIO port A which is used for UART0 pins.
@@ -61,6 +63,15 @@ void InitializeUART(int baud) {
   UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), baud,
 			  (UART_CONFIG_PAR_NONE | UART_CONFIG_STOP_ONE |
 			   UART_CONFIG_WLEN_8));
+    
+  // Default to assuming the offset makes sense
+  hack_offset = false;
+}
+
+static tBoolean DoubleTest(int, ...);
+void InitializeDoublePrintHack(void) {
+    // Just try the offset and see if its wrong
+    hack_offset ^= DoubleTest(1.0f);
 }
 
 
@@ -357,7 +368,6 @@ int KeyWasPressed(void) {
 #define va_d2f(args) DoubleFloat(&args.__ap)
 
 static float DoubleFloat(void **args) {
-
     unsigned int a, b;
     int exp;
 
@@ -366,7 +376,7 @@ static float DoubleFloat(void **args) {
         unsigned int i;
     } num;
 
-    if (!(((unsigned int)(*args)) & 0x4)) {
+    if ((((unsigned int)(*args)) & 0x4) ^ hack_offset) {
         a = (*(unsigned int **)args)[2];
         b = (*(unsigned int **)args)[1];
         (*(unsigned int **)args) += 3;
@@ -388,6 +398,16 @@ static float DoubleFloat(void **args) {
 
     
     return num.f;
+}
+
+static tBoolean DoubleTest(int eh, ...) {
+    float test;
+    va_list args;
+    va_start(args, eh);
+    test = va_d2f(args);
+    va_end(args);
+    
+    return test == 1.0f;
 }
 
 
