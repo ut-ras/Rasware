@@ -213,4 +213,51 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
 5. To move your local changes to the server, simply use the push command.
 
         git push origin master
+        
+Setup for Mac (tested under Mavericks) (WIP)
+---------------
 
+1. Get Homebrew: [link](http://brew.sh) (Installation instructions are at the bottom of the page.)
+
+
+2. Get OpenOCD through Homebrew. Type in terminal
+  ```bash
+      brew install openocd
+  ```
+3. Get the Cross Compilers for the LM4F from [here](https://launchpad.net/gcc-arm-embedded ) (download the one for Mac), extract, and move the extracted folder to the same directory that your Rasware2013 folder is in. 
+
+
+4. Get StellarisWare from [Toast](http://toast.projectgeky.com/rasware/StellarisWare.tar.bz2), extract, and move the extracted StellarisWare folder to the same directory that your Rasware2013 folder is in. 
+
+
+5. Compile RASLib
+  ```bash
+      cd Rasware2013/RASLib
+      make
+  ```
+6. Navigate to Rasware2013/RASTemplate and open up the Makefile with your favorite text editor. (*)
+
+7. Find the `PREFIX` variable around the top of the file and edit it to:
+  ```make
+      PREFIX := ../../gcc-arm-none-eabi-4_8-2014q3/bin/arm-none-eabi
+  ```
+8. A couple of lines below the `PREFIX`, where there are several other variables like `CC`, `LD`, etc., add a new variable `GDB`:
+  
+  ```make
+      GDB := $(PREFIX)-gdb
+  ```
+9. Scroll down the Makefile to the `#Rules` section and add the following to `flash:`
+  ```make
+      flash: $(TARGET)
+            openocd -c "source [find board/ek-lm4f120xl.cfg]" &
+            sleep 2
+            $(GDB) $(TARGET:.axf=.out) -ex "target remote :3333" \
+                   -ex "monitor reset halt" \
+                   -ex "load" -ex "monitor reset halt"
+  ```
+ NOTE: the spaces after the `flash: $(TARGET)` are tab charactors. Make is picky about tabs vs. spaces
+
+10. Now, you should be able to edit the `Main.c` file in the RASTemplate and run `make` in the terminal (from this directory) while having the board connected to your computer, and the code in the `Main.c` file should be written to the board. 
+
+
+(*)You can change the Makefile in `Rasware2013/RASDemo` in the same way as above, though in the case of RASDemo.
