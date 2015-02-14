@@ -31,14 +31,26 @@ extern "C" {
 
 /**
  * Must be called before using other UART commands
+ * @param baud Baud rate of the UART channel
  */
-void InitializeUART(void);
+void InitializeUART(int baud);
+    
+/**
+ * Determines correct alignment for doubles passed into printf.
+ */    
+void InitializeDoublePrintHack(void);
 
 /**
  * Checks to see if a character has been received in the UART buffer
  * @return 1 if a character was found, 0 otherwise
  */
 int KeyWasPressed(void);
+    
+/**
+ * Busy-waits for an input character and then returns it
+ * @return Character received
+ */
+unsigned char Getc(void);
 
 /**
  * Busy-waits for input characters over UART and places them into the provided buffer
@@ -47,20 +59,17 @@ int KeyWasPressed(void);
  * @param ulLen
  * @return
  */
-int Gets(char *pcBuf, unsigned long ulLen);
+int Gets(char *buffer, int count);
 
 /**
- * Busy-waits for an input character and then returns it
- * @return Character received
+ * TODO: write
  */
-unsigned char Getc(void);
+  unsigned int Scanf(const char * formatString, ... );
 
 /**
- * Formats a string and outputs it over UART
- * @param pcString Format string
- * @param ... Additional parameters to be inserted into the format string
+ * TODO: write
  */
-void Printf(const char *pcString, ...);
+  void SetEcho(unsigned char on);
 
 /**
  * Outputs a single character over UART
@@ -72,7 +81,14 @@ void Putc(char ch);
  * Outputs the characters of a null-terminated string over UART
  * @param pcString String of character to output
  */
-void Puts(const char *pcString);
+int Puts(const char *buffer, int count);
+
+/**
+ * Formats a string and outputs it over UART
+ * @param pcString Format string
+ * @param ... Additional parameters to be inserted into the format string
+ */
+void Printf(const char *pcString, ...);
 
 // These functions configure UART but aren't a part of standard use
 /**

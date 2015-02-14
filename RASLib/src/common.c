@@ -37,8 +37,7 @@ void Dummy(void) {}
 
 
 // The following function sets up the LM4F to use RASLib
-void InitializeMCU(void)
-{
+void InitializeMCU(void) {
     // Enable lazy stacking for interrupt handlers.  This allows floating-point
     // instructions to be used within interrupt handlers, but at the expense of
     // extra stack usage.
@@ -55,8 +54,26 @@ void InitializeMCU(void)
     InitializeGPIO();
     
     //Initialize UART for communication
-    InitializeUART();
+    InitializeUART(115200);
+    InitializeDoublePrintHack();
     
     //Enable global interrupts
     IntMasterEnable();    
 }
+
+
+// Default hard-fault handler sets led
+static void DefaultFault(void) {
+    SetPin(PIN_F1, true);
+}
+
+// Hard-fault handles
+static tCallback faultCallback = DefaultFault;
+static void *faultData;
+
+
+// Called on hard-faults
+void PanicHandler(void) {
+    faultCallback(faultData);
+}
+

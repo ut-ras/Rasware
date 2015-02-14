@@ -65,7 +65,7 @@ typedef struct ADC tADC;
 tADC *InitializeADC(tPin pin);
 
 /**
- * Returns value on a pin used with the tADC provided
+ * Returns the voltage on the pin provided to InitializeADC as a % of 3.3V. (%'s are always between 0.0 and 1.0) 
  * @param adc Pointer to an initialized tADC, returned by InitializeADC
  * @return Value measured as a percentage
  * Note: if the ADC is not continously reading, then the function will busy wait for the results

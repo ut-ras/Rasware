@@ -39,14 +39,20 @@ extern "C" {
 typedef void (*tCallback)();
 
 /**
- * Sets up the LM4F to use RASLib
- */
-void InitializeMCU(void);
-
-/**
  * Function which does nothing
  */
 void Dummy(void);
+    
+/**
+ * Sets up the LM4F to use RASLib
+ */
+void InitializeMCU(void);
+    
+/**
+ * Set up a function to be called on hard-fault.
+ * Defaults to setting the red LED on.
+ */
+void OnHardFault(tCallback cb, void *data);
 
 
 #ifdef __cplusplus
