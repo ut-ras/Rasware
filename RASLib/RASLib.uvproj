@@ -461,11 +461,6 @@
               <FilePath>.\src\linesensor.c</FilePath>
             </File>
             <File>
-              <FileName>Startup.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\Startup.c</FilePath>
-            </File>
-            <File>
               <FileName>servomotor.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\servomotor.c</FilePath>
@@ -483,7 +478,7 @@
             <File>
               <FileName>driverlib-cm4f.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>C:\StellarisWare\driverlib\rvmdk-cm4f\driverlib-cm4f.lib</FilePath>
+              <FilePath>..\..\StellarisWare\driverlib\rvmdk-cm4f\driverlib-cm4f.lib</FilePath>
             </File>
           </Files>
         </Group>

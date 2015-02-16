@@ -8,31 +8,36 @@ tBoolean led_on;
 
 void blink(void) {
     SetPin(PIN_F1, led_on);
+    SetPin(PIN_F3, !led_on);
 
     led_on = !led_on;
 }
 
 int main(void) {  
     char ch;
-    InitializeMCU();
+
     CallEvery(blink, 0, 0.25f);
 
-    while(1) {
-        Printf("\nRAS Demo for Robotathon 2013\n");
-        Printf("  0=UART Demo\n  1=Motor Demo\n");
-        Printf("  2=Servo Demo\n  3=I2C Line Sensor Demo\n");
-        Printf("  4=IR Sensor Demo\n  5=Encoders Demo\n");
-        Printf("  6=GPIO Demo\n  7=GPIO Line Sensor Demo\n");
+    while (1) {
+        Printf("\nRAS Demo for Robotathon 2013\n"
+               "  0=UART Demo\n"
+	       "  1=Motor Demo\n"
+               "  2=Servo Demo\n"
+	       "  3=I2C Line Sensor Demo\n"
+               "  4=IR Sensor Demo\n"
+	       "  5=Encoders Demo\n"
+               "  6=GPIO Demo\n"
+	       "  7=GPIO Line Sensor Demo\n"
+               "  8=Sonar Demo\n"
+               ">> ");
         
-        Printf(">> ");
-        // Read input from User
+        // Read input from user
         ch = Getc();
-        Printf("%c", ch);
         Printf("\n");
 
         switch(ch) {
             case '0':
-                Printf("\n UART Demo\n");
+                Printf("\nUART Demo\n");
                 uartDemo();                 
                 break;
             case '1':
@@ -51,7 +56,7 @@ int main(void) {
                 i2cLineSensorDemo();    
                 break;
             case '4':                            
-                   Printf("\nIR Sensor Demo\n");
+                Printf("\nIR Sensor Demo\n");
                 initIRSensor();
                 IRSensorDemo();     
                 break;
@@ -68,6 +73,11 @@ int main(void) {
                 Printf("\nGPIO Line Sensor Demo\n");
                 initGPIOLineSensor();
                 gpioLineSensorDemo();
+                break;
+            case '8':
+                Printf("\nSonar Demo\n");
+                initSonar();
+                sonarDemo();
                 break;
         }
     }

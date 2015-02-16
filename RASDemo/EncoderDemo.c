@@ -3,26 +3,38 @@
 #include <RASLib/inc/common.h>
 #include <RASLib/inc/encoder.h>
 
-
-tEncoder *demoEncoder[2];
+static tEncoder *leftEncoder;
+static tEncoder *rightEncoder;
+static tBoolean initialized = false;
 
 void initEncoders(void) {
-    demoEncoder[0] = InitializeEncoder(PIN_D0, PIN_D1, false);
-    demoEncoder[1] = InitializeEncoder(PIN_D2, PIN_D3, false);
+    // don't initialize this if we've already done so
+    if (initialized) {
+        return;
+    }
+    
+    initialized = true;
+
+    leftEncoder = InitializeEncoder(PIN_D0, PIN_D1, false);
+    rightEncoder = InitializeEncoder(PIN_D2, PIN_D3, false);
 }
 
 void encoderDemo(void) {
-    Printf("Press:\nany key-read encoder values\n");
-    Printf("any key after read begins-quit\n");
-    
-    ResetEncoder(demoEncoder[0]);
-    ResetEncoder(demoEncoder[1]);
+    Printf("Press any key to quit\n");
+   
+    // clear any encoder ticks that have accumulated
+    ResetEncoder(leftEncoder);
+    ResetEncoder(rightEncoder);
 
-    while(!KeyWasPressed()) {
-        Printf("enc0:%d  enc1:%d\r",
-                    GetEncoder(demoEncoder[0]),
-                    GetEncoder(demoEncoder[1]));
+    // loop as long as the user doesn't press a key 
+    while (!KeyWasPressed()) {
+        Printf(
+            "Encoder values:  %10d  %10d  \r",
+            GetEncoder(leftEncoder),
+            GetEncoder(rightEncoder)
+            );
     }
     
     Printf("\n");
 }
+
