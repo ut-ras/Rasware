@@ -97,10 +97,10 @@ struct PIDStruct {
 } typedef PIDStruct;
 
 #define PIDP (0.00003)
-#define PIDD (0.00013)
+#define PIDD (0.00000)
 #define PIDI (0.000000)
-#define MAX_MOTOR (.5)
-#define MIN_MOTOR (-.5)
+#define MAX_MOTOR (0.5)
+#define MIN_MOTOR (-0.5)
 
 void runPID(PIDStruct* s, int goalDeltaTicks, tMotor* motor) {
     signed long ticks = -GetEncoder(s->enc);
@@ -131,7 +131,7 @@ int main(void) {
     right_motor = InitializeServoMotor(PIN_A7, false);
 
     right_encoder = InitializeEncoder(PIN_E4, PIN_E5, false);   
-    left_encoder = InitializeEncoder(PIN_B0, PIN_B1, false);
+    left_encoder = InitializeEncoder(PIN_B1, PIN_B0, false);
 
     ResetEncoder(left_encoder);
     ResetEncoder(right_encoder);
@@ -169,7 +169,8 @@ int main(void) {
                 right.prevCommand, left.prevCommand, 
                 right.deltaTicks, left.deltaTicks);
             
-            WatchdogReloadSet(WATCHDOG_BASE, 25000000);    
+            WatchdogReloadSet(WATCHDOG_BASE, 25000000);   
+            SetPin(PIN_F1,false); 
         }
     }
     }
