@@ -233,7 +233,7 @@ brew install openocd
 
 6. Find the `PREFIX` variable around the top of the file and edit it to:
   ```make
-      PREFIX := ../../gcc-arm-none-eabi-4_8-2014q3/bin/arm-none-eabi
+      PREFIX := ../../gcc-arm-none-eabi-4_9-2014q4/bin/arm-none-eabi
   ```
 
 7. Compile RASLib
@@ -245,7 +245,7 @@ brew install openocd
 
 9. Find the `PREFIX` variable around the top of the file and edit it to:
   ```make
-      PREFIX := ../../gcc-arm-none-eabi-4_8-2014q3/bin/arm-none-eabi
+      PREFIX := ../../gcc-arm-none-eabi-4_9-2014q4/bin/arm-none-eabi
   ```
 10. A couple of lines below the `PREFIX`, where there are several other variables like `CC`, `LD`, etc., add a new variable `GDB`:
   
