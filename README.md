@@ -65,11 +65,11 @@ Note: for windows 8, the drivers are unsigned, so installing them requires you t
 1. Open Rasware2013/RASDemo/RASDemo.uvproj with Keil uVision. This is an example project we made to demostrate how to get a lot of useful peripherals working with the Launchpad, like motors and line sensors. 
 2. With the Launchpad plugged into your computer, in Keil do Project->Build Target and then Flash->Download. This compiles and loads the project onto the Launchpad.
 3. Open PuTTY and connect to the board 
-    1. Click the "serial" radio button
-    2. Under "serial line" type "COM#" where # was the COM port number shown in the Device Manager 
-    3. Under "speed" type "115200"
-    4. Under "Saved Settings" type "Rasware2013" and then click "Save". 
-    5. Now the settings are saved in PuTTY. In the future, just open PuTTY and double click "Rasware2013" under "Saved Settings".
+1. Click the "serial" radio button
+2. Under "serial line" type "COM#" where # was the COM port number shown in the Device Manager 
+3. Under "speed" type "115200"
+4. Under "Saved Settings" type "Rasware2013" and then click "Save". 
+5. Now the settings are saved in PuTTY. In the future, just open PuTTY and double click "Rasware2013" under "Saved Settings".
 [TODO: finish this section once RASDemo is done]
 
 ### Starting your own project ###
@@ -91,13 +91,13 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
 ### Setup a Directory  ###
 1. Create a directory to work in. This is where we will place everything.
 
-        mkdir ras
-        cd ras
+mkdir ras
+cd ras
 
 ### Install Dependencies ###
 1. First install the basic dependencies
- * Archlinux : `sudo pacman -S git screen libusb`
- * Ubuntu/Debian : `sudo apt-get install git screen libusb-dev pkg-config build-essential`
+* Archlinux : `sudo pacman -S git screen libusb`
+* Ubuntu/Debian : `sudo apt-get install git screen libusb-dev pkg-config build-essential`
 2. If your computer is 64-bits, you will also need to install `ia32-libs`
 3. If libusb-dev is not available, you may be able just use `libusb`
 
@@ -106,68 +106,68 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
 2. Download and move to your ras directory.
 3. Uncompress the file and install it your your /usr/local directory.
 
-        tar vfxj gcc-arm-none-eabi*.bz2
-        sudo cp -r gcc-arm-none-eabi*/bin/* /usr/local/bin
-        sudo cp -r gcc-arm-none-eabi*/lib/* /usr/local/lib
-        sudo cp -r gcc-arm-none-eabi*/share/* /usr/local/share
-        sudo cp -r gcc-arm-none-eabi*/arm-none-eabi /usr/local
-        rm -r gcc-arm-none-eabi*
+tar vfxj gcc-arm-none-eabi*.bz2
+sudo cp -r gcc-arm-none-eabi*/bin/* /usr/local/bin
+sudo cp -r gcc-arm-none-eabi*/lib/* /usr/local/lib
+sudo cp -r gcc-arm-none-eabi*/share/* /usr/local/share
+sudo cp -r gcc-arm-none-eabi*/arm-none-eabi /usr/local
+rm -r gcc-arm-none-eabi*
 
 4. You should now be able to run the compiler. It should complain about missing input files, but that means that just means the compiler is working.
 
-        arm-none-eabi-gcc
+arm-none-eabi-gcc
 
 ### Install LM4Flash ###
 1. The lm4flsh utility allows us to program the board. To obtain the program you can download it from the [github repo](https://github.com/utzig/lm4tools).
 
-        git clone https://github.com/utzig/lm4tools.git
+git clone https://github.com/utzig/lm4tools.git
 
 2. You will need to compile the library before you can use it.
 
-        cd lm4tools/lm4flash
-        make
+cd lm4tools/lm4flash
+make
 
 3. Now just move it to local/bin so it is in your path.
 
-        sudo mv lm4flash /usr/local/bin
-        cd ../..
-        rm -rf lm4flash
+sudo mv lm4flash /usr/local/bin
+cd ../..
+rm -rf lm4flash
 
 ### Download the Cortex-M4 Libraries ###
 1. Due to an issue in the ARM libraries provided by the cross-compiler, you will need to download the [correct libraries](http://toast.projectgeky.com/rasware/CortexM4Libs.tar.bz2) for the Cortex-M4.
 2. Move the libraries to your ras directory and uncompress the file.
 
-        tar vfxj CortexM4Libs.tar.bz2
+tar vfxj CortexM4Libs.tar.bz2
 
 ### Download StellarisWare ###
 1. Download [StellarisWare](http://toast.projectgeky.com/rasware/StellarisWare.tar.bz2), the TI library and move it to your ras directory.
 2. Uncompress the file and compile StellarisWare.
 
-        tar vfxj StellarisWare.tar.bz2
-        cd StellarisWare
-        make
-        cd ..
-        rm StellarisWare.tar.bz2
+tar vfxj StellarisWare.tar.bz2
+cd StellarisWare
+make
+cd ..
+rm StellarisWare.tar.bz2
 
 ### Download Rasware ###
 1. You can now use git to create a copy of your forked repo with the clone command.
 
-        git clone https://github.com/username/Rasware2013.git
+git clone https://github.com/username/Rasware2013.git
 
 2. Before you use it, make sure to compile RASLib.
 
-        cd Rasware2013/RASLib
-        make
+cd Rasware2013/RASLib
+make
 
 ### Add the LM4F to UDev ###
 1. To keep from needing root access to communicate with the lm4f, you will need to copy the lm4f rule to the udev directory.
 
-        sudo cp Rasware2013/RASLib/51-lm4f.rules /etc/udev/rules.d
+sudo cp Rasware2013/RASLib/51-lm4f.rules /etc/udev/rules.d
 
 2. Have udev re-read it's rules for these changes to come into effect.
 
-        sudo udevadm control --reload
-        sudo udevadm trigger
+sudo udevadm control --reload
+sudo udevadm trigger
 
 3. Plug in a Stellaris Launchpad. you should now see the file /dev/lm4f appear.
 
@@ -175,16 +175,16 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
 1. Like most projects on Linux, Rasware can be compiled with make. We have created an example project to demonstrate how to use several useful peripherals with the Launchpad, like motors and line-sensors.
 2. To compile RASDemo, simply run make.
 
-        cd Rasware2013/RASDemo
-        make
+cd Rasware2013/RASDemo
+make
 
 3. The lm4flash utility can be used to load your program on the board. There is a slight issue in Debian that may require running the command with sudo.
 
-        lm4flash RASDemo.axf
+lm4flash RASDemo.axf
 
 4. The special file /dev/lm4f can now be written to and read from to send data over uart. You can now use an external program, such as screen, to communicate with the devices.
 
-        screen /dev/lm4f 115200
+screen /dev/lm4f 115200
 
 5. You should now be presented with a menu for using RASDemo. Feel free to mess around and look into RASDemo's source code to see how it is done. To exit press `C-a k y`, or control-A followed by a K followed by a Y.
 6. If you don't want to do all of the above steps by hand each time, you can make the code, flash the board, and start screen all by running the command `make run`.
@@ -195,25 +195,25 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
 ### Committing code back to the repo
 1. Before you start, you should configure git with both your username and email.
 
-        git config --global user.name "User Name"
-        git config --global user.email "your@email.here"
+git config --global user.name "User Name"
+git config --global user.email "your@email.here"
 
 2. Git will keep track of changes to your directory. You can use the status command to show the state of git.
 
-        git status
+git status
 
 3. To track a file, use the add command
 
-        git add filename
+git add filename
 
 4. You can now use the commit command to create a commit which contians all of the modifications to files you `git add`ed. It will open an editor, which defaults to VIM, for writing a [commit message](https://github.com/erlang/otp/wiki/Writing-good-commit-messages). If saved, the commit will be created. To change the default editor, assign a program to the EDITOR variable
 
-        git commit
+git commit
 
 5. To move your local changes to the server, simply use the push command.
 
-        git push origin master
-        
+git push origin master
+
 Setup for Mac (tested under Mavericks) (WIP)
 ---------------
 
@@ -221,13 +221,13 @@ Setup for Mac (tested under Mavericks) (WIP)
 
 
 2. Get OpenOCD through Homebrew. Type in terminal
-  ```bash
-      brew install openocd
-  ```
+```bash
+brew install openocd
+```
 3. Get the Cross Compilers for the LM4F from [here](https://launchpad.net/gcc-arm-embedded ) (download the one for Mac), extract, and move the extracted folder to the same directory that your Rasware2013 folder is in. 
 
 
-4. Get StellarisWare from [Toast](http://toast.projectgeky.com/rasware/StellarisWare.tar.bz2), extract, and move the extracted StellarisWare folder to the same directory that your Rasware2013 folder is in. 
+4. Get StellarisWare from [Toast](http://129.116.175.23/rasware/StellarisWare.tar.bz2), extract, and move the extracted StellarisWare folder to the same directory that your Rasware2013 folder is in. 
 
 5. Navigate to Rasware2013/RASLib and open up the Makefile with your favorite text editor. (*)
 
