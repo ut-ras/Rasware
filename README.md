@@ -140,7 +140,7 @@ rm -rf lm4flash
 tar vfxj CortexM4Libs.tar.bz2
 
 ### Download StellarisWare ###
-1. Download [StellarisWare](http://toast.projectgeky.com/rasware/StellarisWare.tar.bz2), the TI library and move it to your ras directory.
+1. Download [StellarisWare](http://129.119.175.23/rasware/StellarisWare.tar.bz2), the TI library and move it to your ras directory.
 2. Uncompress the file and compile StellarisWare.
 
 tar vfxj StellarisWare.tar.bz2
