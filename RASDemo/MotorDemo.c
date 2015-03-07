@@ -3,37 +3,25 @@
 #include <RASLib/inc/common.h>
 #include <RASLib/inc/motor.h>
 
-static tMotor *leftMotor;
-static tMotor *rightMotor;
+static tMotor *Motors[4];
 static tBoolean initialized = false;
 
 void initMotors(void) {
-    // don't initialize this if we've already done so
-    if (initialized) {
-        // make sure the motors are off
-        SetMotor(leftMotor, 0);
-        SetMotor(rightMotor, 0);
-        return;
+    if (!initialized) {
+      initialized = true;
+      
+      Motors[0] = InitializeServoMotor(PIN_B6, false);
+      Motors[1] = InitializeServoMotor(PIN_B7, false);
+      Motors[2] = InitializeServoMotor(PIN_C4, false);
+      Motors[3] = InitializeServoMotor(PIN_C5, false);
     }
-    
-    initialized = true;
-
-    leftMotor = InitializeTLEMotor(PIN_B7, PIN_B6, true, false);
-    rightMotor = InitializeTLEMotor(PIN_C5, PIN_C4, true, false);
-    
-    // other pins can also be used for motors on the sacapuntas boosterpack:
-    //leftMotor = InitializeMotor(PIN_F1, PIN_F0, true, false);
-    //rightMotor = InitializeMotor(PIN_F3, PIN_F2, true, false);
-
-    // make sure the motors are off
-    SetMotor(leftMotor, 0);
-    SetMotor(rightMotor, 0);
 }
+
 
 void motorDemo(void) {
     float left = 0, right = 0, speed = 0.75f, accel = 0.01f;
-    char newline = 13;
     char ch;    
+    int i;
 
     Printf("Press:\n"
 	   "  w-forward\n"
@@ -50,7 +38,7 @@ void motorDemo(void) {
     // wait for the user to enter a character
     ch = ' ';
     
-    while (ch != newline) {
+    while (ch != '\n') {
         switch (ch) {
             case 'w':
                 left = speed;
@@ -89,29 +77,18 @@ void motorDemo(void) {
                 right = 0;
                 break;
         }
-        
-        // bounds checking (done in SetMotor, but also useful to bound it here for the demo)
-        if (left > 1.0f) {
-             left = 1.0f;
-        } else if (left < -1.0f) {
-             left = -1.0f;
-        }
 
-        if (right > 1.0f) {
-             right = 1.0f;
-        } else if (right < -1.0f) {
-             right = -1.0f;
-        }
-
-        SetMotor(leftMotor, left);
-        SetMotor(rightMotor, right);
+        SetMotor(Motors[0], left);
+        SetMotor(Motors[1], left);
+        SetMotor(Motors[2], right);
+        SetMotor(Motors[3], right);
         Printf(" set motor to %1.2f %1.2f  \r", left, right);
         
         ch = Getc();
-    }                 
+    } 
    
     // make sure the motors are off before exiting the demo 
-    SetMotor(leftMotor, 0.0f);
-    SetMotor(rightMotor, 0.0f);
+    for (i = 0; i < 4; ++i) 
+      SetMotor(Motors[i], 0);
     Printf("\n");
 }
