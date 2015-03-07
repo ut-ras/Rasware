@@ -229,24 +229,30 @@ Setup for Mac (tested under Mavericks) (WIP)
 
 4. Get StellarisWare from [Toast](http://toast.projectgeky.com/rasware/StellarisWare.tar.bz2), extract, and move the extracted StellarisWare folder to the same directory that your Rasware2013 folder is in. 
 
+5. Navigate to Rasware2013/RASLib and open up the Makefile with your favorite text editor. (*)
 
-5. Compile RASLib
+6. Find the `PREFIX` variable around the top of the file and edit it to:
+  ```make
+      PREFIX := ../../gcc-arm-none-eabi-4_8-2014q3/bin/arm-none-eabi
+  ```
+
+7. Compile RASLib
   ```bash
       cd Rasware2013/RASLib
       make
   ```
-6. Navigate to Rasware2013/RASTemplate and open up the Makefile with your favorite text editor. (*)
+8. Navigate to Rasware2013/RASTemplate and open up the Makefile with your favorite text editor. (*)
 
-7. Find the `PREFIX` variable around the top of the file and edit it to:
+9. Find the `PREFIX` variable around the top of the file and edit it to:
   ```make
       PREFIX := ../../gcc-arm-none-eabi-4_8-2014q3/bin/arm-none-eabi
   ```
-8. A couple of lines below the `PREFIX`, where there are several other variables like `CC`, `LD`, etc., add a new variable `GDB`:
+10. A couple of lines below the `PREFIX`, where there are several other variables like `CC`, `LD`, etc., add a new variable `GDB`:
   
   ```make
       GDB := $(PREFIX)-gdb
   ```
-9. Scroll down the Makefile to the `#Rules` section and add the following to `flash:`
+11. Scroll down the Makefile to the `#Rules` section and add the following to `flash:`
   ```make
       flash: $(TARGET)
             openocd -c "source [find board/ek-lm4f120xl.cfg]" &
