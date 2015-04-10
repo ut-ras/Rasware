@@ -23,12 +23,12 @@
 
 #include "adc.h"
 
-#include <StellarisWare/inc/hw_ints.h>
-#include <StellarisWare/inc/hw_memmap.h>
-#include <StellarisWare/driverlib/sysctl.h>
-#include <StellarisWare/driverlib/interrupt.h>
-#include <StellarisWare/driverlib/adc.h>
-#include <StellarisWare/driverlib/gpio.h>
+#include <TivaWare/inc/hw_ints.h>
+#include <TivaWare/inc/hw_memmap.h>
+#include <TivaWare/driverlib/sysctl.h>
+#include <TivaWare/driverlib/interrupt.h>
+#include <TivaWare/driverlib/adc.h>
+#include <TivaWare/driverlib/gpio.h>
 
 
 // Definition of ADC Pin-map for the TM4C1233H6PM / LM4F120H5QR/

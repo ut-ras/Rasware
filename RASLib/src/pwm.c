@@ -23,13 +23,13 @@
 
 #include "pwm.h"
 
-#include <StellarisWare/inc/hw_ints.h>
-#include <StellarisWare/inc/hw_memmap.h>
-#include <StellarisWare/inc/lm4f120h5qr.h>
-#include <StellarisWare/driverlib/interrupt.h>
-#include <StellarisWare/driverlib/timer.h>
-#include <StellarisWare/driverlib/gpio.h>
-#include <StellarisWare/driverlib/sysctl.h>
+#include <TivaWare/inc/hw_ints.h>
+#include <TivaWare/inc/hw_memmap.h>
+#include <TivaWare/inc/tm4c123gh6pm.h>
+#include <TivaWare/driverlib/interrupt.h>
+#include <TivaWare/driverlib/timer.h>
+#include <TivaWare/driverlib/gpio.h>
+#include <TivaWare/driverlib/sysctl.h>
 
 
 // The number of PWM modules is simply the number of 

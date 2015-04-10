@@ -2,7 +2,7 @@
 TARGET = output/libras.a
 
 # Library Locations
-STELLARIS = ../../StellarisWare
+STELLARIS = ${HOME}/src/TivaWare
 RASLIB = ../RASLib
 CORTEXM4 = ../../CortexM4Libs
 ARMCLIB = $(dir $(shell which $(CC)))..
@@ -47,6 +47,7 @@ CFLAGS += -MD
 CFLAGS += -std=c99
 CFLAGS += -Dgcc
 CFLAGS += -DPART_LM4F120H5QR
+CFLAGS += -DPART_TM4C1230C3PM
 CFLAGS += -DTARGET_IS_BLIZZARD_RA1
 
 LDFLAGS += --entry ResetHandler

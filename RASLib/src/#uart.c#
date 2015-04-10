@@ -35,7 +35,6 @@
 #include <TivaWare/driverlib/gpio.h>
 #include <TivaWare/driverlib/debug.h>
 #include <TivaWare/driverlib/interrupt.h>
-#include <TivaWare/driverlib/pin_map.h>
 #include <TivaWare/driverlib/rom.h>
 #include <TivaWare/driverlib/rom_map.h>
 #include <TivaWare/driverlib/sysctl.h>

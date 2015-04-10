@@ -22,13 +22,16 @@
 //*****************************************************************************
 
 #include "gpio.h"
+#include <stdint.h>
+#include <stdbool.h>
 
-#include <StellarisWare/inc/hw_ints.h>
-#include <StellarisWare/inc/hw_memmap.h>
-#include <StellarisWare/inc/hw_gpio.h>
-#include <StellarisWare/driverlib/interrupt.h>
-#include <StellarisWare/driverlib/gpio.h>
-#include <StellarisWare/driverlib/sysctl.h>
+#include <TivaWare/inc/hw_ints.h>
+#include <TivaWare/inc/hw_memmap.h>
+#include <TivaWare/inc/hw_gpio.h>
+#include <TivaWare/driverlib/interrupt.h>
+#include <TivaWare/driverlib/gpio.h>
+#include <TivaWare/driverlib/sysctl.h>
+
 
 
 // Port table is used externally to lookup port values
@@ -54,7 +57,7 @@ tPinTask pinTaskBuffer[PIN_COUNT];
 #define PORT_HANDLER(PORT)                                      \
 void Port##PORT##Handler(void) {                                \
     unsigned long i, status;                                    \
-    status = GPIOPinIntStatus(GPIO_PORT##PORT##_BASE, true);    \
+    status = GPIOIntStatus(GPIO_PORT##PORT##_BASE, true);    \
                                                                 \
     for (i = 0; i < 8; i++){                                    \
         if (status & (0x1 << i)) {                              \
@@ -62,7 +65,7 @@ void Port##PORT##Handler(void) {                                \
             task->callback(task->data);                         \
         }                                                       \
     }                                                           \
-    GPIOPinIntClear(GPIO_PORT##PORT##_BASE, status);            \
+    GPIOIntClear(GPIO_PORT##PORT##_BASE, status);            \
 }
 
 // Interrupt handlers for Ports A through F
@@ -91,11 +94,11 @@ void InitializeGPIO(void) {
     
     // Special workarounds for PF0 and PD7
     // For more info lookup NMI mux issue on the LM4F
-    HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY_DD;
+    HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
     HWREG(GPIO_PORTD_BASE + GPIO_O_CR) = GPIO_PIN_7;
     HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = 0;
     
-    HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY_DD;
+    HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
     HWREG(GPIO_PORTF_BASE + GPIO_O_CR) = GPIO_PIN_0;
     HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = 0;
         
@@ -150,7 +153,7 @@ static void CallOnPinType(tCallback callback, void *data, tPin pin, unsigned lon
     tPinTask *task = &pinTaskBuffer[pin];
 
     // Stop the interrupt first to avoid a race condition
-    GPIOPinIntDisable(PORT_VAL(pin), PIN_VAL(pin));
+    GPIOIntDisable(PORT_VAL(pin), PIN_VAL(pin));
     task->callback = Dummy;
     
     // Make sure the pin is setup as an input
@@ -164,8 +167,8 @@ static void CallOnPinType(tCallback callback, void *data, tPin pin, unsigned lon
         
         // Setup the interrupts
         GPIOIntTypeSet(PORT_VAL(pin), PIN_VAL(pin), type);
-        GPIOPinIntClear(PORT_VAL(pin), PIN_VAL(pin));
-        GPIOPinIntEnable(PORT_VAL(pin), PIN_VAL(pin));
+        GPIOIntClear(PORT_VAL(pin), PIN_VAL(pin));
+        GPIOIntEnable(PORT_VAL(pin), PIN_VAL(pin));
     }
 }
 

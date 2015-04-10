@@ -24,6 +24,9 @@
 #ifndef _R_COMMON_H_
 #define _R_COMMON_H_
 
+#include <stdint.h>
+#include <stdbool.h>
+
 // Included for definition of tBoolean
 #include <StellarisWare/inc/hw_types.h>
 

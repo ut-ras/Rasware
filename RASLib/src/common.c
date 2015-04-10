@@ -26,10 +26,10 @@
 #include "gpio.h"
 #include "uart.h"
 
-#include <StellarisWare/inc/hw_types.h>
-#include <StellarisWare/driverlib/sysctl.h>
-#include <StellarisWare/driverlib/fpu.h>
-#include <StellarisWare/driverlib/interrupt.h>
+#include <TivaWare/inc/hw_types.h>
+#include <TivaWare/driverlib/sysctl.h>
+#include <TivaWare/driverlib/fpu.h>
+#include <TivaWare/driverlib/interrupt.h>
 
 
 // Does nothing

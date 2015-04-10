@@ -23,12 +23,12 @@
 
 #include "i2c.h"
 
-#include <StellarisWare/inc/hw_memmap.h>
-#include <StellarisWare/inc/hw_ints.h>
-#include <StellarisWare/driverlib/i2c.h>
-#include <StellarisWare/driverlib/gpio.h>
-#include <StellarisWare/driverlib/interrupt.h>
-#include <StellarisWare/driverlib/sysctl.h>
+#include <TivaWare/inc/hw_memmap.h>
+#include <TivaWare/inc/hw_ints.h>
+#include <TivaWare/driverlib/i2c.h>
+#include <TivaWare/driverlib/gpio.h>
+#include <TivaWare/driverlib/interrupt.h>
+#include <TivaWare/driverlib/sysctl.h>
 
 
 // Definition of struct I2C
@@ -77,12 +77,12 @@ struct I2C {
 // Buffer of I2C structs to use
 // Limited to the available modules
 static tI2C i2cBuffer[I2C_COUNT] = {
-    {I2C0_MASTER_BASE, SYSCTL_PERIPH_I2C0, INT_I2C0},
-    {I2C1_MASTER_BASE, SYSCTL_PERIPH_I2C1, INT_I2C1},
-    {I2C2_MASTER_BASE, SYSCTL_PERIPH_I2C2, INT_I2C2},
-    {I2C3_MASTER_BASE, SYSCTL_PERIPH_I2C3, INT_I2C3},
-    {I2C4_MASTER_BASE, SYSCTL_PERIPH_I2C4, INT_I2C4},
-    {I2C5_MASTER_BASE, SYSCTL_PERIPH_I2C5, INT_I2C5},
+    {I2C0_BASE, SYSCTL_PERIPH_I2C0, INT_I2C0},
+    {I2C1_BASE, SYSCTL_PERIPH_I2C1, INT_I2C1},
+    {I2C2_BASE, SYSCTL_PERIPH_I2C2, INT_I2C2},
+    {I2C3_BASE, SYSCTL_PERIPH_I2C3, INT_I2C3},
+    {I2C4_BASE, SYSCTL_PERIPH_I2C4, INT_I2C4},
+    {I2C5_BASE, SYSCTL_PERIPH_I2C5, INT_I2C5},
 };
 
 static int i2cCount = 0;
@@ -145,15 +145,15 @@ tBoolean I2CSuccess(tI2C *i2c) {
 #define I2C_HANDLER(MOD)                                                \
 void I2C##MOD##Handler(void) {                                          \
     tI2C *i2c = &i2cBuffer[MOD];                                        \
-    unsigned long status = I2CMasterIntStatusEx(I2C##MOD##_MASTER_BASE, \
+    unsigned long status = I2CMasterIntStatusEx(I2C##MOD##_BASE, \
                                                 false);                 \
                                                                         \
     if (status == I2C_MASTER_INT_TIMEOUT) {                             \
-        I2CMasterIntClearEx(I2C##MOD##_MASTER_BASE,                     \
+        I2CMasterIntClearEx(I2C##MOD##_BASE,                     \
                             I2C_MASTER_INT_TIMEOUT);                    \
         i2c->state = TIMEOUT;                                           \
     } else {                                                            \
-        I2CMasterIntClearEx(I2C##MOD##_MASTER_BASE,                     \
+        I2CMasterIntClearEx(I2C##MOD##_BASE,                     \
                             I2C_MASTER_INT_DATA);                       \
     }                                                                   \
                                                                         \
@@ -165,21 +165,21 @@ void I2C##MOD##Handler(void) {                                          \
                 return;                                                 \
             }                                                           \
                                                                         \
-            I2CMasterDataPut(I2C##MOD##_MASTER_BASE, *i2c->data);       \
+            I2CMasterDataPut(I2C##MOD##_BASE, *i2c->data);       \
             i2c->data++;                                                \
             i2c->len--;                                                 \
                                                                         \
             if (i2c->len > 0)                                           \
-                I2CMasterControl(I2C##MOD##_MASTER_BASE,                \
+                I2CMasterControl(I2C##MOD##_BASE,                \
                                  I2C_MASTER_CMD_BURST_SEND_CONT);       \
             else                                                        \
-                I2CMasterControl(I2C##MOD##_MASTER_BASE,                \
+                I2CMasterControl(I2C##MOD##_BASE,                \
                                  I2C_MASTER_CMD_BURST_SEND_FINISH);     \
                                                                         \
             break;                                                      \
                                                                         \
         case RECEIVING:                                                 \
-            *i2c->data = I2CMasterDataGet(I2C##MOD##_MASTER_BASE);      \
+            *i2c->data = I2CMasterDataGet(I2C##MOD##_BASE);      \
             i2c->data++;                                                \
             i2c->len--;                                                 \
                                                                         \
@@ -190,10 +190,10 @@ void I2C##MOD##Handler(void) {                                          \
             }                                                           \
                                                                         \
             if (i2c->len > 1)                                           \
-                I2CMasterControl(I2C##MOD##_MASTER_BASE,                \
+                I2CMasterControl(I2C##MOD##_BASE,                \
                                  I2C_MASTER_CMD_BURST_RECEIVE_CONT);    \
             else                                                        \
-                I2CMasterControl(I2C##MOD##_MASTER_BASE,                \
+                I2CMasterControl(I2C##MOD##_BASE,                \
                                  I2C_MASTER_CMD_BURST_RECEIVE_FINISH);  \
                                                                         \
             break;                                                      \

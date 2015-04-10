@@ -2,7 +2,7 @@
 TARGET = RASTemplate.axf
 
 # Library Locations
-STELLARIS = ../../StellarisWare
+STELLARIS = ${HOME}/src/TivaWare
 RASLIB = ../RASLib
 CORTEXM4 = ../../CortexM4Libs
 ARMCLIB = $(dir $(shell which $(CC)))..
@@ -21,7 +21,7 @@ SCREEN := screen
 # File Definitions
 SRC := $(wildcard src/*.c *.c)
 INC = inc $(RASLIB)/.. $(STELLARIS)/.. $(STELLARIS)
-LIB = ras driver-cm4f m c gcc
+LIB = ras driver m c gcc
 LDS = lm4f.ld
 
 OBJ := $(SRC:.c=.o)
@@ -35,7 +35,7 @@ CFLAGS += -mcpu=cortex-m4
 lib-search-dirs = $(shell ${CC} ${CFLAGS} -print-search-dirs | grep libraries | sed -e 's/libraries:\ =//' -e 's/:/ /g')
 LDDIR := ${lib-search-dirs}
 LDDIR += $(RASLIB)/output
-LDDIR += $(STELLARIS)/driverlib/gcc-cm4f
+LDDIR += $(STELLARIS)/driverlib/gcc
 LDDIR += $(CORTEXM4)
 
 CFLAGS += -g
