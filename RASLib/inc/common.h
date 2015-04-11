@@ -27,8 +27,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+typedef bool tBoolean;
+
 // Included for definition of tBoolean
-#include <StellarisWare/inc/hw_types.h>
+#include <TivaWare/inc/hw_types.h>
 
 // Included for common use in debugging
 #include "uart.h"
