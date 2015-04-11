@@ -25,9 +25,21 @@
 #define _R_COMMON_H_
 
 #include <stdint.h>
+
+// Help Keil
+#ifndef UINT32_MAX
+typedef unsigned int     uint32_t;
+typedef unsigned stort   uint16_t; 
+typedef unsigned char    uint8_t;
+typedef signed int       int32_t;
+typedef signed short     int16_t;
+typedef signed char      int8_t;
+#endif 
+
 #include <stdbool.h>
 
 typedef bool tBoolean;
+
 
 // Included for definition of tBoolean
 #include <TivaWare/inc/hw_types.h>
