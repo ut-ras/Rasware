@@ -22,10 +22,13 @@
 //*****************************************************************************
 
 #include "gpio.h"
+#include <stdint.h>
+#include <stddef.h>
 
 #include <StellarisWare/inc/hw_ints.h>
 #include <StellarisWare/inc/hw_memmap.h>
 #include <StellarisWare/inc/hw_gpio.h>
+#include <StellarisWare/inc/lm4f120h5qr.h>
 #include <StellarisWare/driverlib/interrupt.h>
 #include <StellarisWare/driverlib/gpio.h>
 #include <StellarisWare/driverlib/sysctl.h>
@@ -39,6 +42,62 @@ const unsigned long PIN_PORTS[PORT_COUNT] = {
     GPIO_PORTD_BASE,
     GPIO_PORTE_BASE,
     GPIO_PORTF_BASE
+};
+
+volatile uint32_t *PIN_BIT_ADDR[PIN_COUNT] = {
+  NULL, // PA0 uart 0
+  NULL, // PA1
+  GPIO_PORTA_DATA_BITS_R + (1 << 2), // PA2
+  GPIO_PORTA_DATA_BITS_R + (1 << 3), // PA3
+  GPIO_PORTA_DATA_BITS_R + (1 << 4), // PA4
+  GPIO_PORTA_DATA_BITS_R + (1 << 5), // PA5
+  GPIO_PORTA_DATA_BITS_R + (1 << 6), // PA6
+  GPIO_PORTA_DATA_BITS_R + (1 << 7), // PA7
+
+  GPIO_PORTB_DATA_BITS_R + (1 << 0), // PB0
+  GPIO_PORTB_DATA_BITS_R + (1 << 1), // PB1
+  GPIO_PORTB_DATA_BITS_R + (1 << 2), // PB2
+  GPIO_PORTB_DATA_BITS_R + (1 << 3), // PB3
+  GPIO_PORTB_DATA_BITS_R + (1 << 4), // PB4
+  GPIO_PORTB_DATA_BITS_R + (1 << 5), // PB5
+  GPIO_PORTB_DATA_BITS_R + (1 << 6), // PB6
+  GPIO_PORTB_DATA_BITS_R + (1 << 7), // PB7
+
+  NULL, // PC0 JTAG
+  NULL, // PC1
+  NULL, // PC2
+  NULL, // PC3
+  GPIO_PORTC_DATA_BITS_R + (1 << 4), // PC4
+  GPIO_PORTC_DATA_BITS_R + (1 << 5), // PC5
+  GPIO_PORTC_DATA_BITS_R + (1 << 6), // PC6
+  GPIO_PORTC_DATA_BITS_R + (1 << 7), // PC7
+
+  GPIO_PORTD_DATA_BITS_R + (1 << 0), // PD0
+  GPIO_PORTD_DATA_BITS_R + (1 << 1), // PD1
+  GPIO_PORTD_DATA_BITS_R + (1 << 2), // PD2
+  GPIO_PORTD_DATA_BITS_R + (1 << 3), // PD3
+  GPIO_PORTD_DATA_BITS_R + (1 << 4), // PD4
+  GPIO_PORTD_DATA_BITS_R + (1 << 5), // PD5
+  GPIO_PORTD_DATA_BITS_R + (1 << 6), // PD6
+  GPIO_PORTD_DATA_BITS_R + (1 << 7), // PD7
+
+  GPIO_PORTE_DATA_BITS_R + (1 << 0), // PE0
+  GPIO_PORTE_DATA_BITS_R + (1 << 1), // PE1
+  GPIO_PORTE_DATA_BITS_R + (1 << 2), // PE2
+  GPIO_PORTE_DATA_BITS_R + (1 << 3), // PE3
+  GPIO_PORTE_DATA_BITS_R + (1 << 4), // PE4
+  GPIO_PORTE_DATA_BITS_R + (1 << 5), // PE5
+  NULL, // PE6 these pins d(on't e)xist
+  NULL, // PE7
+
+  GPIO_PORTF_DATA_BITS_R + (1 << 0), // PF0
+  GPIO_PORTF_DATA_BITS_R + (1 << 1), // PF1
+  GPIO_PORTF_DATA_BITS_R + (1 << 2), // PF2
+  GPIO_PORTF_DATA_BITS_R + (1 << 3), // PF3
+  GPIO_PORTF_DATA_BITS_R + (1 << 4), // PF4
+  NULL, // PF5 these pins don't exist
+  NULL, // PF6
+  NULL, // PF7
 };
 
 // Internally used struct containing interrupt data
@@ -111,20 +170,27 @@ void InitializeGPIO(void) {
 
 // Get Pin value as a boolean
 tBoolean GetPin(tPin pin) {
+  if ( PIN_BIT_ADDR[pin] != NULL) {
     // Setting pin direction is just a bit set and fairly trivial
     GPIOPinTypeGPIOInput(PORT_VAL(pin), PIN_VAL(pin));
     
     // Get the actual pin value
-    return GPIOPinRead(PORT_VAL(pin), PIN_VAL(pin)) ? true : false;
+    
+    return (PIN_BIT_ADDR[pin] != 0);
+  } else {
+    return 0;
+  }
 }
 
 // Set Pin value as a boolean
 void SetPin(tPin pin, tBoolean val) {
+  if ( PIN_BIT_ADDR[pin] != NULL) {
     // Setting pin direction is just a bit set and fairly trivial
     GPIOPinTypeGPIOOutput(PORT_VAL(pin), PIN_VAL(pin));
     
     // Set the actual pin value
-    GPIOPinWrite(PORT_VAL(pin), PIN_VAL(pin), val ? 0xff : 0x00);
+    *(PIN_BIT_ADDR[pin]) =val ? 0xff : 0x00;
+  }
 }
 
 // Set a pin into high impedance mode
