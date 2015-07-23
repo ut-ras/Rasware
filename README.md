@@ -110,32 +110,38 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
       sudo cp -r gcc-arm-none-eabi*/arm-none-eabi /usr/local
       rm -r gcc-arm-none-eabi*
   ```
+
 4. You should now be able to run the compiler. This command will print the version of your cross-compiler
   ```bash
       arm-none-eabi-gcc -v
   ```
+
 ### Install LM4Flash ###
 1. The lm4flsh utility allows us to program the board. To obtain the program you can download it from the [github repo](https://github.com/utzig/lm4tools).
   ```bash
       git clone https://github.com/utzig/lm4tools.git
   ```
+
 2. You will need to compile the library before you can use it.
   ```bash
       cd lm4tools/lm4flash
       make
   ```
+
 3. Now just move it to local/bin so it is in your path.
   ```bash
       sudo mv lm4flash /usr/local/bin
       cd ../..
       rm -rf lm4flash
   ```
+
 ### Download the Cortex-M4 Libraries ###
 1. Due to an issue in the ARM libraries provided by the cross-compiler, you will need to download the [correct libraries](http://toast.projectgeky.com/rasware/CortexM4Libs.tar.bz2) for the Cortex-M4.
 2. Move the libraries to your ras directory and uncompress the file.
   ```bash
       tar vfxj CortexM4Libs.tar.bz2
   ```
+
 ### Download StellarisWare ###
 1. Download [StellarisWare](http://129.119.175.23/rasware/StellarisWare.tar.bz2), the TI library and move it to your ras directory.
 2. Uncompress the file and compile StellarisWare.
@@ -146,26 +152,31 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
       cd ..
       rm StellarisWare.tar.bz2
   ```
+
 ### Download Rasware ###
 1. You can now use git to create a copy of your forked repo with the clone command.
   ```bash
       git clone https://github.com/username/Rasware2013.git
   ```
+
 2. Before you use it, make sure to compile RASLib.
   ```bash
       cd Rasware2013/RASLib
       make
   ```
+
 ### Add the LM4F to UDev ###
 1. To keep from needing root access to communicate with the lm4f, you will need to copy the lm4f rule to the udev directory.
   ```bash
       sudo cp Rasware2013/RASLib/51-lm4f.rules /etc/udev/rules.d
   ```
+
 2. Have udev re-read it's rules for these changes to come into effect.
   ```bash
       sudo udevadm control --reload
       sudo udevadm trigger
   ```
+
 3. Plug in a Stellaris Launchpad. you should now see the file /dev/lm4f appear.
 
 ### Compile and run RASDemo ###
@@ -175,14 +186,17 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
       cd Rasware2013/RASDemo
       make
   ```
+
 3. The lm4flash utility can be used to load your program on the board. There is a slight issue in Debian that may require running the command with sudo.
   ```bash
       lm4flash RASDemo.axf
   ```
+
 4. The special file /dev/lm4f can now be written to and read from to send data over uart. You can now use an external program, such as screen, to communicate with the devices.
   ```bash
       screen /dev/lm4f 115200
   ```
+
 5. You should now be presented with a menu for using RASDemo. Feel free to mess around and look into RASDemo's source code to see how it is done. To exit press `C-a k y`, or control-A followed by a K followed by a Y.
 6. If you don't want to do all of the above steps by hand each time, you can make the code, flash the board, and start screen all by running the command `make run`.
 
@@ -192,22 +206,27 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
       git config --global user.name "User Name"
       git config --global user.email "your@email.here"
   ```
+
 2. Git will keep track of changes to your directory. You can use the status command to show the state of git.
   ```bash
       git status
   ```
+
 3. To track a file, use the add command
   ```bash
       git add filename
   ```
+
 4. You can now use the commit command to create a commit which contians all of the modifications to files you `git add`ed. It will open an editor, which defaults to VIM, for writing a [commit message](https://github.com/erlang/otp/wiki/Writing-good-commit-messages). If saved, the commit will be created. To change the default editor, assign a program to the EDITOR variable
   ```bash
       git commit
   ```
+
 5. To move your local changes to the server, simply use the push command.
   ```bash
       git  lists + code blocks maybepush origin master
   ```
+
 Setup for Mac (tested under Mavericks) (WIP)
 ---------------
 
