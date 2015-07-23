@@ -22,6 +22,8 @@
 //*****************************************************************************
 
 #include "gpio.h"
+#include <stdint.h>
+#include <stddef.h>
 
 #include <StellarisWare/inc/hw_ints.h>
 #include <StellarisWare/inc/hw_memmap.h>
@@ -39,6 +41,62 @@ const unsigned long PIN_PORTS[PORT_COUNT] = {
     GPIO_PORTD_BASE,
     GPIO_PORTE_BASE,
     GPIO_PORTF_BASE
+};
+
+volatile uint32_t *PIN_BIT_ADDR[PIN_COUNT] = {
+  (volatile uint32_t *) NULL, // PA0 uart 0
+  (volatile uint32_t *) NULL, // PA1
+  ((volatile uint32_t *) GPIO_PORTA_BASE + GPIO_O_DATA) + (1 << 2), // PA2
+  ((volatile uint32_t *) GPIO_PORTA_BASE + GPIO_O_DATA) + (1 << 3), // PA3
+  ((volatile uint32_t *) GPIO_PORTA_BASE + GPIO_O_DATA) + (1 << 4), // PA4
+  ((volatile uint32_t *) GPIO_PORTA_BASE + GPIO_O_DATA) + (1 << 5), // PA5
+  ((volatile uint32_t *) GPIO_PORTA_BASE + GPIO_O_DATA) + (1 << 6), // PA6
+  ((volatile uint32_t *) GPIO_PORTA_BASE + GPIO_O_DATA) + (1 << 7), // PA7
+
+  ((volatile uint32_t *) GPIO_PORTB_BASE + GPIO_O_DATA) + (1 << 0), // PB0
+  ((volatile uint32_t *) GPIO_PORTB_BASE + GPIO_O_DATA) + (1 << 1), // PB1
+  ((volatile uint32_t *) GPIO_PORTB_BASE + GPIO_O_DATA) + (1 << 2), // PB2
+  ((volatile uint32_t *) GPIO_PORTB_BASE + GPIO_O_DATA) + (1 << 3), // PB3
+  ((volatile uint32_t *) GPIO_PORTB_BASE + GPIO_O_DATA) + (1 << 4), // PB4
+  ((volatile uint32_t *) GPIO_PORTB_BASE + GPIO_O_DATA) + (1 << 5), // PB5
+  ((volatile uint32_t *) GPIO_PORTB_BASE + GPIO_O_DATA) + (1 << 6), // PB6
+  ((volatile uint32_t *) GPIO_PORTB_BASE + GPIO_O_DATA) + (1 << 7), // PB7
+
+  (volatile uint32_t *) NULL, // PC0 JTAG
+  (volatile uint32_t *) NULL, // PC1
+  (volatile uint32_t *) NULL, // PC2
+  (volatile uint32_t *) NULL, // PC3
+  ((volatile uint32_t *) GPIO_PORTC_BASE + GPIO_O_DATA) + (1 << 4), // PC4
+  ((volatile uint32_t *) GPIO_PORTC_BASE + GPIO_O_DATA) + (1 << 5), // PC5
+  ((volatile uint32_t *) GPIO_PORTC_BASE + GPIO_O_DATA) + (1 << 6), // PC6
+  ((volatile uint32_t *) GPIO_PORTC_BASE + GPIO_O_DATA) + (1 << 7), // PC7
+
+  ((volatile uint32_t *) GPIO_PORTD_BASE + GPIO_O_DATA) + (1 << 0), // PD0
+  ((volatile uint32_t *) GPIO_PORTD_BASE + GPIO_O_DATA) + (1 << 1), // PD1
+  ((volatile uint32_t *) GPIO_PORTD_BASE + GPIO_O_DATA) + (1 << 2), // PD2
+  ((volatile uint32_t *) GPIO_PORTD_BASE + GPIO_O_DATA) + (1 << 3), // PD3
+  ((volatile uint32_t *) GPIO_PORTD_BASE + GPIO_O_DATA) + (1 << 4), // PD4
+  ((volatile uint32_t *) GPIO_PORTD_BASE + GPIO_O_DATA) + (1 << 5), // PD5
+  ((volatile uint32_t *) GPIO_PORTD_BASE + GPIO_O_DATA) + (1 << 6), // PD6
+  ((volatile uint32_t *) GPIO_PORTD_BASE + GPIO_O_DATA) + (1 << 7), // PD7
+  
+  ((volatile uint32_t *) GPIO_PORTE_BASE + GPIO_O_DATA) + (1 << 0), // PE0
+  ((volatile uint32_t *) GPIO_PORTE_BASE + GPIO_O_DATA) + (1 << 1), // PE1
+  ((volatile uint32_t *) GPIO_PORTE_BASE + GPIO_O_DATA) + (1 << 2), // PE2
+  ((volatile uint32_t *) GPIO_PORTE_BASE + GPIO_O_DATA) + (1 << 3), // PE3
+  ((volatile uint32_t *) GPIO_PORTE_BASE + GPIO_O_DATA) + (1 << 4), // PE4
+  ((volatile uint32_t *) GPIO_PORTE_BASE + GPIO_O_DATA) + (1 << 5), // PE5
+  (volatile uint32_t *) NULL, // PE6 these pins d(on't e)xist
+  (volatile uint32_t *) NULL, // PE7
+  
+  ((volatile uint32_t *) GPIO_PORTF_BASE + GPIO_O_DATA) + (1 << 0), // PF0
+  ((volatile uint32_t *) GPIO_PORTF_BASE + GPIO_O_DATA) + (1 << 1), // PF1
+  ((volatile uint32_t *) GPIO_PORTF_BASE + GPIO_O_DATA) + (1 << 2), // PF2
+  ((volatile uint32_t *) GPIO_PORTF_BASE + GPIO_O_DATA) + (1 << 3), // PF3
+  ((volatile uint32_t *) GPIO_PORTF_BASE + GPIO_O_DATA) + (1 << 4), // PF4
+  (volatile uint32_t *) NULL, // PF5 these pins don't exist
+  (volatile uint32_t *) NULL, // PF6
+  (volatile uint32_t *) NULL, // PF7
 };
 
 // Internally used struct containing interrupt data
@@ -111,20 +169,27 @@ void InitializeGPIO(void) {
 
 // Get Pin value as a boolean
 tBoolean GetPin(tPin pin) {
+  if ( PIN_BIT_ADDR[pin] != NULL) {
     // Setting pin direction is just a bit set and fairly trivial
     GPIOPinTypeGPIOInput(PORT_VAL(pin), PIN_VAL(pin));
     
     // Get the actual pin value
-    return GPIOPinRead(PORT_VAL(pin), PIN_VAL(pin)) ? true : false;
+    
+    return (PIN_BIT_ADDR[pin] != 0);
+  } else {
+    return 0;
+  }
 }
 
 // Set Pin value as a boolean
 void SetPin(tPin pin, tBoolean val) {
+  if ( PIN_BIT_ADDR[pin] != NULL) {
     // Setting pin direction is just a bit set and fairly trivial
     GPIOPinTypeGPIOOutput(PORT_VAL(pin), PIN_VAL(pin));
     
     // Set the actual pin value
-    GPIOPinWrite(PORT_VAL(pin), PIN_VAL(pin), val ? 0xff : 0x00);
+    *(PIN_BIT_ADDR[pin]) =val ? 0xff : 0x00;
+  }
 }
 
 // Set a pin into high impedance mode
