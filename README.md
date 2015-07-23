@@ -23,7 +23,7 @@ Robotathon Setup Instructions
 
 The remainder of the instructions will depend on what type of system you're running.
 
-Setup for Windows (WIP)
+Setup for Windows
 -----------------
 
 ### Install TortiseGit ###
@@ -77,7 +77,7 @@ Note: for windows 8, the drivers are unsigned, so installing them requires you t
 3. You will be promted to do a Git Push. Do so. At this point, you've only made changes to the repo on your machine. The Git Push uploads the changes to GitHub.
 4. If you need to log in, check with a mentor to resetup 
 
-Setup for Linux (WIP)
+Setup for Linux
 ---------------
 
 Just a quick warning: unlike Linux, Windows is actually supported by TI for the LM4F. The Linux support is entirely supplied by hobbiest who have put together various toolchains for others to use. This means that a Windows setup will be much easier to create. However, Linux has many benefits, especially for coders, so these instructions are here for those who are already experienced with Linux and willing to take the challenge.
@@ -227,7 +227,7 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
       git  lists + code blocks maybepush origin master
   ```
 
-Setup for Mac (tested under Mavericks) (WIP)
+Setup for Mac (tested under Mavericks)
 ---------------
 
 1. Get Homebrew: [link](http://brew.sh) (Installation instructions are at the bottom of the page.)
