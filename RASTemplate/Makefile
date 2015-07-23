@@ -32,8 +32,7 @@ ASM := $(SRC:.c=.s)
 CFLAGS += -mthumb
 CFLAGS += -mcpu=cortex-m4
 
-lib-search-dirs = $(shell ${CC} ${CFLAGS} -print-search-dirs | grep libraries | sed -e "s/libraries:\ =/\"/" -e "s/:/\" \"/g" -e "s/$$/\"/")
-LDDIR := ${lib-search-dirs}
+lib-search-dirs = $(shell ${CC} ${CFLAGS} -print-search-dirs | grep libraries | sed -e "s/libraries:\ =/-L'/" -e "s/ /\\\ /" -e "s/:/' -L'/g" -e "s/$$/'/")
 LDDIR += $(RASLIB)/output
 LDDIR += $(STELLARIS)/driverlib/gcc-cm4f
 LDDIR += $(CORTEXM4)
@@ -55,6 +54,7 @@ LDFLAGS += --gc-sections
 
 CFLAGS += $(addprefix -I, $(INC))
 LDFLAGS += $(addprefix -L, $(LDDIR))
+LDFLAGS += ${lib-search-dirs}
 LDFLAGS += $(addprefix -l, $(LIB))
 
 -include $(OBJECTS:.o=.d)
