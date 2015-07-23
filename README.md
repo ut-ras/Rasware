@@ -70,10 +70,6 @@ Note: for windows 8, the drivers are unsigned, so installing them requires you t
 3. Under "speed" type "115200"
 4. Under "Saved Settings" type "Rasware2013" and then click "Save". 
 5. Now the settings are saved in PuTTY. In the future, just open PuTTY and double click "Rasware2013" under "Saved Settings".
-[TODO: finish this section once RASDemo is done]
-
-### Starting your own project ###
-[TODO: Make a starter project for RASLets to use?]
 
 ### Committing code back to the repo ###
 1. While in the directory, right click and select Git Commit
@@ -188,9 +184,6 @@ screen /dev/lm4f 115200
 
 5. You should now be presented with a menu for using RASDemo. Feel free to mess around and look into RASDemo's source code to see how it is done. To exit press `C-a k y`, or control-A followed by a K followed by a Y.
 6. If you don't want to do all of the above steps by hand each time, you can make the code, flash the board, and start screen all by running the command `make run`.
-
-### Starting your own project
-[TODO: Make a starter project for RASLets to use?]
 
 ### Committing code back to the repo
 1. Before you start, you should configure git with both your username and email.
