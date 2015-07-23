@@ -5,7 +5,7 @@ Description
 -----------
 
 This is a generic robotics library and demo project for the EK-LM4F120XL Stellaris Launchpad, built on top of Stellarisware. It is intended to be used for our 2013 Robotathon as well as general purpose robotics projects within our organization.
-Authored by the IEEE - Robotics and Automation Society Student Branch at the University of Texas at Austin. For documentation, see Rasware2013's Github [wiki](https://github.com/ut-ras/Rasware2013/wiki).
+Authored by the IEEE - Robotics and Automation Society Student Branch at the University of Texas at Austin. For documentation, see Rasware's Github [wiki](https://github.com/ut-ras/Rasware/wiki).
 
 Robotathon Setup Instructions
 -----------------
@@ -17,7 +17,7 @@ Robotathon Setup Instructions
 
 ### Fork Rasware (only one Robotathon team member should do this step) ###
 
-1. Once logged into GitHub, go to [ut-ras](https://github.com/ut-ras)'s [Rasware2013](https://github.com/ut-ras/Rasware2013).
+1. Once logged into GitHub, go to [ut-ras](https://github.com/ut-ras)'s [Rasware](https://github.com/ut-ras/Rasware).
 2. [Fork](https://help.github.com/articles/fork-a-repo) the project's code through the button on the top right. This will copy the project to your own account.
 3. On the team's forked repository Github page, go to Settings->Collaborators and add each team member as a collaborator
 
@@ -62,14 +62,14 @@ Note: for windows 8, the drivers are unsigned, so installing them requires you t
 3. Enter your forked repo's url, and press enter
 
 ### Compile and run RASDemo ###
-1. Open Rasware2013/RASDemo/RASDemo.uvproj with Keil uVision. This is an example project we made to demostrate how to get a lot of useful peripherals working with the Launchpad, like motors and line sensors. 
+1. Open Rasware/RASDemo/RASDemo.uvproj with Keil uVision. This is an example project we made to demostrate how to get a lot of useful peripherals working with the Launchpad, like motors and line sensors. 
 2. With the Launchpad plugged into your computer, in Keil do Project->Build Target and then Flash->Download. This compiles and loads the project onto the Launchpad.
 3. Open PuTTY and connect to the board 
 1. Click the "serial" radio button
 2. Under "serial line" type "COM#" where # was the COM port number shown in the Device Manager 
 3. Under "speed" type "115200"
-4. Under "Saved Settings" type "Rasware2013" and then click "Save". 
-5. Now the settings are saved in PuTTY. In the future, just open PuTTY and double click "Rasware2013" under "Saved Settings".
+4. Under "Saved Settings" type "Rasware" and then click "Save". 
+5. Now the settings are saved in PuTTY. In the future, just open PuTTY and double click "Rasware" under "Saved Settings".
 
 ### Committing code back to the repo ###
 1. While in the directory, right click and select Git Commit
@@ -136,14 +136,14 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
   ```
 
 ### Download the Cortex-M4 Libraries ###
-1. Due to an issue in the ARM libraries provided by the cross-compiler, you will need to download the [correct libraries](http://toast.projectgeky.com/rasware/CortexM4Libs.tar.bz2) for the Cortex-M4.
+1. Due to an issue in the ARM libraries provided by the cross-compiler, you will need to download the [correct libraries](http://129.116.175.23/rasware/CortexM4Libs.tar.bz2) for the Cortex-M4.
 2. Move the libraries to your ras directory and uncompress the file.
   ```bash
       tar vfxj CortexM4Libs.tar.bz2
   ```
 
 ### Download StellarisWare ###
-1. Download [StellarisWare](http://129.119.175.23/rasware/StellarisWare.tar.bz2), the TI library and move it to your ras directory.
+1. Download [StellarisWare](http://129.116.175.23/rasware/StellarisWare.tar.bz2), the TI library and move it to your ras directory.
 2. Uncompress the file and compile StellarisWare.
   ```bash
       tar vfxj StellarisWare.tar.bz2
@@ -156,19 +156,19 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
 ### Download Rasware ###
 1. You can now use git to create a copy of your forked repo with the clone command.
   ```bash
-      git clone https://github.com/username/Rasware2013.git
+      git clone https://github.com/username/Rasware.git
   ```
 
 2. Before you use it, make sure to compile RASLib.
   ```bash
-      cd Rasware2013/RASLib
+      cd Rasware/RASLib
       make
   ```
 
 ### Add the LM4F to UDev ###
 1. To keep from needing root access to communicate with the lm4f, you will need to copy the lm4f rule to the udev directory.
   ```bash
-      sudo cp Rasware2013/RASLib/51-lm4f.rules /etc/udev/rules.d
+      sudo cp Rasware/RASLib/51-lm4f.rules /etc/udev/rules.d
   ```
 
 2. Have udev re-read it's rules for these changes to come into effect.
@@ -183,7 +183,7 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
 1. Like most projects on Linux, Rasware can be compiled with make. We have created an example project to demonstrate how to use several useful peripherals with the Launchpad, like motors and line-sensors.
 2. To compile RASDemo, simply run make.
   ```bash
-      cd Rasware2013/RASDemo
+      cd Rasware/RASDemo
       make
   ```
 
@@ -237,12 +237,12 @@ Setup for Mac (tested under Mavericks)
   ```bash
       brew install openocd
   ```
-3. Get the Cross Compilers for the LM4F from [here](https://launchpad.net/gcc-arm-embedded ) (download the one for Mac), extract, and move the extracted folder to the same directory that your Rasware2013 folder is in. 
+3. Get the Cross Compilers for the LM4F from [here](https://launchpad.net/gcc-arm-embedded ) (download the one for Mac), extract, and move the extracted folder to the same directory that your Rasware folder is in. 
 
 
-4. Get StellarisWare from [Toast](http://129.116.175.23/rasware/StellarisWare.tar.bz2), extract, and move the extracted StellarisWare folder to the same directory that your Rasware2013 folder is in. 
+4. Get StellarisWare from [Toast](http://129.116.175.23/rasware/StellarisWare.tar.bz2), extract, and move the extracted StellarisWare folder to the same directory that your Rasware folder is in. 
 
-5. Navigate to Rasware2013/RASLib and open up the Makefile with your favorite text editor. (*)
+5. Navigate to Rasware/RASLib and open up the Makefile with your favorite text editor. (*)
 
 6. Find the `PREFIX` variable around the top of the file and edit it to:
   ```make
@@ -251,10 +251,10 @@ Setup for Mac (tested under Mavericks)
 
 7. Compile RASLib
   ```bash
-      cd Rasware2013/RASLib
+      cd Rasware/RASLib
       make
   ```
-8. Navigate to Rasware2013/RASTemplate and open up the Makefile with your favorite text editor. (*)
+8. Navigate to Rasware/RASTemplate and open up the Makefile with your favorite text editor. (*)
 
 9. Find the `PREFIX` variable around the top of the file and edit it to:
   ```make
@@ -279,4 +279,4 @@ Setup for Mac (tested under Mavericks)
 10. Now, you should be able to edit the `Main.c` file in the RASTemplate and run `make` in the terminal (from this directory) while having the board connected to your computer, and the code in the `Main.c` file should be written to the board. 
 
 
-(*)You can change the Makefile in `Rasware2013/RASDemo` in the same way as above, though in the case of RASDemo.
+(*)You can change the Makefile in `Rasware/RASDemo` in the same way as above, though in the case of RASDemo.
