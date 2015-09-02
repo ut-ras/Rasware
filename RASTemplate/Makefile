@@ -1,21 +1,24 @@
 # Makefile for RASWare 2013
-TARGET = RASTemplate.axf
+TARGET = RASTemplate.out
 
 # Library Locations
-STELLARIS = ../../StellarisWare
 RASLIB = ../RASLib
-CORTEXM4 = ../../CortexM4Libs
+STELLARIS = /usr/local/lib/StellarisWare
+CORTEXM4 = /usr/local/lib/CortexM4Libs
 ARMCLIB = $(dir $(shell which $(CC)))..
+GDBSCRIPT = $(RASLIB)/gdb-script
 
 # Command Definitions
-PREFIX = arm-none-eabi
+PREFIX = arm-none-eabi-
 
-CC := $(PREFIX)-gcc
-LD := $(PREFIX)-ld
-OBJCOPY := $(PREFIX)-objcopy
-SIZE := $(PREFIX)-size
+CC := $(PREFIX)gcc
+LD := $(PREFIX)ld
+OBJCOPY := $(PREFIX)objcopy
+SIZE := $(PREFIX)size
+GDB := $(PREFIX)gdb
 
-FLASH := lm4flash
+OPENOCDCFG := $(shell find /usr/share/openocd -iname *tm4c123*)
+OPENOCD = openocd -f $(OPENOCDCFG)
 SCREEN := screen
 
 # File Definitions
@@ -61,18 +64,24 @@ LDFLAGS += $(addprefix -L, $(LDDIR))
 LDFLAGS += ${lib-search-dirs}
 LDFLAGS += $(addprefix -l, $(LIB))
 
--include $(OBJECTS:.o=.d)
-
 # Rules
 all: $(TARGET)
 
+-include $(OBJECTS:.o=.d)
+
 asm: $(ASM)
 
-size: $(TARGET:.axf=.out)
+size: $(TARGET)
 	$(SIZE) $<
 
 flash: $(TARGET)
-	$(FLASH) $<
+	$(GDB) $< -batch -x $(RASLIB)/gdb-script \
+		-ex "monitor reset halt"             \
+		-ex "load"                           \
+		-ex "monitor reset run"
+
+debug: $(TARGET)
+	$(GDB) $< -x $(RASLIB)/gdb-script
 
 uart:
 	$(SCREEN) /dev/lm4f 115200
