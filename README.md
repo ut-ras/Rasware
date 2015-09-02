@@ -1,282 +1,242 @@
 Rasware
-===========
+=======
+
 
 Description
 -----------
 
-This is a generic robotics library and demo project for the EK-LM4F120XL Stellaris Launchpad, built on top of Stellarisware. It is intended to be used for our 2013 Robotathon as well as general purpose robotics projects within our organization.
+Rasware is a generic robotics library project for the EK-LM4F120XL Stellaris Launchpad, built on top of StellarisWare. It is intended to be used for UT RAS's Robotathon competition as well as general purpose robotics projects.
 Authored by the IEEE - Robotics and Automation Society Student Branch at the University of Texas at Austin. For documentation, see Rasware's Github [wiki](https://github.com/ut-ras/Rasware/wiki).
 
+
 Robotathon Setup Instructions
------------------
+-----------------------------
 
 ### Get started with Git ###
-
 1. Create a free GitHub account on [github.com](https://github.com/signup/free)
 3. If you want to learn more about Git, you can read the GitPro book online for free (and legally, too!) at http://git-scm.com/book
 
 ### Fork Rasware (only one Robotathon team member should do this step) ###
-
 1. Once logged into GitHub, go to [ut-ras](https://github.com/ut-ras)'s [Rasware](https://github.com/ut-ras/Rasware).
 2. [Fork](https://help.github.com/articles/fork-a-repo) the project's code through the button on the top right. This will copy the project to your own account.
-3. On the team's forked repository Github page, go to Settings->Collaborators and add each team member as a collaborator
+3. On the team's forked repository Github page, go to `Settings -> Collaborators` and add each team member as a collaborator
 
 The remainder of the instructions will depend on what type of system you're running.
+
 
 Setup for Windows
 -----------------
 
-### Install TortiseGit ###
+### Install Virtual Box ###
+1. Download and install [Virtual Box](https://www.virtualbox.org/wiki/Downloads).
+2. Oracle's Virtual Box is a hypervisor that lets us run a controlled environment for writing and flashing code.
+3. The "Host Machine" refers to your physical computer, so you probably want the installer for "Windows Hosts"
 
-1. Go to [Google Code](https://code.google.com/p/tortoisegit/wiki/Download)
-2. Download the correct architecture according to your machine (If you don't know, Right Click in My Computer, click Properties, and check wht System Type is)
-3. Run the executable with default values
+### Download the RASBox Image ###
+1. Download [RASBox](http://129.116.175.23/rasware/rasbox.ova).
+2. Launch Oracle Virtual Box.
+3. Import the RASBox Image my selecting `File -> Import Appliance` and navigating to the downloaded file.
+4. Once imported, there should be a `rasbox` VM listed in Virtual Box. Select it and click `start` to launch the VM.
 
-### Install Stellarisware ###
-1. Go to [TI](https://myportal.ti.com/portal/dt?provider=TIPassLoginSingleContainer&lt=myti&j5=2&j3=1&goto=https://my.ti.com/cgi-bin/home.pl) and create a new account.
-2. Go to [TI](http://www.ti.com/tool/sw-lm3s), and download SW-LM3S-LM4F.exe.
-3. When complete, run the installer with the default installation paths.
+### Forward USB ###
+1. Plug in a Launchpad to your computer. If you don't have a Launchpad available this step can be done later.
+2. In the RASBox VM, select `Machine -> Settings` and select the `USB` settings.
+3. Click the little USB symbol with the + sign, select the `Texas Instruments In-Circuit Debug Interface` device, and click `OK`.
+4. Once selected, replugging in the Launchpad should be detected by the RASBox.
 
-### Install Keil uVision ###
-1. Go to [TI](http://www.ti.com/tool/SW-EK-TM4C123GXL) and download EK-TM4C123GXL-KEIL.exe.
-2. Extact the archive
-3. Navigate to Tools/Keil/ and run the installer.
+### Install PuTTY (Optional but suggested) ###
+1. Download [putty.exe](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html).
+2. Putty is an incredibly useful little tool for terminal connections in Windows.
+3. Launch Putty and set the hostname to `ras@20.0.0.8` which is the default username and IP address of the RASBox.
+4. Click `Open` to create an SSH connection to the RASBox.
 
-### Install drivers for the Launchpad ###
-Note: for windows 8, the drivers are unsigned, so installing them requires you to activate special permissions. Basically follow this process: http://www.tabletroms.com/forums/visual-land-tablets/5894-how-install-unsigned-drivers-windows-8-a.html. (Or else the Device Manager just won't let you install drivers.)
+### Using the Terminal ###
+1. You should now be presented with a terminal showing something like `ras@rasbox:~$ `. This is known as a [shell or command line](<https://en.wikipedia.org/wiki/Shell_(computing)>) which is the main interface for using our system.
+2. Here is a quick introduction ([part 1](http://www.linfo.org/command_line_lesson_1.html), [part 2](http://www.linfo.org/command_line_lesson_2.html)) in using the shell.
+3. To edit files, [nano](https://en.wikipedia.org/wiki/GNU_nano) is suggested for new users. You can edit a file by typing the following into the shell.
 
-1. Plug in a Stellaris Launchpad to your computer with a usb cord.
-2. Windows should fail at installing divers.
-3. Go to the Device Manager on your computer.
-4.For each listing with a yellow warning, right-click and select `Update Driver`.
-5. Click `Browse my Computer` and navigate to the unzipped archive folder.
-6. Once all of the drivers are installed, not the COM port number that appears in the Device manager. It should read `Stellaris Virtual Serial Port (COM__)`.
+  ```bash
+    nano hello.txt
+  ```
 
-### Install PuTTY ###
-1. Go to <http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html>.
-2. Under "for Windows on Intel x86" click on [putty.exe](http://the.earth.li/~sgtatham/putty/latest/x86/putty.exe) to save putty to your computer.
 
-### Download Code ###
-1. Choose a directory to work in
-2. Right click on directory, and select Git Clone
-3. Enter your forked repo's url, and press enter
+### Jump to the Linux Instructions ###
+1. Follow the rest of the [instructions](#clone-rasware) on how to use Rasware.
 
-### Compile and run RASDemo ###
-1. Open Rasware/RASDemo/RASDemo.uvproj with Keil uVision. This is an example project we made to demostrate how to get a lot of useful peripherals working with the Launchpad, like motors and line sensors. 
-2. With the Launchpad plugged into your computer, in Keil do Project->Build Target and then Flash->Download. This compiles and loads the project onto the Launchpad.
-3. Open PuTTY and connect to the board 
-1. Click the "serial" radio button
-2. Under "serial line" type "COM#" where # was the COM port number shown in the Device Manager 
-3. Under "speed" type "115200"
-4. Under "Saved Settings" type "Rasware" and then click "Save". 
-5. Now the settings are saved in PuTTY. In the future, just open PuTTY and double click "Rasware" under "Saved Settings".
 
-### Committing code back to the repo ###
-1. While in the directory, right click and select Git Commit
-2. Write useful commit comments. See [link](https://github.com/erlang/otp/wiki/Writing-good-commit-messages). Your teammates will thank you.
-3. You will be promted to do a Git Push. Do so. At this point, you've only made changes to the repo on your machine. The Git Push uploads the changes to GitHub.
-4. If you need to log in, check with a mentor to resetup 
+Setup for Mac
+-------------
+
+### Install Dependencies ###
+1. Install Homebrew: [link](http://brew.sh) (Installation instructions are at the bottom of the page.)
+2. Install OpenOCD through Homebrew in a terminal.
+
+  ```bash
+    brew install openocd
+  ```
+
+3. Download the Cross Compilers for the LM4F from [here](https://launchpad.net/gcc-arm-embedded) (download the one for Mac) and extract.
+4. Download [StellarisWare](http://129.116.175.23/rasware/StellarisWare.tar.bz2), and extract.
+
+### Clone Rasware ###
+
+1. Use git to clone Rasware.
+
+  ```bash
+    git clone https://github.com/username/Rasware.git
+  ```
+
+
+### Modify the Makefiles to point to tools ###
+1. In Rasware, open up RASLib/Makefile with your favorite text editor and change the line containing the `PREFIX` variable.
+  ```make
+    PREFIX := ../../gcc-arm-none-eabi-*/bin/arm-none-eabi-
+  ```
+
+2. Also change the line containing the `STELLARIS` and `CORTEXM4` variabls.
+  ```make
+    STELLARIS = ../../StellarisWare
+    CORTEXM4 = ../../CortexM4Libs
+  ```
+
+3. Compile RASLib.
+
+  ```bash
+    cd Rasware/RASLib
+    make
+  ```
+
+
+### Jump to the Linux Instructions ###
+1. If everything has worked so far, follow the rest of the [instructions](#compile-and-run-rasdemo) on how to use Rasware.
+
 
 Setup for Linux
 ---------------
-
-Just a quick warning: unlike Linux, Windows is actually supported by TI for the LM4F. The Linux support is entirely supplied by hobbiest who have put together various toolchains for others to use. This means that a Windows setup will be much easier to create. However, Linux has many benefits, especially for coders, so these instructions are here for those who are already experienced with Linux and willing to take the challenge.
-
-These instructions are written for use in a terminal (xterm, gterm, kterm, tty1, etc.) and assume that you have already installed, ard are farmiliar with, your favorite text editor. If you have not found a favorite text editor, I recomend you take a look at [Vim](http://www.vim.org), [Emacs](http://www.emacswiki.org/emacs/), and [SublimeText2](http://www.sublimetext.com/2).
+These instructions are written for use in a terminal (xterm, gterm, kterm, tty1, etc.) and assume that you have already installed, and are familiar with, your favorite text editor. If you have not found a favorite text editor, I recomend you take a look at [Vim](http://www.vim.org), [Emacs](http://www.emacswiki.org/emacs/), and [SublimeText2](http://www.sublimetext.com/2).
 
 ### Setup a Directory  ###
 1. Create a directory to work in. This is where we will place everything.
+
   ```bash
-      mkdir ras
-      cd ras
+    mkdir ras
+    cd ras
   ```
+
 
 ### Install Dependencies ###
 1. First install the basic dependencies
-* Archlinux : `sudo pacman -S git screen libusb`
-* Ubuntu/Debian : `sudo apt-get install git screen libusb-dev pkg-config build-essential`
-2. If your computer is 64-bits, you will also need to install `ia32-libs`
-3. If libusb-dev is not available, you may be able just use `libusb`
-
-### Install the Cross Compiler ###
-1. Cross Compilers for the LM4F can be found [here](https://launchpad.net/gcc-arm-embedded)
-2. Download and move to your ras directory.
-3. Uncompress the file and install it your your /usr/local directory.
-  ```bash
-      tar vfxj gcc-arm-none-eabi*.bz2
-      sudo cp -r gcc-arm-none-eabi*/bin/* /usr/local/bin
-      sudo cp -r gcc-arm-none-eabi*/lib/* /usr/local/lib
-      sudo cp -r gcc-arm-none-eabi*/share/* /usr/local/share
-      sudo cp -r gcc-arm-none-eabi*/arm-none-eabi /usr/local
-      rm -r gcc-arm-none-eabi*
-  ```
-
-4. You should now be able to run the compiler. This command will print the version of your cross-compiler
-  ```bash
-      arm-none-eabi-gcc -v
-  ```
-
-### Install LM4Flash ###
-1. The lm4flsh utility allows us to program the board. To obtain the program you can download it from the [github repo](https://github.com/utzig/lm4tools).
-  ```bash
-      git clone https://github.com/utzig/lm4tools.git
-  ```
-
-2. You will need to compile the library before you can use it.
-  ```bash
-      cd lm4tools/lm4flash
-      make
-  ```
-
-3. Now just move it to local/bin so it is in your path.
-  ```bash
-      sudo mv lm4flash /usr/local/bin
-      cd ../..
-      rm -rf lm4flash
-  ```
-
-### Download the Cortex-M4 Libraries ###
-1. Due to an issue in the ARM libraries provided by the cross-compiler, you will need to download the [correct libraries](http://129.116.175.23/rasware/CortexM4Libs.tar.bz2) for the Cortex-M4.
-2. Move the libraries to your ras directory and uncompress the file.
-  ```bash
-      tar vfxj CortexM4Libs.tar.bz2
-  ```
+* Archlinux : `sudo pacman -S git base-devel openocd screen arm-none-eabi-gcc arm-none-eabi-gdb`
+* Ubuntu/Debian : `sudo apt-get install git build-essential openocd screen gcc-arm-none-eabi gdb-arm-none-eabi`
 
 ### Download StellarisWare ###
-1. Download [StellarisWare](http://129.116.175.23/rasware/StellarisWare.tar.bz2), the TI library and move it to your ras directory.
-2. Uncompress the file and compile StellarisWare.
+1. Download [StellarisWare](http://129.116.175.23/rasware/StellarisWare.tar.bz2), the TI library.
+2. Uncompress the file, compile StellarisWare, and move it to `/usr/local/lib`.
+
   ```bash
-      tar vfxj StellarisWare.tar.bz2
-      cd StellarisWare
-      make
-      cd ..
-      rm StellarisWare.tar.bz2
+    tar vfx StellarisWare.tar.bz2
+    cd StellarisWare
+    make
+    cd ..
+    sudo mv StellarisWare /usr/local/lib
+    rm StellarisWare.tar.bz2
   ```
 
-### Download Rasware ###
-1. You can now use git to create a copy of your forked repo with the clone command.
+
+### Add the LM4F rule to UDev ###
+1. To avoid needing root access to communicate with the lm4f, you will need to copy the lm4f rule to the udev directory.
+
   ```bash
-      git clone https://github.com/username/Rasware.git
+    wget https://raw.githubusercontent.com/ut-ras/Rasware/master/RASLib/51-lm4f.rules
+    sudo mv 51-lm4f.rules /etc/udev/rules.d
   ```
 
-2. Before you use it, make sure to compile RASLib.
+2. Trigger udev for the new rules to come into effect.
+
   ```bash
-      cd Rasware/RASLib
-      make
+    sudo udevadm control --reload
+    sudo udevadm trigger
   ```
 
-### Add the LM4F to UDev ###
-1. To keep from needing root access to communicate with the lm4f, you will need to copy the lm4f rule to the udev directory.
+3. Plug in a Stellaris Launchpad. you should now see the file `/dev/lm4f`.
+
+### Clone Rasware ###
+1. Use git to clone Rasware.
+
   ```bash
-      sudo cp Rasware/RASLib/51-lm4f.rules /etc/udev/rules.d
+    git clone https://github.com/username/Rasware.git
   ```
 
-2. Have udev re-read it's rules for these changes to come into effect.
+2. Compile RASLib by using the [make](<https://en.wikipedia.org/wiki/Make_(software)>) program.
+
   ```bash
-      sudo udevadm control --reload
-      sudo udevadm trigger
+    cd Rasware/RASLib
+    make
   ```
 
-3. Plug in a Stellaris Launchpad. you should now see the file /dev/lm4f appear.
 
 ### Compile and run RASDemo ###
-1. Like most projects on Linux, Rasware can be compiled with make. We have created an example project to demonstrate how to use several useful peripherals with the Launchpad, like motors and line-sensors.
-2. To compile RASDemo, simply run make.
+1. We have created an example project to demonstrate Rasware running on a Launchpad.
+2. Compile RASDemo.
+
   ```bash
-      cd Rasware/RASDemo
-      make
+    cd Rasware/RASDemo
+    make
   ```
 
-3. The lm4flash utility can be used to load your program on the board. There is a slight issue in Debian that may require running the command with sudo.
+3. To flash RASDemo to the board, we use make with different arguments.
+
   ```bash
-      lm4flash RASDemo.axf
+    make flash
   ```
 
-4. The special file /dev/lm4f can now be written to and read from to send data over uart. You can now use an external program, such as screen, to communicate with the devices.
+4. If a launchpad is plugged in, the special file `/dev/lm4f` should be available. You can use make to create a terminal over [UART](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver/transmitter).
+
   ```bash
-      screen /dev/lm4f 115200
+    make uart
   ```
 
-5. You should now be presented with a menu for using RASDemo. Feel free to mess around and look into RASDemo's source code to see how it is done. To exit press `C-a k y`, or control-A followed by a K followed by a Y.
-6. If you don't want to do all of the above steps by hand each time, you can make the code, flash the board, and start screen all by running the command `make run`.
+5. You should now be presented with the RASDemo menu. Feel free to mess around and look into RASDemo's source code to see how it is done. To exit press `C-a k y`, or control-A followed by a K followed by a Y.
 
-### Committing code back to the repo
+6. If you don't want to do all of the above steps each time, you can run everything with one command.
+
+  ```bash
+    make run
+  ```
+
+
+### Committing code back to your repo ###
 1. Before you start, you should configure git with both your username and email.
+
   ```bash
-      git config --global user.name "User Name"
-      git config --global user.email "your@email.here"
+    git config --global user.name "User Name"
+    git config --global user.email "your@email.here"
   ```
 
-2. Git will keep track of changes to your directory. You can use the status command to show the state of git.
+2. Git will keep track of any changes to your directory. You can use the status command to show the state of git.
+
   ```bash
-      git status
+    git status
   ```
 
-3. To track a file, use the add command
+3. To track a file, you can use the add command.
+
   ```bash
-      git add filename
+    git add filename
   ```
 
-4. You can now use the commit command to create a commit which contians all of the modifications to files you `git add`ed. It will open an editor, which defaults to VIM, for writing a [commit message](https://github.com/erlang/otp/wiki/Writing-good-commit-messages). If saved, the commit will be created. To change the default editor, assign a program to the EDITOR variable
+4. You can now use the commit command to create a commit containing all of the modifications of the files you `git add`ed. It will open an editor for writing a [commit message](https://github.com/erlang/otp/wiki/Writing-good-commit-messages). If saved, the commit will be created.
+
   ```bash
-      git commit
+    git commit
   ```
 
-5. To move your local changes to the server, simply use the push command.
+5. To move your local changes to the server, use the push command.
+
   ```bash
-      git  lists + code blocks maybepush origin master
+    git push origin master
   ```
 
-Setup for Mac (tested under Mavericks)
----------------
 
-1. Get Homebrew: [link](http://brew.sh) (Installation instructions are at the bottom of the page.)
+### Fin ###
 
-
-2. Get OpenOCD through Homebrew. Type in terminal
-  ```bash
-      brew install openocd
-  ```
-3. Get the Cross Compilers for the LM4F from [here](https://launchpad.net/gcc-arm-embedded ) (download the one for Mac), extract, and move the extracted folder to the same directory that your Rasware folder is in. 
-
-
-4. Get StellarisWare from [Toast](http://129.116.175.23/rasware/StellarisWare.tar.bz2), extract, and move the extracted StellarisWare folder to the same directory that your Rasware folder is in. 
-
-5. Navigate to Rasware/RASLib and open up the Makefile with your favorite text editor. (*)
-
-6. Find the `PREFIX` variable around the top of the file and edit it to:
-  ```make
-      PREFIX := ../../gcc-arm-none-eabi-4_9-2014q4/bin/arm-none-eabi
-  ```
-
-7. Compile RASLib
-  ```bash
-      cd Rasware/RASLib
-      make
-  ```
-8. Navigate to Rasware/RASTemplate and open up the Makefile with your favorite text editor. (*)
-
-9. Find the `PREFIX` variable around the top of the file and edit it to:
-  ```make
-      PREFIX := ../../gcc-arm-none-eabi-4_9-2014q4/bin/arm-none-eabi
-  ```
-10. A couple of lines below the `PREFIX`, where there are several other variables like `CC`, `LD`, etc., add a new variable `GDB`:
-  
-  ```make
-      GDB := $(PREFIX)-gdb
-  ```
-11. Scroll down the Makefile to the `#Rules` section and add the following to `flash:`
-  ```make
-      flash: $(TARGET)
-            openocd -c "source [find board/ek-lm4f120xl.cfg]" &
-            sleep 2
-            $(GDB) $(TARGET:.axf=.out) -ex "target remote :3333" \
-                   -ex "monitor reset halt" \
-                   -ex "load" -ex "monitor reset halt"
-  ```
- NOTE: the spaces after the `flash: $(TARGET)` are tab charactors. Make is picky about tabs vs. spaces
-
-10. Now, you should be able to edit the `Main.c` file in the RASTemplate and run `make` in the terminal (from this directory) while having the board connected to your computer, and the code in the `Main.c` file should be written to the board. 
-
-
-(*)You can change the Makefile in `Rasware/RASDemo` in the same way as above, though in the case of RASDemo.
