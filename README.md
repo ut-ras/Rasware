@@ -53,7 +53,7 @@ Setup for Windows
 ### Using the Terminal ###
 1. You should now be presented with a terminal showing something like `ras@rasbox:~$ `. This is known as a [shell or command line](<https://en.wikipedia.org/wiki/Shell_(computing)>) which is the main interface for using our system.
 2. Here is a quick introduction ([part 1](http://www.linfo.org/command_line_lesson_1.html), [part 2](http://www.linfo.org/command_line_lesson_2.html)) in using the shell.
-3. To edit files, [nano](https://en.wikipedia.org/wiki/GNU_nano) is suggested for new users. You can edit a file by typing the following into the shell.
+3. To edit files, [nano](https://en.wikipedia.org/wiki/GNU_nano) is suggested for new users. You can edit a file, for example hello.txt below, by typing the following into the shell.
 
   ```bash
     nano hello.txt
