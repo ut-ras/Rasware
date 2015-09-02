@@ -47,8 +47,11 @@ Setup for Windows
 ### Install PuTTY (Optional but suggested) ###
 1. Download [putty.exe](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html).
 2. Putty is an incredibly useful little tool for terminal connections in Windows.
-3. Launch Putty and set the hostname to `ras@20.0.0.8` which is the default username and IP address of the RASBox.
-4. Click `Open` to create an SSH connection to the RASBox.
+3. In the VirtualBox Manager, select `File -> Preferences`, select `Network`, select `Host-only Networks`, and then select the little screwdriver symbol.
+4. Change the IPv4 Address to `20.0.0.1` and hit `OK` until all the windows are gone.
+5. Launch Putty and set the hostname to `ras@20.0.0.8` which is the default username and IP address of the RASBox.
+6. You may want to also give the session a name and save it.
+7. Click `Open` to create an SSH connection to the RASBox.
 
 ### Using the Terminal ###
 1. You should now be presented with a terminal showing something like `ras@rasbox:~$ `. This is known as a [shell or command line](<https://en.wikipedia.org/wiki/Shell_(computing)>) which is the main interface for using our system.
