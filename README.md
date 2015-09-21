@@ -37,6 +37,7 @@ Setup for Windows
 2. Launch Oracle Virtual Box.
 3. Import the RASBox Image my selecting `File -> Import Appliance` and navigating to the downloaded file.
 4. Once imported, there should be a `rasbox` VM listed in Virtual Box. Select it and click `start` to launch the VM.
+5. The user name is `ras` and there is no password.
 
 ### Forward USB ###
 1. Plug in a Launchpad to your computer. If you don't have a Launchpad available this step can be done later.
