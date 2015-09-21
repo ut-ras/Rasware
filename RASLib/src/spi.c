@@ -135,20 +135,27 @@ tSPI *InitializeSPI(tPin clk, tPin mosi, tPin miso, int frequency,
         return toRet;
 }
 
-tBoolean SPIRequest(tSPI *spi, tPin csl,
+tBoolean SPIRequestUS(tSPI *spi, tPin csl,
                     const uint32_t *sendData, unsigned int sendLen,
                     uint32_t *recData, unsigned int recLen,
-                    float wait) {
+                    tTime wait) {
         int i;
         if (sendLen < 1 && recLen < 1) return true;
         if (csl > 0) SetPin(csl, !spi->invert_csl);
-        Wait(wait);
+        WaitUS(wait);
         for (i = 0; i < sendLen || i < recLen; ++i) {
                 SSIDataPut(spi->base, sendData[i]);
                 if (recLen > i) SSIDataGet(spi->base, &recData[i]);
-                Wait(wait);
+                WaitUS(wait);
         }
         while (SSIBusy(spi->base));
         if (csl > 0) SetPin(csl, spi->invert_csl);
         return true;
+}
+
+tBoolean SPIRequest(tSPI *spi, tPin csl,
+                    const uint32_t *sendData, unsigned int sendLen,
+                    uint32_t *recData, unsigned int recLen,
+                    float wait) {
+        SPIRequestUS(spi, csl, sendData, sendLen, recData, recLen, US(wait));
 }

@@ -27,6 +27,7 @@
 
 #include "common.h"
 #include "gpio.h"
+#include "time.h"
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -69,6 +70,21 @@ extern "C" {
                             const uint32_t *sendData, unsigned int sendLen,
                             uint32_t *recData, unsigned int recLen,
                             float wait);
+/**
+ * Requests data from a SPI device (blocking).
+ * @param spi An initialized SPI module, which is returned by InitializeSPI
+ * @param csl A chip select line
+ * @param sendData Pointer to array of byes being sent
+ * @param sendLen Number of bytes allocated in the send data array
+ * @param recData Pointer to array of byes to store the data received
+ * @param recLen Number of bytes allocated in the receive data array
+ * @param wait Time between frames sent over spi in US
+ * @return true if successful
+ */
+        tBoolean SPIRequestUS(tSPI *spi, tPin csl,
+                              const uint32_t *sendData, unsigned int sendLen,
+                              uint32_t *recData, unsigned int recLen,
+                              tTime wait);
 
 #ifdef __cplusplus
 }
