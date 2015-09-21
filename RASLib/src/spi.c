@@ -135,13 +135,6 @@ tSPI *InitializeSPI(tPin clk, tPin mosi, tPin miso, int frequency,
         return toRet;
 }
 
-/* warning: breaks Keil compile */
-static inline uint8_t reverse_byte (uint8_t toRev) {
-        uint32_t toRet;
-        __asm__ volatile("rbit %1, %0;": "=r"(toRet): "r" (toRev));
-        return (toRet >> 24) & 0xFF ;
-}
-
 tBoolean SPIRequest(tSPI *spi, tPin csl,
                     const uint32_t *sendData, unsigned int sendLen,
                     uint32_t *recData, unsigned int recLen,
@@ -151,12 +144,8 @@ tBoolean SPIRequest(tSPI *spi, tPin csl,
         if (csl > 0) SetPin(csl, !spi->invert_csl);
         Wait(wait);
         for (i = 0; i < sendLen || i < recLen; ++i) {
-                SSIDataPut(spi->base, (sendLen > i) ? reverse_byte(sendData[i])
-                                                    : 0);
-                if (recLen > i) {
-                        SSIDataGet(spi->base, &recData[i]);
-                        recData[i] = reverse_byte(recData[i]);
-                }
+                SSIDataPut(spi->base, sendData[i]);
+                if (recLen > i) SSIDataGet(spi->base, &recData[i]);
                 Wait(wait);
         }
         while (SSIBusy(spi->base));
