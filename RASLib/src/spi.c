@@ -45,9 +45,9 @@ struct SPI {
 
 static tSPI spiBuffer[SPI_COUNT] = {
         {SSI0_BASE},
-        {SSI0_BASE},
-        {SSI0_BASE},
-        {SSI0_BASE},
+        {SSI1_BASE},
+        {SSI2_BASE},
+        {SSI3_BASE},
 };
 
 static const int8_t spiLookupByCLK[PIN_COUNT] = {
