@@ -65,7 +65,7 @@ Setup for Windows
 
 
 ### Jump to the Linux Instructions ###
-1. Follow the rest of the [instructions](#clone-rasware) on how to use Rasware.
+1. Follow the rest of the instructions on how to use Rasware from the [clone rasware](#clone-rasware-1) step in the Linux instructions.
 
 
 Setup for Mac
@@ -112,7 +112,7 @@ Setup for Mac
 
 
 ### Jump to the Linux Instructions ###
-1. If everything has worked so far, follow the rest of the [instructions](#compile-and-run-rasdemo) on how to use Rasware.
+1. If everything has worked so far, follow the rest of the instructions on how to use Rasware from the [compile and run rasdemo](#compile-and-run-rasdemo) step in the Linux instructions.
 
 
 Setup for Linux
