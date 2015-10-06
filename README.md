@@ -21,29 +21,27 @@ Robotathon Setup Instructions
 2. [Fork](https://help.github.com/articles/fork-a-repo) the project's code through the button on the top right. This will copy the project to your own account.
 3. On the team's forked repository Github page, go to `Settings -> Collaborators` and add each team member as a collaborator
 
-The remainder of the instructions will depend on what type of system you're running.
+The remainder of the instructions will depend on what type of system you're running. If you are running Windows 10, you may have better luck with the [VMware](#setup-for-windows-with-vmware), otherwise we suggest [Virtual Box](#setup-for-windows-with-virtual-box) for Windows users.
 
 
-Setup for Windows
------------------
+Setup for Windows (with Virtual Box)
+------------------------------------
 
 ### Install Virtual Box ###
 1. Download and install [Virtual Box](https://www.virtualbox.org/wiki/Downloads).
 2. Oracle's Virtual Box is a hypervisor that lets us run a controlled environment for writing and flashing code.
-3. The "Host Machine" refers to your physical computer, so you probably want the installer for "Windows Hosts"
+3. The "Host Machine" refers to your physical computer, so you will want the installer for "Windows Hosts"
 
 ### Download the RASBox Image ###
 1. Download [RASBox](http://129.116.175.23/rasware/rasbox.ova).
 2. Launch Oracle Virtual Box.
-3. Import the RASBox Image my selecting `File -> Import Appliance` and navigating to the downloaded file.
+3. Import the RASBox Image by selecting `File -> Import Appliance` and navigating to the downloaded file.
 4. Once imported, there should be a `rasbox` VM listed in Virtual Box. Select it and click `start` to launch the VM.
 5. The user name is `ras` and there is no password.
 
 ### Forward USB ###
 1. Plug in a Launchpad to your computer. If you don't have a Launchpad available this step can be done later.
-2. In the RASBox VM, select `Machine -> Settings` and select the `USB` settings.
-3. Click the little USB symbol with the + sign, select the `Texas Instruments In-Circuit Debug Interface` device, and click `OK`.
-4. Once selected, replugging in the Launchpad should be detected by the RASBox.
+2. In the RASBox VM, select `Devices -> USB Devices` and select `Texas Instruments ICDI`
 
 ### Install PuTTY (Optional but suggested) ###
 1. Download [putty.exe](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html).
@@ -51,6 +49,77 @@ Setup for Windows
 3. In the VirtualBox Manager, select `File -> Preferences`, select `Network`, select `Host-only Networks`, and then select the little screwdriver symbol.
 4. Change the IPv4 Address to `20.0.0.1` and hit `OK` until all the windows are gone.
 5. Launch Putty and set the hostname to `ras@20.0.0.8` which is the default username and IP address of the RASBox.
+6. You may want to also give the session a name and save it.
+7. Click `Open` to create an SSH connection to the RASBox.
+
+### Using the Terminal ###
+1. You should now be presented with a terminal showing something like `ras@rasbox:~$ `. This is known as a [shell or command line](<https://en.wikipedia.org/wiki/Shell_(computing)>) which is the main interface for using our system.
+2. Here is a quick introduction ([part 1](http://www.linfo.org/command_line_lesson_1.html), [part 2](http://www.linfo.org/command_line_lesson_2.html)) in using the shell.
+3. To edit files, [nano](https://en.wikipedia.org/wiki/GNU_nano) is suggested for new users. You can edit a file, for example hello.txt below, by typing the following into the shell.
+
+  ```bash
+    nano hello.txt
+  ```
+
+
+### Jump to the Linux Instructions ###
+1. Follow the rest of the instructions on how to use Rasware from the [clone rasware](#clone-rasware-1) step in the Linux instructions.
+
+
+Setup for Windows (with VMware)
+-------------------------------
+
+### Install VMware ###
+1. Download and install [VMware Workstation Player](https://my.vmware.com/web/vmware/downloads).
+2. WMware Player is a hypervisor that lets us run a controlled environment for writing and flashing code.
+
+### Download the RASBox Image ###
+1. Download [RASBox](http://129.116.175.23/rasware/rasbox.ova).
+2. Launch VMware Player.
+3. Import the RASBox Image by selecting `Open a Virtual Machine` and navigating to the downloaded file.
+4. If the import fails due to not passing `OVF specifications` or `Virtual hardware compliance checks`, just try again with checks relaxed.
+5. Once imported, there should be a `rasbox` VM listed in VMware. Double click on it to launch the VM.
+6. The user name is `ras` and there is no password.
+7. First we need to set up the RASBox to use the available network interfaces. Find the available interfaces with the following command.
+
+  ```bash
+    ip link show
+  ```
+
+8. In the output there should be several interfaces with names like `eno16777736`. We should expect two different interfaces.
+9. Run the following command with each interface to set up DHCP.
+
+  ```bash
+    sudo systemctl enable dhcpcd@<interface>
+  ```
+
+10. You should reboot to make sure the changes stick.
+
+  ```bash
+    sudo reboot now
+  ```
+
+11. You can check to make sure the network is working by pinging some website like google.
+
+  ```bash
+    ping www.gogle.com
+  ```
+
+### Forward USB ###
+1. Plug in a Launchpad to your computer. If you don't have a Launchpad available this step can be done later.
+2. In the RASBox VM, select `Player -> Removable Devices -> Luminary Micro ICDI` and select `Connect`.
+
+### Install PuTTY (Optional but suggested) ###
+1. Download [putty.exe](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html).
+2. Putty is an incredibly useful little tool for terminal connections in Windows.
+3. In VMWare, run the following command to find the ip address of the RASBox.
+
+  ```bash
+    ip addr show
+  ```
+
+4. Somewhere in the output there should be something like `inet 192.168.186.128`, this is your IP address. We most likely want the last one listed.
+5. Launch Putty and set the hostname to `ras@<ip address>`.
 6. You may want to also give the session a name and save it.
 7. Click `Open` to create an SSH connection to the RASBox.
 

@@ -54,7 +54,7 @@ int KeyWasPressed(void);
  * Busy-waits for an input character and then returns it
  * @return Character received
  */
-//unsigned char Getc(void);
+unsigned char Getc(void);
 
 /**
  * Busy-waits for input characters over UART and places them into the provided buffer
