@@ -41,7 +41,9 @@ Setup for Windows (with Virtual Box)
 
 ### Forward USB ###
 1. Plug in a Launchpad to your computer. If you don't have a Launchpad available this step can be done later.
-2. In the RASBox VM, select `Devices -> USB Devices` and select `Texas Instruments ICDI`
+2. In the RASBox VM, select `Machine -> Settings` and select the `USB` settings.
+3. Click the little USB symbol with the + sign, select the `Texas Instruments In-Circuit Debug Interface` device, and click `OK`.
+4. Once selected, replugging in the Launchpad should be detected by the RASBox.
 
 ### Install PuTTY (Optional but suggested) ###
 1. Download [putty.exe](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html).

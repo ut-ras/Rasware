@@ -97,7 +97,7 @@ clean:
 
 
 %.a: $(OBJ)
-	$(AR) rc $@ $^
+	$(AR) rcs $@ $^
 
 %.axf: %.out
 	$(OBJCOPY) -O binary $< $@
