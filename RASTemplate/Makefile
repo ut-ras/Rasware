@@ -13,6 +13,7 @@ PREFIX = arm-none-eabi-
 
 CC := $(PREFIX)gcc
 LD := $(PREFIX)ld
+AR := $(PREFIX)ar
 OBJCOPY := $(PREFIX)objcopy
 SIZE := $(PREFIX)size
 GDB := $(PREFIX)gdb
