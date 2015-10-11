@@ -169,27 +169,20 @@ void InitializeGPIO(void) {
 
 // Get Pin value as a boolean
 tBoolean GetPin(tPin pin) {
-  if ( PIN_BIT_ADDR[pin] != NULL) {
     // Setting pin direction is just a bit set and fairly trivial
     GPIOPinTypeGPIOInput(PORT_VAL(pin), PIN_VAL(pin));
     
     // Get the actual pin value
-    
-    return (PIN_BIT_ADDR[pin] != 0);
-  } else {
-    return 0;
-  }
+    return (*PIN_BIT_ADDR[pin] != 0);
 }
 
 // Set Pin value as a boolean
 void SetPin(tPin pin, tBoolean val) {
-  if ( PIN_BIT_ADDR[pin] != NULL) {
     // Setting pin direction is just a bit set and fairly trivial
     GPIOPinTypeGPIOOutput(PORT_VAL(pin), PIN_VAL(pin));
     
     // Set the actual pin value
-    *(PIN_BIT_ADDR[pin]) =val ? 0xff : 0x00;
-  }
+    *(PIN_BIT_ADDR[pin]) = val ? 0xff : 0x00;
 }
 
 // Set a pin into high impedance mode
