@@ -1,0 +1,23 @@
+Info : clock speed 150485368 kHz
+Info : ICDI Firmware version: 9270
+Info : lm4f120h5qr.cpu: hardware has 6 breakpoints, 4 watchpoints
+Info : accepting 'gdb' connection from pipe
+undefined debug reason 7 - target needs reset
+adapter speed: RCLK - adaptive
+target state: halted
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x00000aa0 msp: 0x20008000
+adapter speed: RCLK - adaptive
+target state: halted
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x00000aa0 msp: 0x20008000
+target state: halted
+target halted due to breakpoint, current mode: Thread 
+xPSR: 0x61000000 pc: 0x20000042 msp: 0x20008000
+Warn : keep_alive() was not invoked in the 1000ms timelimit. GDB alive packet not sent! (1296). Workaround: increase "set remotetimeout" in GDB
+adapter speed: RCLK - adaptive
+target state: halted
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x00000290 msp: 0x20008000
+adapter speed: RCLK - adaptive
+Info : dropped 'gdb' connection
