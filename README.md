@@ -33,7 +33,7 @@ Setup for Windows (with Virtual Box)
 3. The "Host Machine" refers to your physical computer, so you will want the installer for "Windows Hosts"
 
 ### Download the RASBox Image ###
-1. Download [RASBox](http://129.116.175.23/rasware/rasbox.ova).
+1. Download [RASBox](http://128.83.136.86/rasware/rasbox.ova).
 2. Launch Oracle Virtual Box.
 3. Import the RASBox Image by selecting `File -> Import Appliance` and navigating to the downloaded file.
 4. Once imported, there should be a `rasbox` VM listed in Virtual Box. Select it and click `start` to launch the VM.
@@ -76,7 +76,7 @@ Setup for Windows (with VMware)
 2. WMware Player is a hypervisor that lets us run a controlled environment for writing and flashing code.
 
 ### Download the RASBox Image ###
-1. Download [RASBox](http://129.116.175.23/rasware/rasbox.ova).
+1. Download [RASBox](http://128.83.136.86/rasware/rasbox.ova).
 2. Launch VMware Player.
 3. Import the RASBox Image by selecting `Open a Virtual Machine` and navigating to the downloaded file.
 4. If the import fails due to not passing `OVF specifications` or `Virtual hardware compliance checks`, just try again with checks relaxed.
@@ -151,7 +151,7 @@ Setup for Mac
   ```
 
 3. Download the Cross Compilers for the LM4F from [here](https://launchpad.net/gcc-arm-embedded) (download the one for Mac) and extract.
-4. Download [StellarisWare](http://129.116.175.23/rasware/StellarisWare.tar.bz2), and extract.
+4. Download [StellarisWare](http://128.83.136.86/rasware/StellarisWare.tar.bz2), and extract.
 
 ### Clone Rasware ###
 
@@ -205,7 +205,7 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
 * Ubuntu/Debian : `sudo apt-get install git build-essential openocd screen gcc-arm-none-eabi gdb-arm-none-eabi libnewlib-arm-none-eabi`
 
 ### Download StellarisWare ###
-1. Download [StellarisWare](http://129.116.175.23/rasware/StellarisWare.tar.bz2), the TI library.
+1. Download [StellarisWare](http://128.83.136.86/rasware/StellarisWare.tar.bz2), the TI library.
 2. Uncompress the file, compile StellarisWare, and move it to `/usr/local/lib`.
 
   ```bash
