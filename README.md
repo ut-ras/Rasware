@@ -155,7 +155,7 @@ Setup for Mac
 
 ### Clone Rasware ###
 
-1. Use git to clone Rasware.
+1. Use git to clone Rasware, replacing "username" with your Git username in the URL. Make sure you've forked Rasware already!
 
   ```bash
     git clone https://github.com/username/Rasware.git
@@ -236,7 +236,7 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
 3. Plug in a Stellaris Launchpad. you should now see the file `/dev/lm4f`.
 
 ### Clone Rasware ###
-1. Use git to clone Rasware.
+1. Use git to clone Rasware, replacing "username" with your Git username in the URL. Make sure you've cloned Rasware already!
 
   ```bash
     git clone https://github.com/username/Rasware.git
