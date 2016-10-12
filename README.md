@@ -176,6 +176,8 @@ Setup for Mac
   
 2b. Repeat 1 and 2 for RASDemo/Makefile and RASTemplate/Makefile.
 
+2c. In all three Makefiles, around lines 85-90, there are lines that say "/dev/lm4f". You need to change "lm4f" to be whatever your computer sees your Launchpad as. The easiest way to do this is to unplug the Launchpad, run "ls /dev", plug in the Launchpad, and run "ls /dev" again. Find the device that was added to the list and change the paths on those lines in the Makefiles to match that device. 
+
 3. Compile RASLib.
 
   ```bash
