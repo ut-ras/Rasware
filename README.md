@@ -173,6 +173,8 @@ Setup for Mac
     STELLARIS = ../../StellarisWare
     CORTEXM4 = ../../CortexM4Libs
   ```
+  
+2b. Repeat 1 and 2 for RASDemo/Makefile and RASTemplate/Makefile.
 
 3. Compile RASLib.
 
