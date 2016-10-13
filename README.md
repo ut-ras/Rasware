@@ -38,9 +38,7 @@ Setup for Windows
 3. When complete, run the installer with the default installation paths.
 
 ### Install Keil uVision ###
-1. Go to [TI](http://www.ti.com/tool/SW-EK-TM4C123GXL) and download EK-TM4C123GXL-KEIL.exe.
-2. Extact the archive
-3. Navigate to Tools/Keil/ and run the installer.
+Follow the instructions [here](https://edx-org-utaustinx.s3.amazonaws.com/UT601x/KeilInstall.html). Replace "edX UT.6.02x" with "University of Texas at Austin".
 
 ### Install drivers for the Launchpad ###
 Note: for windows 8, the drivers are unsigned, so installing them requires you to activate special permissions. Basically follow this process: http://www.tabletroms.com/forums/visual-land-tablets/5894-how-install-unsigned-drivers-windows-8-a.html. (Or else the Device Manager just won't let you install drivers.)
