@@ -78,6 +78,8 @@ flash: $(TARGET)
 	$(GDB) $< -batch -x $(RASLIB)/gdb-script \
 		-ex "monitor reset halt"             \
 		-ex "load"                           \
+		-ex "monitor reset halt"             \
+		-ex "monitor shutdown"		     \
 		-ex "monitor reset run"
 
 debug: $(TARGET)
