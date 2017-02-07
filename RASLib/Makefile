@@ -75,10 +75,12 @@ size: $(TARGET)
 	$(SIZE) $<
 
 flash: $(TARGET)
-	$(GDB) $< -batch -x $(RASLIB)/gdb-script \
-		-ex "monitor reset halt"             \
-		-ex "load"                           \
-		-ex "monitor reset run"
+	$(OPENOCD) -c "init"                              \
+	           -c "halt"                              \
+	           -c "flash write_image erase $(TARGET)" \
+	           -c "verify_image $(TARGET)"            \
+	           -c "halt"                              \
+	           -c "shutdown"
 
 debug: $(TARGET)
 	$(GDB) $< -x $(RASLIB)/gdb-script
