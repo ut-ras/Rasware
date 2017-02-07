@@ -268,6 +268,14 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
   ```bash
     make flash
   ```
+  
+  If at this point an error message is printed that includes "Error erasing flash with vFlashErase packet", run the following command twice and press the board's reset button:
+  
+  ```bash
+    openocd -f /usr/share/openocd/scripts/board/ek-tm4c123gxl.cfg -c init -c halt -c "flash write_image erase RASDemo.out" -c verify_image RASDemo.out -c halt -c shutdown
+  ```
+  
+  You should now be able to use `make flash` normally until you flash from Keil again. Keil seems to break things. Thank you to Kevin George for this workaround.
 
 4. If a launchpad is plugged in, the special file `/dev/lm4f` should be available. You can use make to create a terminal over [UART](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver/transmitter).
 
