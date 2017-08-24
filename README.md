@@ -26,26 +26,27 @@ The remainder of the instructions will depend on what type of system you're runn
 
 Setup for Windows (with Virtual Box)
 ------------------------------------
-
-### Install Virtual Box ###
+DEPRECATED - Install Ubuntu and then follow the Linux setup instructions.
+~~### Install Virtual Box ###
 1. Download and install [Virtual Box](https://www.virtualbox.org/wiki/Downloads).
 2. Oracle's Virtual Box is a hypervisor that lets us run a controlled environment for writing and flashing code.
-3. The "Host Machine" refers to your physical computer, so you will want the installer for "Windows Hosts"
+3. The "Host Machine" refers to your physical computer, so you will want the installer for "Windows Hosts"~~
 
-### Download the RASBox Image ###
+
+~~### Download the RASBox Image ###
 1. Download [RASBox](http://128.83.136.86/rasware/rasbox.ova).
 2. Launch Oracle Virtual Box.
 3. Import the RASBox Image by selecting `File -> Import Appliance` and navigating to the downloaded file.
 4. Once imported, there should be a `rasbox` VM listed in Virtual Box. Select it and click `start` to launch the VM.
 5. The user name is `ras` and there is no password.
 
-### Forward USB ###
+~~### Forward USB ###
 1. Plug in a Launchpad to your computer. If you don't have a Launchpad available this step can be done later.
 2. In the RASBox VM, select `Machine -> Settings` and select the `USB` settings.
 3. Click the little USB symbol with the + sign, select the `Texas Instruments In-Circuit Debug Interface` device, and click `OK`.
-4. Once selected, replugging in the Launchpad should be detected by the RASBox.
+4. Once selected, replugging in the Launchpad should be detected by the RASBox.~~
 
-### Install PuTTY (Optional but suggested) ###
+~~### Install PuTTY (Optional but suggested) ###
 1. Download [putty.exe](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html).
 2. Putty is an incredibly useful little tool for terminal connections in Windows.
 3. In the VirtualBox Manager, select `File -> Preferences`, select `Network`, select `Host-only Networks`, and then select the little screwdriver symbol.
@@ -54,7 +55,7 @@ Setup for Windows (with Virtual Box)
 6. You may want to also give the session a name and save it.
 7. Click `Open` to create an SSH connection to the RASBox.
 
-### Using the Terminal ###
+~~### Using the Terminal ###
 1. You should now be presented with a terminal showing something like `ras@rasbox:~$ `. This is known as a [shell or command line](<https://en.wikipedia.org/wiki/Shell_(computing)>) which is the main interface for using our system.
 2. Here is a quick introduction ([part 1](http://www.linfo.org/command_line_lesson_1.html), [part 2](http://www.linfo.org/command_line_lesson_2.html)) in using the shell.
 3. To edit files, [nano](https://en.wikipedia.org/wiki/GNU_nano) is suggested for new users. You can edit a file, for example hello.txt below, by typing the following into the shell.
@@ -70,12 +71,14 @@ Setup for Windows (with Virtual Box)
 
 Setup for Windows (with VMware)
 -------------------------------
-
 ### Install VMware ###
 1. Download and install [VMware Workstation Player](https://my.vmware.com/web/vmware/downloads).
 2. WMware Player is a hypervisor that lets us run a controlled environment for writing and flashing code.
 
-### Download the RASBox Image ###
+
+DEPRECATED - Install Ubuntu and then follow the Linux setup instructions.
+
+~~### Download the RASBox Image ###
 1. Download [RASBox](http://128.83.136.86/rasware/rasbox.ova).
 2. Launch VMware Player.
 3. Import the RASBox Image by selecting `Open a Virtual Machine` and navigating to the downloaded file.
@@ -88,20 +91,20 @@ Setup for Windows (with VMware)
     ip link show
   ```
 
-8. In the output there should be several interfaces with names like `eno16777736`. We should expect two different interfaces.
+~~8. In the output there should be several interfaces with names like `eno16777736`. We should expect two different interfaces.
 9. Run the following command with each interface to set up DHCP.
 
   ```bash
     sudo systemctl enable dhcpcd@<interface>
   ```
 
-10. You should reboot to make sure the changes stick.
+~~10. You should reboot to make sure the changes stick.
 
   ```bash
     sudo reboot now
   ```
 
-11. You can check to make sure the network is working by pinging some website like google.
+~~11. You can check to make sure the network is working by pinging some website like google.
 
   ```bash
     ping www.gogle.com
@@ -111,7 +114,7 @@ Setup for Windows (with VMware)
 1. Plug in a Launchpad to your computer. If you don't have a Launchpad available this step can be done later.
 2. In the RASBox VM, select `Player -> Removable Devices -> Luminary Micro ICDI` and select `Connect`.
 
-### Install PuTTY (Optional but suggested) ###
+~~### Install PuTTY (Optional but suggested) ###
 1. Download [putty.exe](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html).
 2. Putty is an incredibly useful little tool for terminal connections in Windows.
 3. In VMWare, run the following command to find the ip address of the RASBox.
@@ -120,12 +123,12 @@ Setup for Windows (with VMware)
     ip addr show
   ```
 
-4. Somewhere in the output there should be something like `inet 192.168.186.128`, this is your IP address. We most likely want the last one listed.
+~~4. Somewhere in the output there should be something like `inet 192.168.186.128`, this is your IP address. We most likely want the last one listed.
 5. Launch Putty and set the hostname to `ras@<ip address>`.
 6. You may want to also give the session a name and save it.
 7. Click `Open` to create an SSH connection to the RASBox.
 
-### Using the Terminal ###
+~~### Using the Terminal ###
 1. You should now be presented with a terminal showing something like `ras@rasbox:~$ `. This is known as a [shell or command line](<https://en.wikipedia.org/wiki/Shell_(computing)>) which is the main interface for using our system.
 2. Here is a quick introduction ([part 1](http://www.linfo.org/command_line_lesson_1.html), [part 2](http://www.linfo.org/command_line_lesson_2.html)) in using the shell.
 3. To edit files, [nano](https://en.wikipedia.org/wiki/GNU_nano) is suggested for new users. You can edit a file, for example hello.txt below, by typing the following into the shell.
@@ -151,7 +154,7 @@ Setup for Mac
   ```
 
 3. Download the Cross Compilers for the LM4F from [here](https://launchpad.net/gcc-arm-embedded) (download the one for Mac) and extract.
-4. Download [StellarisWare](http://128.83.136.86/rasware/StellarisWare.tar.bz2), and extract.
+4. Locate Stellarisware in your Rasware/Downloads, and extract.
 
 ### Clone Rasware ###
 
@@ -209,7 +212,7 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
 * Ubuntu/Debian : `sudo apt-get install git build-essential openocd screen gcc-arm-none-eabi gdb-arm-none-eabi libnewlib-arm-none-eabi`
 
 ### Download StellarisWare ###
-1. Download [StellarisWare](http://128.83.136.86/rasware/StellarisWare.tar.bz2), the TI library.
+1. Locate Stellarisware, the TI library, in Rasware/Downloads.
 2. Uncompress the file, compile StellarisWare, and move it to `/usr/local/lib`.
 
   ```bash
