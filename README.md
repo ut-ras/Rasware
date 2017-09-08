@@ -66,8 +66,15 @@ Setup for Mac
 3. Download the Cross Compilers for the LM4F from [here](https://launchpad.net/gcc-arm-embedded) (download the one for Mac) and extract.
 4. Locate Stellarisware in your Rasware/Downloads, and extract.
 
-### Clone Rasware ###
+### Setup a Directory  ###
+1. Create a directory to work in. This is where we will place everything.
 
+  ```bash
+    mkdir ras
+    cd ras
+  ```
+
+### Clone Rasware ###
 1. Use git to clone Rasware, replacing "username" with your Git username in the URL. Make sure you've forked Rasware already!
 
   ```bash
@@ -122,7 +129,7 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
 * Ubuntu/Debian : `sudo apt-get install git build-essential openocd screen gcc-arm-none-eabi gdb-arm-none-eabi libnewlib-arm-none-eabi`
 
 ### Clone Rasware ###
-Use git to clone Rasware, replacing "username" with your Git username in the URL. Make sure you've cloned Rasware already!
+Use git to clone Rasware, replacing "username" with your Git username in the URL. Make sure you've forked Rasware already! If you're coming from the Max instructions 
 
   ```bash
     git clone https://github.com/username/Rasware.git
