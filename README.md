@@ -21,17 +21,7 @@ Robotathon Setup Instructions
 2. [Fork](https://help.github.com/articles/fork-a-repo) the project's code through the button on the top right. This will copy the project to your own account.
 3. On the team's forked repository Github page, go to `Settings -> Collaborators` and add each team member as a collaborator
 
-The remainder of the instructions will depend on what type of system you're running. If you are running Windows 10, you may have better luck with the [VMware](#setup-for-windows-with-vmware), otherwise we suggest [Virtual Box](#setup-for-windows-with-virtual-box) for Windows users.
-
-
-Setup for Windows (with Virtual Box)
-------------------------------------
-RASBOX IS DEPRECATED - Install a Ubuntu VM and then follow the Linux setup instructions.
-
-
-
-### Jump to the Linux Instructions ###
-1. Follow the rest of the instructions on how to use Rasware from the [clone rasware](#clone-rasware-1) step in the Linux instructions.
+The remainder of the instructions will depend on what type of system you're running. 
 
 
 Setup for Windows (with VMware)
@@ -39,15 +29,22 @@ Setup for Windows (with VMware)
 ### Install VMware ###
 1. Download and install [VMware Workstation Player](https://my.vmware.com/web/vmware/downloads).
 2. WMware Player is a hypervisor that lets us run a controlled environment for writing and flashing code.
-
-
-RASBOX IS DEPRECATED - Install a Ubuntu VM and then follow the Linux setup instructions.
+3. Download a copy of the latest Ubuntu LTS .iso from [here](https://www.ubuntu.com/download/desktop).
+4. Open VMWare and select Create a New Virtual Machine.
+5. Select the Installer disc image file bubble and navigate to your freshly downloaded .iso. Click next.
+6. Full Name is your own name. User name is whatever you want, all lower case, no special characters. Create and confirm a password. Click next.
+7. Choose a name for your VM. (Some people like to theme their Linux machine names. We've seen famous scientists, video game AIs, Star Trek starship classes, whatever you want.)
+8. Make sure you're okay with the location where you'll store this machine, then click next.
+9. 20GB is a good max disk size. This will not immediately allocate 20GB, it will be populated as you fill it. This is just the max allowed size.
+10. Store your virtual disk as a single file. Click next.
+11. Click Customize Hardware, then slide the memory slider up to 4GB. This is plenty of RAM for this VM's purposes. Click close.
+12. Click finish, let the machine install, then log in!
 
 
 
 ### Forward USB ###
 1. Plug in a Launchpad to your computer. If you don't have a Launchpad available this step can be done later.
-2. In the RASBox VM, select `Player -> Removable Devices -> Luminary Micro ICDI` and select `Connect`.
+2. In the VM, select `Player -> Removable Devices -> Luminary Micro ICDI` and select `Connect`.
 
 
 
@@ -124,6 +121,13 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
 * Archlinux : `sudo pacman -S git base-devel openocd screen arm-none-eabi-gcc arm-none-eabi-gdb arm-none-eabi-newlib`
 * Ubuntu/Debian : `sudo apt-get install git build-essential openocd screen gcc-arm-none-eabi gdb-arm-none-eabi libnewlib-arm-none-eabi`
 
+### Clone Rasware ###
+Use git to clone Rasware, replacing "username" with your Git username in the URL. Make sure you've cloned Rasware already!
+
+  ```bash
+    git clone https://github.com/username/Rasware.git
+  ```
+
 ### Download StellarisWare ###
 1. Locate Stellarisware, the TI library, in Rasware/Downloads.
 2. Uncompress the file, compile StellarisWare, and move it to `/usr/local/lib`.
@@ -155,20 +159,14 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
 
 3. Plug in a Stellaris Launchpad. you should now see the file `/dev/lm4f`.
 
-### Clone Rasware ###
-1. Use git to clone Rasware, replacing "username" with your Git username in the URL. Make sure you've cloned Rasware already!
-
-  ```bash
-    git clone https://github.com/username/Rasware.git
-  ```
-
-2. Compile RASLib by using the [make](<https://en.wikipedia.org/wiki/Make_(software)>) program.
+### Compile Rasware ###
+Compile RASLib by using the [make](<https://en.wikipedia.org/wiki/Make_(software)>) program.
 
   ```bash
     cd Rasware/RASLib
     make
   ```
-
+Repeat for RASTemplate and RASDemo.
 
 ### Compile and run RASDemo ###
 1. We have created an example project to demonstrate Rasware running on a Launchpad.
@@ -184,7 +182,7 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
   ```bash
     make flash
   ```
-  If you get an Error 1, make sure your USB device is connected, powered on, and forwarded to your VM if necessary and try again. If you get another Error 1, `make flash` again and press reset.
+  If you get an Error 1, make sure your USB device is connected, powered on, and forwarded to your VM if necessary and try again. If you see "shutdown command invoked," press the reset button. If you get another Error 1, `make flash` again and press reset.
   
   Else, if at this point an error message is printed that includes "Error erasing flash with vFlashErase packet", run the following command twice and press the board's reset button:
   ```bash
