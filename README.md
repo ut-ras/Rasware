@@ -189,7 +189,7 @@ Repeat for RASTemplate and RASDemo.
   ```bash
     make flash
   ```
-  If you get an Error 1, make sure your USB device is connected, powered on, and forwarded to your VM if necessary and try again. If you see "shutdown command invoked," press the reset button. If you get another Error 1, `make flash` again and press reset.
+  If you get an Error 1, make sure your USB device is connected, powered on, and forwarded to your VM if necessary and try again. If you see "shutdown command invoked," press the reset button. If you get another Error 1, `make flash` again and press reset. If you keep getting Error 1's, make sure you've forwarded your LaunchPad's USB connection to the VM: In the VM, select `Player -> Removable Devices -> Luminary Micro ICDI` and select `Connect`.
   
   Else, if at this point an error message is printed that includes "Error erasing flash with vFlashErase packet", run the following command twice and press the board's reset button:
   ```bash
