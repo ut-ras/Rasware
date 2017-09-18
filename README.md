@@ -56,6 +56,12 @@ Setup for Mac
 -------------
 
 ### Install Dependencies ###
+0. Before we do anything else, run this in your terminal if you're running Marericks or newer (macOS 10.9+) and haven't already done this:
+
+    ```bash
+        xcode-select --install
+    ```
+
 1. Install Homebrew: [link](http://brew.sh) (Installation instructions are at the bottom of the page.)
 2. Install OpenOCD through Homebrew in a terminal.
 
@@ -63,7 +69,12 @@ Setup for Mac
     brew install openocd
   ```
 
-3. Download the Cross Compilers for the LM4F from [here](https://launchpad.net/gcc-arm-embedded) (download the one for Mac) and extract.
+3. Install the Cross Compiler Toolchain for Embedded ARM Devices through Homebrew as well:
+
+    ```bash
+        brew cask install gcc-arm-embedded
+    ```
+
 4. Locate Stellarisware in your Rasware/Downloads, and extract.
 
 ### Setup a Directory  ###
@@ -83,22 +94,16 @@ Setup for Mac
 
 
 ### Modify the Makefiles to point to tools ###
-1. In Rasware, open up RASLib/Makefile with your favorite text editor and change the line containing the `PREFIX` variable.
-  ```make
-    PREFIX := ../../gcc-arm-none-eabi-*/bin/arm-none-eabi-
-  ```
-
-2. Also change the line containing the `STELLARIS` and `CORTEXM4` variabls.
+1. In Rasware, open up RASLib/Makefile with your favorite text editor and change the line the line containing the `STELLARIS` variable.
   ```make
     STELLARIS = ../../StellarisWare
-    CORTEXM4 = ../../CortexM4Libs
   ```
   
-2b. Repeat 1 and 2 for RASDemo/Makefile and RASTemplate/Makefile.
+2. Repeat the above for RASDemo/Makefile and RASTemplate/Makefile.
 
-2c. In all three Makefiles, around lines 85-90, there are lines that say "/dev/lm4f". You need to change "lm4f" to be whatever your computer sees your Launchpad as. The easiest way to do this is to unplug the Launchpad, run "ls /dev", plug in the Launchpad, and run "ls /dev" again. Find the device that was added to the list and change the paths on those lines in the Makefiles to match that device. 
+3. In all three Makefiles, around lines 85-90, there are lines that say "/dev/lm4f". You need to change "lm4f" to be whatever your computer sees your Launchpad as. The easiest way to do this is to unplug the Launchpad, run "ls /dev", plug in the Launchpad, and run "ls /dev" again. Find the device that was added to the list and change the paths on those lines in the Makefiles to match that device. 
 
-3. Compile RASLib.
+4. Compile RASLib.
 
   ```bash
     cd Rasware/RASLib
