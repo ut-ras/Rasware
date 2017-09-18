@@ -62,6 +62,7 @@ Setup for Mac
         xcode-select --install
     ```
 
+
 1. Install Homebrew: [link](http://brew.sh) (Installation instructions are at the bottom of the page.)
 2. Install OpenOCD through Homebrew in a terminal.
 
@@ -69,11 +70,30 @@ Setup for Mac
     brew install openocd
   ```
 
+
 3. Install the Cross Compiler Toolchain for Embedded ARM Devices through Homebrew as well:
 
     ```bash
         brew cask install gcc-arm-embedded
     ```
+
+
+### Configure Groups ###
+1. On macOS devices belong to the `wheel` group, so in order to access the devices on your Mac (like the Launchpad) you also need to be part of the `wheel` group. Put the following in a terminal to see what groups you're part of:
+
+  ```bash
+      groups
+  ```
+
+
+2. If `wheel` was one of the groups listed, you're good to go and can skip the next step.
+
+3. If not, add yourself to the `wheel` group:
+
+  ```bash
+    sudo dscl . append /Groups/wheel GroupMembership $(whoami)
+  ```
+
 
 ### Jump to the Linux Instructions ###
 1. If everything has worked so far, follow the rest of the instructions on how to use Rasware from the [setup a directory](#setup-a-directory) step in the Linux instructions.
