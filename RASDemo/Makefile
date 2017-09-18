@@ -34,7 +34,6 @@ LDS = lm4f.ld
 OBJ := $(SRC:.c=.o)
 ASM := $(SRC:.c=.s)
 
-
 # Flag Definitions
 CFLAGS += -mthumb
 CFLAGS += -mcpu=cortex-m4
