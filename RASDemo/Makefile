@@ -8,6 +8,9 @@ CORTEXM4 = /usr/local/lib/CortexM4Libs
 ARMCLIB = $(dir $(shell which $(CC)))..
 GDBSCRIPT = $(RASLIB)/gdb-script
 
+# Board device path
+DETECT_SCRIPT = $(RASLIB)/detect-board
+
 # Command Definitions
 PREFIX = arm-none-eabi-
 
@@ -87,10 +90,10 @@ debug: $(TARGET)
 	$(GDB) $< -x $(RASLIB)/gdb-script
 
 uart:
-	$(SCREEN) /dev/lm4f 115200
+	$(SCREEN) $(shell $(DETECT_SCRIPT)) 115200
 
 run: flash
-	$(SCREEN) /dev/lm4f 115200
+	$(SCREEN) $(shell $(DETECT_SCRIPT)) 115200
 
 clean:
 	-rm $(TARGET)
