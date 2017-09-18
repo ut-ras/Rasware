@@ -18,7 +18,7 @@ OBJCOPY := $(PREFIX)objcopy
 SIZE := $(PREFIX)size
 GDB := $(PREFIX)gdb
 
-OPENOCDCFG := $(shell find /usr/share/openocd -iname *tm4c123*)
+OPENOCDCFG := $(shell find /usr -path */scripts/board/*tm4c123* 2>/dev/null)
 OPENOCD = openocd -f $(OPENOCDCFG)
 SCREEN := screen
 
