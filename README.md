@@ -56,6 +56,12 @@ Setup for Mac
 -------------
 
 ### Install Dependencies ###
+0. Before we do anything else, run this in your terminal if you're running Marericks or newer (macOS 10.9+) and haven't already done this:
+
+    ```bash
+        xcode-select --install
+    ```
+
 1. Install Homebrew: [link](http://brew.sh) (Installation instructions are at the bottom of the page.)
 2. Install OpenOCD through Homebrew in a terminal.
 
@@ -63,70 +69,33 @@ Setup for Mac
     brew install openocd
   ```
 
-3. Download the Cross Compilers for the LM4F from [here](https://launchpad.net/gcc-arm-embedded) (download the one for Mac) and extract.
-4. Locate Stellarisware in your Rasware/Downloads, and extract.
+3. Install the Cross Compiler Toolchain for Embedded ARM Devices through Homebrew as well:
 
-### Setup a Directory  ###
-1. Create a directory to work in. This is where we will place everything.
-
-  ```bash
-    mkdir ras
-    cd ras
-  ```
-
-### Clone Rasware ###
-1. Use git to clone Rasware, replacing "username" with your Git username in the URL. Make sure you've forked Rasware already!
-
-  ```bash
-    git clone https://github.com/username/Rasware.git
-  ```
-
-
-### Modify the Makefiles to point to tools ###
-1. In Rasware, open up RASLib/Makefile with your favorite text editor and change the line containing the `PREFIX` variable.
-  ```make
-    PREFIX := ../../gcc-arm-none-eabi-*/bin/arm-none-eabi-
-  ```
-
-2. Also change the line containing the `STELLARIS` and `CORTEXM4` variabls.
-  ```make
-    STELLARIS = ../../StellarisWare
-    CORTEXM4 = ../../CortexM4Libs
-  ```
-  
-2b. Repeat 1 and 2 for RASDemo/Makefile and RASTemplate/Makefile.
-
-2c. In all three Makefiles, around lines 85-90, there are lines that say "/dev/lm4f". You need to change "lm4f" to be whatever your computer sees your Launchpad as. The easiest way to do this is to unplug the Launchpad, run "ls /dev", plug in the Launchpad, and run "ls /dev" again. Find the device that was added to the list and change the paths on those lines in the Makefiles to match that device. 
-
-3. Compile RASLib.
-
-  ```bash
-    cd Rasware/RASLib
-    make
-  ```
-
+    ```bash
+        brew cask install gcc-arm-embedded
+    ```
 
 ### Jump to the Linux Instructions ###
-1. If everything has worked so far, follow the rest of the instructions on how to use Rasware from the [compile and run rasdemo](#compile-and-run-rasdemo) step in the Linux instructions.
+1. If everything has worked so far, follow the rest of the instructions on how to use Rasware from the [setup a directory](#setup-a-directory) step in the Linux instructions.
 
 
 Setup for Linux
 ---------------
-These instructions are written for use in a terminal (xterm, gterm, kterm, tty1, etc.) and assume that you have already installed, and are familiar with, your favorite text editor. If you have not found a favorite text editor, I recomend you take a look at [Vim](http://www.vim.org), [Emacs](http://www.emacswiki.org/emacs/), and [SublimeText2](http://www.sublimetext.com/2).
-
-### Setup a Directory  ###
-1. Create a directory to work in. This is where we will place everything.
-
-  ```bash
-    mkdir ras
-    cd ras
-  ```
-
+These instructions are written for use in a terminal (xterm, gterm, kterm, tty1, etc.) and assume that you have already installed, and are familiar with, your favorite text editor. If you have not found a favorite text editor, I recomend you take a look at [Vim](http://www.vim.org), [Emacs](http://www.emacswiki.org/emacs/), and [SublimeText3](http://www.sublimetext.com/).
 
 ### Install Dependencies ###
 1. First install the basic dependencies
 * Archlinux : `sudo pacman -S git base-devel openocd screen arm-none-eabi-gcc arm-none-eabi-gdb arm-none-eabi-newlib`
 * Ubuntu/Debian : `sudo apt-get install git build-essential openocd screen gcc-arm-none-eabi gdb-arm-none-eabi libnewlib-arm-none-eabi`
+
+### Setup a Directory ###
+1. Create a directory to work in. This is where we will place everything.
+
+  ```bash
+    mkdir ras
+    cd ras
+  ```
+
 
 ### Clone Rasware ###
 Use git to clone Rasware, replacing "username" with your Git username in the URL. Make sure you've forked Rasware already! If you're coming from the Max instructions 
@@ -150,6 +119,7 @@ Use git to clone Rasware, replacing "username" with your Git username in the URL
 
 
 ### Add the LM4F rule to UDev ###
+#### (skip this step if you're on macOS) ####
 1. To avoid needing root access to communicate with the lm4f, you will need to copy the lm4f rule to the udev directory.
 
   ```bash
@@ -193,11 +163,11 @@ Repeat for RASTemplate and RASDemo.
   
   Else, if at this point an error message is printed that includes "Error erasing flash with vFlashErase packet", run the following command twice and press the board's reset button:
   ```bash
-    openocd -f /usr/share/openocd/scripts/board/ek-tm4c123gxl.cfg -c init -c halt -c "flash write_image erase RASDemo.out" -c verify_image RASDemo.out -c halt -c shutdown
+    openocd -f $(find /usr -path */scripts/board/*tm4c123* 2>/dev/null) -c init -c halt -c "flash write_image erase RASDemo.out" -c verify_image RASDemo.out -c halt -c shutdown
   ```
   You should now be able to use `make flash` normally until you flash from Keil again. Keil seems to break things. Thank you to Kevin George for this workaround.
 
-4. If a launchpad is plugged in, the special file `/dev/lm4f` should be available. You can use make to create a terminal over [UART](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver/transmitter).
+4. If a launchpad is plugged in, it should be accessible at a special file in `/dev` (`/dev/lm4f` on Linux, `/dev/tty.usbmodem[board's serial id]` on macOS - run the detect-board script in the RASLib folder if you're curious). You can use make to create a terminal over [UART](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver/transmitter).
 
   ```bash
     make uart
