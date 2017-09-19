@@ -8,6 +8,9 @@ CORTEXM4 = /usr/local/lib/CortexM4Libs
 ARMCLIB = $(dir $(shell which $(CC)))..
 GDBSCRIPT = $(RASLIB)/gdb-script
 
+# Board device path
+DETECT_SCRIPT = $(RASLIB)/detect-board
+
 # Command Definitions
 PREFIX = arm-none-eabi-
 
@@ -18,7 +21,7 @@ OBJCOPY := $(PREFIX)objcopy
 SIZE := $(PREFIX)size
 GDB := $(PREFIX)gdb
 
-OPENOCDCFG := $(shell find /usr/share/openocd -iname *tm4c123*)
+OPENOCDCFG := $(shell find /usr -path */scripts/board/*tm4c123* 2>/dev/null)
 OPENOCD = openocd -f $(OPENOCDCFG)
 SCREEN := screen
 
@@ -86,10 +89,10 @@ debug: $(TARGET)
 	$(GDB) $< -x $(RASLIB)/gdb-script
 
 uart:
-	$(SCREEN) /dev/lm4f 115200
+	$(SCREEN) $(shell $(DETECT_SCRIPT)) 115200
 
 run: flash
-	$(SCREEN) /dev/lm4f 115200
+	$(SCREEN) $(shell $(DETECT_SCRIPT)) 115200
 
 clean:
 	-rm $(TARGET)
