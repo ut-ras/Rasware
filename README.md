@@ -14,7 +14,7 @@ Robotathon Setup Instructions
 
 ### Get started with Git ###
 1. Create a free GitHub account on [github.com](https://github.com/signup/free)
-3. If you want to learn more about Git, you can read the GitPro book online for free (and legally, too!) at http://git-scm.com/book
+3. If you want to learn more about Git check out this great beginners guide http://rogerdudler.github.io/git-guide/ or if you really want to get into it, you can read the GitPro book online for free (and legally, too!) at http://git-scm.com/book
 
 ### Fork Rasware (only one Robotathon team member should do this step) ###
 1. Once logged into GitHub, go to [ut-ras](https://github.com/ut-ras)'s [Rasware](https://github.com/ut-ras/Rasware).
@@ -156,11 +156,17 @@ Use git to clone Rasware, replacing "username" with your Git username in the URL
 
 3. Plug in a Stellaris Launchpad. you should now see the file `/dev/lm4f`.
 
-### Compile Rasware ###
+### Compile Rasware, RASTemplate, RASDemo ###
 Compile RASLib by using the [make](<https://en.wikipedia.org/wiki/Make_(software)>) program.
 
   ```bash
     cd Rasware/RASLib
+    make
+    cd ..
+    cd RASTemplate
+    make
+    cd ..
+    cd RASDemo
     make
   ```
 Repeat for RASTemplate and RASDemo.
