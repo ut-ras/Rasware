@@ -29,7 +29,9 @@ Setup for Windows (with VMware)
 ### Install VMware ###
 1. Download and install [VMware Workstation Player](https://my.vmware.com/web/vmware/downloads) (near the bottom of the page).
 2. WMware Player is a hypervisor that lets us run a controlled environment for writing and flashing code.
-3. Download a copy of the latest Ubuntu LTS .iso from here: [64-bit](ftp://ftp.utexas.edu/pub/ubuntu-iso/16.04.3/ubuntu-16.04.3-desktop-amd64.iso) or [32-bit](ftp://ftp.utexas.edu/pub/ubuntu-iso/16.04.3/ubuntu-16.04.3-desktop-i386.iso). 
+3. Download a copy of the latest Ubuntu LTS .iso from here: 
+    64-bit: ftp://ftp.utexas.edu/pub/ubuntu-iso/16.04.3/ubuntu-16.04.3-desktop-amd64.iso
+    32-bit: ftp://ftp.utexas.edu/pub/ubuntu-iso/16.04.3/ubuntu-16.04.3-desktop-i386.iso
 4. Open VMWare and select Create a New Virtual Machine.
 5. Select the Installer disc image file bubble and navigate to your freshly downloaded .iso. Click next.
 6. Full Name is your own name. User name is whatever you want, all lower case, no special characters. Create and confirm a password. Click next.
