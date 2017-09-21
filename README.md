@@ -43,6 +43,12 @@ Setup for Windows (with VMware)
 10. Store your virtual disk as a single file. Click next.
 11. Click Customize Hardware, then slide the memory slider up to 4GB. This is plenty of RAM for this VM's purposes. Click close.
 12. Click finish, let the machine install, then log in!
+    
+    If VMWare complains about VT-x not being enabled, you have two options:
+    
+    1) Follow VMWare's instructions in the dialog box to go into your BIOS and enable VT-x;
+    
+    2) Use the 32-bit .iso image. (This is the easier option and it should work fine for our purposes.)
 
 
 
