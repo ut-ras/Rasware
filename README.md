@@ -27,7 +27,7 @@ The remainder of the instructions will depend on what type of system you're runn
 Setup for Windows (with VMware)
 -------------------------------
 ### Install VMware ###
-1. Download and install [VMware Workstation Player](https://my.vmware.com/web/vmware/downloads).
+1. Download and install [VMware Workstation Player](https://my.vmware.com/web/vmware/downloads) (near the bottom of the page).
 2. WMware Player is a hypervisor that lets us run a controlled environment for writing and flashing code.
 3. Download a copy of the latest Ubuntu LTS .iso from [here](https://www.ubuntu.com/download/desktop).
 4. Open VMWare and select Create a New Virtual Machine.
