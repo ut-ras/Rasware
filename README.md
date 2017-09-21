@@ -124,7 +124,7 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
 
 
 ### Clone Rasware ###
-Use git to clone Rasware, replacing "username" with your Git username in the URL. Make sure you've forked Rasware already! If you're coming from the Max instructions 
+Use git to clone Rasware, replacing "username" with your Git username in the URL. Make sure you've forked Rasware already!
 
   ```bash
     git clone https://github.com/username/Rasware.git
@@ -175,7 +175,6 @@ Compile RASLib by using the [make](<https://en.wikipedia.org/wiki/Make_(software
     cd RASDemo
     make
   ```
-Repeat for RASTemplate and RASDemo.
 
 ### Compile and run RASDemo ###
 1. We have created an example project to demonstrate Rasware running on a Launchpad.
