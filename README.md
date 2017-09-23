@@ -55,7 +55,7 @@ Setup for Windows (with VMware)
 
 
 ### Jump to the Linux Instructions ###
-1. Follow the rest of the instructions on how to use Rasware from the [clone rasware](#clone-rasware-1) step in the Linux instructions.
+1. Follow the rest of the instructions on how to use Rasware from the [Install Dependencies](#install-dependencies) step in the Linux instructions.
 
 
 Setup for Mac
