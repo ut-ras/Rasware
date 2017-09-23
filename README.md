@@ -64,9 +64,9 @@ Setup for Mac
 ### Install Dependencies ###
 0. Before we do anything else, run this in your terminal if you're running Marericks or newer (macOS 10.9+) and haven't already done this:
 
-    ```bash
+  ```bash
         xcode-select --install
-    ```
+  ```
 
 
 1. Install Homebrew: [link](http://brew.sh) (Installation instructions are at the bottom of the page.)
@@ -79,9 +79,9 @@ Setup for Mac
 
 3. Install the Cross Compiler Toolchain for Embedded ARM Devices through Homebrew as well:
 
-    ```bash
+  ```bash
         brew cask install gcc-arm-embedded
-    ```
+  ```
 
 
 ### Configure Groups ###
@@ -124,14 +124,15 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
 
 
 ### Clone Rasware ###
-Use git to clone Rasware, replacing "username" with your Git username in the URL. Make sure you've forked Rasware already!
+Use git to clone Rasware, *replacing "username" with your Git username in the URL.* Make sure you've forked Rasware already!
+This makes a copy of Rasware on your computer.
 
   ```bash
     git clone https://github.com/username/Rasware.git
   ```
 
 ### Download StellarisWare ###
-1. Locate Stellarisware, the TI library, in Rasware/Downloads.
+1. Locate Stellarisware, the TI library, in Rasware/Downloads on your computer (in the repository you cloned).
 2. Uncompress the file, compile StellarisWare, and move it to `/usr/local/lib`.
 
   ```bash
