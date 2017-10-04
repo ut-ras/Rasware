@@ -59,7 +59,7 @@ The first ```make flash``` will return an Error 1; this is fine. Run the second 
 
 
 
-##Step 3: What pins should I use? 
+## Step 3: Which pins should I use? 
 
 Here are a few things to keep in mind when choosing pins to wire your components to:
 
