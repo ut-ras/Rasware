@@ -1,14 +1,14 @@
-#RASware Crash Course
+# RASware Crash Course
 RASTemplate is a template of a basic program that you can use to immediately start programming instead of having to deal with Makefile setup.
 
 
 
-##Step 0: Make sure you have RASware set up!
+## Step 0: Make sure you have RASware set up!
 If you don't, go through the [installation instructions](https://github.com/ut-ras/Rasware) here!
 
 If you still need help, find a mentor who specializes in whatever you need and go to their [office hours](https://docs.google.com/spreadsheets/d/1pGwM__kKSpHq0Mno_v-tEsfJyLduxxpoXtd1iVQccQI/edit?usp=sharing)!
 
-##Step 1: Copy RASTemplate.
+## Step 1: Copy RASTemplate.
 We recommend you make a copy of the RASTemplate folder so you have a clean copy whenever you need it. For this tutorial, we'll call the folder Robotathon17.
 
 Open your terminal and navigate to your Rasware folder. Then, make your copy:
