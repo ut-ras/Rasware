@@ -18,7 +18,7 @@ Open your terminal and navigate to your Rasware folder. Then, make your copy:
 ```
 Change into your new folder:
 ```bash
-../../Rasware $ cd Robotathon2017
+../../Rasware $ cd Robotathon17
 ```
 Open up Makefile with your favorite text editor. It'll look something like this:
 ```c
@@ -26,13 +26,13 @@ Open up Makefile with your favorite text editor. It'll look something like this:
 TARGET = RASTemplate.out
 ...
 ```
-Change that RASTemplate.out to whatever you named your project folder (in this case, Robotathon2017.out). 
+Change that RASTemplate.out to whatever you named your project folder (in this case, Robotathon17.out). 
 
 Save the file, go to your terminal, and do a ```make clean``` followed by a ```make``` to clean out your old binaries and build some new ones .
 
 ## Step 2: Look at your Main.c.
 
-Using your favorite text editor, open up the Main.c file from your Robotathon2017 folder. Let's look at a few things:
+Using your favorite text editor, open up the Main.c file from your Robotathon17 folder. Let's look at a few things:
 
 * All of the ```#include``` statements at the top are your included header files. A header (.h) file contains only function prototypes. By including this file, you gain access to all of the functions that are defined in the corresponding source (.c) file, which **must** have the same name as the header. We'll go over header and source files in a little bit. Included in Main.c are:
   * common.h, which must be included in all RASware files.
@@ -46,7 +46,7 @@ Using your favorite text editor, open up the Main.c file from your Robotathon201
   * **Try this:** Change ```PIN_F3``` to ```PIN_F2```. This will cause the function to toggle the onboard blue LED after you flash the board, indicating that you're running a different program than before.
 * ```int main(void)``` is the main function, which is the entry point of any program. You see that we first set up a callback with CallEvery that calls ```blink()``` every 0.5 seconds (look at ```RASLib/inc/time.h``` for the exact parameter list!). Then, we go into an infinite loop (which is desirable if we want our robot to stay alive) and repeatedly print "Hello World!". 
 
-If you made any changes, save your Main.c, then open your terminal and in the Robotathon2017 folder, run the following with a Launchpad connected to your computer (and forwarded to your VM, if you're running a VM):
+If you made any changes, save your Main.c, then open your terminal and in the Robotathon17 folder, run the following with a Launchpad connected to your computer (and forwarded to your VM, if you're running a VM):
 
 ```bash
 make
@@ -177,7 +177,7 @@ void PrintSwitch(tPin pin);
 
 ```
 
-Save ```Switch.h```. Now open up your ```Main.c```. At the top, add an include statement: ```include "Switch.h"```. This is in quotes and not angled brackets because it is a local file in the same folder as ```Main.c```, not somewhere else. Then, in your main function, outside of the while loop, call ```InitSwitch()```. Inside of your while loop, call ```PrintSwitch(PIN_xx)``` with whatever pin you connected your bumper switch to. Save your files, and then to flash and open a screen to see the switch value change as you press it, enter the following in your terminal:
+Save ```Switch.h```. Now open up your ```Main.c```. At the top, add an include statement: ```include "Switch.h"```. This is in quotes and not angled brackets because it is a local file in the same folder as ```Main.c```, not somewhere else. Then, in your main function, outside of the while loop, call ```InitSwitch()```. Inside of your while loop, call ```PrintSwitch(PIN_xx)``` with whatever pin you connected your bumper switch to. Save your files, and then to flash and open a screen to see the switch value change as you press it, enter the following in your terminal while in the Robotathon17 folder:
 
 ```bash
 make
