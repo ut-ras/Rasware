@@ -161,7 +161,7 @@ void InitSwitch(void) {
 void PrintSwitch(tPin pin) {
     value = GetPin(pin);
   	Printf("Switch value is %d\n", value); //%d is the escape character for integers
-  											// \n is the escape character for newlines
+  	// \n is the escape character for newlines
 }
 
 ```
@@ -213,7 +213,8 @@ The file to include is ```RASLib/inc/linesensor.h```.
 In your main, in your initialization block, initialize a pointer to a line sensor object and declare an array of eight floats to store the line sensor data:
 
 ```c
-tLineSensor *line = InitializeGPIOLineSensor(PIN_xx, PIN_xx, PIN_xx, PIN_xx, PIN_xx, PIN_xx, PIN_xx, PIN_xx); //These are the eight pins you chose in the proper order
+tLineSensor *line = InitializeGPIOLineSensor(PIN_xx, PIN_xx, PIN_xx, PIN_xx, PIN_xx, PIN_xx, PIN_xx, PIN_xx); 
+ //These are the eight pins you chose in the proper order
 float linevals[8];
 ```
 
@@ -221,7 +222,9 @@ In your while loop, read the line sensor values into the array and print them, m
 
 ```c
 LineSensorReadArray(line, linevals);
-Printf(“%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t”, value[0], value[1], value[2], value[3], value[4], value[5], value[6], value[7]); // \t is the escape character for tabs
+Printf(“%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t”, value[0], value[1], value[2], 
+  value[3], value[4], value[5], value[6], value[7]); 
+  // \t is the escape character for tabs
 ```
 
 Save, ```make```, flash, and run your code to see how the line sensor behaves when you hold it over a white background with a black line. 
