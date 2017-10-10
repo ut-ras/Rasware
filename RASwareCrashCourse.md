@@ -84,6 +84,8 @@ Connect the clean 5V from your voltage regulator's VOUT to the Launchpad's VBUS.
 
 ### Battery
 
+*NOTE: male/female refers to the XT-60's metal terminals, NOT the plastic housing!*
+
 Take your battery, your 2-terminal rocker switch, and your **female** blue power connector. Solder the red wire coming from your battery snaps to one terminal on the rocker switch. Solder a wire from the other switch terminal to the + side of your female blue power connector. Solder the black wire from your battery snaps to the - side of your female blue power connector. Take your **male** blue power connector, and solder a red wire to + and a black wire to -. Connect the male and female power connectors. Once you plug the wires coming from your male connector into your voltage regulator, you can use the switch to turn your battery on and off. To charge your battery, disconnect your male connector and plug your battery's female connector into the charger's male connector.
 
 ### Voltage Regulator
