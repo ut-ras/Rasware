@@ -104,6 +104,14 @@ The IR sensor has three wires:
 * Black is ground. Connect it to GND.
 * White is signal. Connect it to one of the pins specified in ```RASLib/inc/adc.h```. Note which pin you choose!
 
+If you don't have the three-wire connector with a white plactic terminal to plug into the IR sensor, the signals are as follows. With the sensor pointed towards you with the white terminal on the top:
+
+* +3.3V is on the left.
+* Ground is in the center.
+* Signal is on the right. 
+
+You can cut the white terminal and solder wires directly to the sensor's three contacts. 
+
 ### Line Sensor (Reflectance Sensor Array)
 
 You need 11 wires to connect your line sensor:
