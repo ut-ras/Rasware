@@ -191,7 +191,7 @@ Compile RASLib by using the [make](<https://en.wikipedia.org/wiki/Make_(software
   ```bash
     make flash
   ```
-  If you get an Error 1, make sure your USB device is connected, powered on, and forwarded to your VM if necessary and try again. If you see "shutdown command invoked," press the reset button. If you get another Error 1, `make flash` again and press reset. If you keep getting Error 1's, make sure you've forwarded your LaunchPad's USB connection to the VM: In the VM, select `Player -> Removable Devices -> Luminary Micro ICDI` and select `Connect`.
+  If you get an Error 1, `make flash` again and make sure your USB device is connected, powered on, and forwarded to your VM if necessary. If you see "shutdown command invoked," press the reset button. This will start the program on your launchpad. If you keep getting Error 1's, make sure you've forwarded your LaunchPad's USB connection to the VM: In the VM, select `Player -> Removable Devices -> Luminary Micro ICDI` and select `Connect`.
   
   Else, if at this point an error message is printed that includes "Error erasing flash with vFlashErase packet", run the following command twice and press the board's reset button:
   ```bash
@@ -205,14 +205,15 @@ Compile RASLib by using the [make](<https://en.wikipedia.org/wiki/Make_(software
     make uart
   ```
 
-5. You should now be presented with the RASDemo menu. Feel free to mess around and look into RASDemo's source code to see how it is done. To exit press `C-a k y`, or control-A followed by a K followed by a Y.
+5. You should now be presented with the RASDemo menu. Feel free to mess around and look into RASDemo's source code to see how it is done. To exit press `C-a d`, or control-A followed by a d. This will detach the launchpad's UART from your current console. To get back to the launchpad, in your console run `screen -r`.
 
 6. If you don't want to do all of the above steps each time, you can run everything with one command.
 
   ```bash
     make run
   ```
-
+  
+ However, please note openeing the console may give an error if the command was already run before and was detached. If this happens, try running `screen -r` in console.
 
 ### Committing code back to your repo ###
 1. Before you start, you should configure git with both your username and email.
@@ -233,11 +234,22 @@ Compile RASLib by using the [make](<https://en.wikipedia.org/wiki/Make_(software
   ```bash
     git add filename
   ```
+  
+  Optionally, to track all files, you can add all using a dot.
+  
+  ```bash
+    git add .
+  ```
 
 4. You can now use the commit command to create a commit containing all of the modifications of the files you `git add`ed. It will open an editor for writing a [commit message](https://github.com/erlang/otp/wiki/Writing-good-commit-messages). If saved, the commit will be created.
 
   ```bash
     git commit
+  ```
+  
+  Optionally, you can place your commit message inline by passing a message parameter.
+  ```bash
+    git commit -m "Commit message"
   ```
 
 5. To move your local changes to the server, use the push command.
