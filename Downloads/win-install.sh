@@ -9,7 +9,7 @@ if ! grep -q Microsoft /proc/version; then
     echo "This script is meant for Bash on Windows!" && exit 1
 fi
 
-DEPENDENCIES=(curl 7z grep wslpath echo printf cut cat)
+DEPENDENCIES=(curl 7z grep wslpath echo printf cut cat chmod)
 
 OPENOCD_URL_BASE="https://sysprogs.com/files/gnutoolchains/arm-eabi/openocd"
 OPENOCD_VER="OpenOCD-20180728"
@@ -38,12 +38,12 @@ function print
     fi
 
     if [ "$#" -eq $((1 + N)) ]; then
-        >&2 echo $n "$1"
+        echo $n "$1"
     elif [ "$#" -eq $((2 + N)) ]; then
-        >&2 printf "%s" "${2}" && >&2 echo $n "$1" && >&2 printf "%s" "${NC}"
+        printf "${2}" && echo $n "$1" && printf "${NC}"
     else
-        >&2 printf "%s" "${RED}" && >&2 echo "Received: $* ($# args w/N=$N)" \
-            && >&2 printf "%s" "${NC}"; return 1
+        printf "${RED}" && echo "Received: $* ($# args w/N=$N)" \
+            && printf "${NC}"; return 1
     fi
 }
 
@@ -95,12 +95,13 @@ function getOpenOCD
             | cut -d\" -f2)
 
     # If we got versions, try to use them!
-    if ${#versions[@]}; then
+    if [ ${#versions[@]} -gt 0 ]; then
         for url in "${versions[@]}"; do
-            nom=$(basename "${url}" | td -d '\n' | rev | cut -d'.' -f2- | rev)
+            url=$(echo ${url} | tr -d '\n')
+            nom=$(basename "${url}" | rev | cut -d'.' -f2- | rev)
 
-            print "Trying to download $nom from $url..." "$PURPLE"
-            curl "${url}" -o "${DOWNLOAD_PATH}" -s && {
+            print "Trying to download $nom from $url..." $PURPLE
+            curl "${url}" -o "${DOWNLOAD_PATH}" -s -k && {
                 print "Download successful!" "$CYAN"
                 OPENOCD_VER="$nom"
                 return
@@ -130,8 +131,8 @@ function installOpenOCD
 
     # Unarchive to the place:
     7z x "${DOWNLOAD_PATH}" \
-        -o "$install_path" \
-        -y
+        -o"$install_path" \
+        -y > /dev/null
 
     # Verify:
     install_path="${install_path}/${nom}"
@@ -146,10 +147,10 @@ function installOpenOCD
 
     # Some setup (involving some heavy assumptions):
     mkdir -p ~/.bin
-    echo "PATH=${HOME}/.bin/:\$PATH" >> ~/.bashrc
+    echo "PATH=${HOME}/.bin:\$PATH" >> ~/.bashrc
 
     # Install the shim:
-    cat <<-FIN > "~/.bin/openocd"
+    cat <<-FIN > ~/.bin/openocd
 	#!/usr/bin/env bash
 
 	# Generated OpenOCD Shim for WSL.
@@ -187,7 +188,7 @@ function installOpenOCD
 	    out="\${parts[0]}:"
 
 	    for p in "\${parts[@]:1}"; do
-	        out="\${out}\\\${p}"
+	        out="\${out}\\\\\${p}"
 	    done
 
 	    # One last test:
@@ -256,7 +257,7 @@ trap 'print Interrupted. $RED && exit 2' SIGINT SIGQUIT
 
 # And finally, do the things:
 {
-    checkDependencies ""
+    checkDependencies "rm"
 
     print "Grabbing OpenOCD:" "$BOLD"
     getOpenOCD "${1}"
@@ -269,6 +270,6 @@ trap 'print Interrupted. $RED && exit 2' SIGINT SIGQUIT
 
 ##########################
 # AUTHOR:  Rahul Butani  #
-# DATE:    Oct. 06, 2018 #
-# VERSION: 0.0.0         #
+# DATE:    Oct. 07, 2018 #
+# VERSION: 0.1.0         #
 ##########################
