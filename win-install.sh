@@ -144,20 +144,99 @@ function installOpenOCD
         return 1
     fi
 
+    # Some setup (involving some heavy assumptions):
+    mkdir -p ~/.bin
+    echo "PATH=${HOME}/.bin/:\$PATH" >> ~/.bashrc
+
     # Install the shim:
-    cat <<-FIN
-#!/usr/bin/env bash
+    cat <<-FIN > "~/.bin/openocd"
+	#!/usr/bin/env bash
 
-# Generated OpenOCD Shim for WSL.
-# More information here: github.com/ut-ras/RASWare.git
-# Generated on $(date '+%B%e, %Y at %I:%M:%S %p') by version $(cat "${1}" | tail -2 | head -1 | cut -d: -f2 | cut -d' ' -f2).
+	# Generated OpenOCD Shim for WSL.
+	# More information here: github.com/ut-ras/RASWare.git
+	# Generated on $(date '+%B%e, %Y at %I:%M:%S %p') by version $(tail -2 < "${0}" | head -1 | cut -d: -f2 | cut -d' ' -f2).
 
-OPENOCD_LOC="${install_path}"
-OPENOCD_BIN="\${OPENOCD_LOC}/bin/openocd.exe"
+	OPENOCD_LOC="${install_path}"
+	OPENOCD_BIN="\${OPENOCD_LOC}/bin/openocd.exe"
 
-function wslTo
+	# This operates under the dangerous assumption that the Windows version of
+	# OpenOCD has the same .cfg files in the same directory structure under the
+	# same names. This is bad, but the alternative (putting WSL detection logic
+	# into the Makefile + tweaking find to run on the Windows install dirs when
+	# appropriate) seems _much_ worse.
+	function wsl2win
+	{
+	    # This is naive and untested, much like me.
 
+	    path="\$(realpath "\${1}")"
+
+	    # WSL let's you change the prefix! Ahh!
+	    prefix=\$(wslpath C:/ | xargs dirname)
+
+	    # Check if we've very obviously got an untranslatable path:
+	    if [[ ! \$path =~ \${prefix}.* ]]; then echo "Can't translate \${path}!" >&2 && exit 1; fi
+
+	    # File names containing '/' are not legal so we do not need to worry:
+	    # Note that the prefix is stripped here.
+	    IFS="/" read -ra parts <<<"\${path#\$prefix}"
+
+	    # Check that the first part is indeed a Drive Letter:
+	    if [ \${#parts[0]} -gt 1 ]; then echo "Invalid Drive Letter! (\${parts[0]})" >&2; exit 1; fi
+
+	    # No adjustments needed - god bless windows and its case insensitive heritage
+	    out="\${parts[0]}:"
+
+	    for p in "\${parts[@]:1}"; do
+	        out="\${out}\\\${p}"
+	    done
+
+	    # One last test:
+	    if [ ! "\$(wslpath "\${out}" 2>/dev/null)" = "\${path}" ]; then
+	        >&2 echo "Failed to convert \${path} (\${out} was marked incorrect by wslpath)" && exit 1
+	    fi
+
+	    echo "\${out}"
+	}
+
+	function conf_file
+	{
+	    if [[ \${1} == *"/scripts/board/"* ]]; then
+	        FILE_NAME="\$(basename "\${1}")"
+
+	        # If it's where we expect, great:
+	        if [ -f "\${OPENOCD_LOC}/share/openocd/scripts/board/\${FILE_NAME}" ]; then
+	            echo "\$(wsl2win "\${OPENOCD_LOC}/share/openocd/scripts/board/\${FILE_NAME}")"
+	        # If not, look for the file: (untested)
+	        elif find "\${OPENOCD_LOC}" -path "\${FILE_NAME}" 2>/dev/null; then
+	            export -f wsl2win
+	            echo "\$(find "\${OPENOCD_LOC}" -path "\${FILE_NAME}" 2>/dev/null | xargs wsl2win)"
+	        # Failing that, just error out:
+	        else
+	            echo "Failed to find \${1} for OpenOCD!" && exit 1
+	        fi
+
+	    else # Bail
+	        echo "\$1"
+	    fi
+	}
+
+	args=( "\$@" )
+
+	while (( "\$#" )); do
+	    { { [ "\$1" = "-f" ] || [ "\$1" = "--file" ]; } && args[((++i))]="\$(conf_file "\${args[((++i))]}")" && shift; } || ((i++)) && shift
+	done
+
+	# If you've made it this far, here's some fun Bash trivia to keep you busy:
+
+	    # arr[((arr+0))]=\$((arr[((arr++))] + 5))
+	    # done <
+	    # < <
+	    # unset i && ((i++)) && echo \$i
+
+	"\${OPENOCD_BIN}" "\${args[@]}"
 FIN
+
+    chmod +x "~/.bin/openocd"
 }
 
 function err
