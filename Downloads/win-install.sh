@@ -9,7 +9,7 @@ if ! grep -q Microsoft /proc/version; then
     echo "This script is meant for Bash on Windows!" && exit 1
 fi
 
-DEPENDENCIES=("curl 7z grep wslpath echo printf cut cat")
+DEPENDENCIES=(curl 7z grep wslpath echo printf cut cat)
 
 OPENOCD_URL_BASE="https://sysprogs.com/files/gnutoolchains/arm-eabi/openocd"
 OPENOCD_VER="OpenOCD-20180728"
@@ -49,14 +49,14 @@ function print
 
 function checkDependencies
 {
-    dependencies=$DEPENDENCIES
+    dependencies=("${DEPENDENCIES[@]}")
     dependencies+=("$*")
 
     exitC=0
 
-    for d in ${dependencies[@]}; do
-        if ! hash ${d} 2>/dev/null; then
-            print "Error: ${d} is not installed." $RED
+    for d in "${dependencies[@]}"; do
+        if ! hash "${d}" 2>/dev/null; then
+            print "Error: ${d} is not installed." "$RED"
             exitC=1
         fi
     done
@@ -67,21 +67,21 @@ function checkDependencies
 function getOpenOCD
 {
     # If we got an OpenOCD Version, let's try that:
-    if [ -n ${1} ]; then
-        print "Using provided OpenOCD Version (${1})" $PURPLE
+    if [ -n "${1}" ]; then
+        print "Using provided OpenOCD Version (${1})" "$PURPLE"
 
-        exts=(".7z .zip")
-        for ext in ${exts[@]}; do
-            print "Trying '${1}${ext}'" $PURPLE
+        exts=(.7z .zip)
+        for ext in "${exts[@]}"; do
+            print "Trying '${1}${ext}'" "$PURPLE"
 
             curl "${OPENOCD_URL_BASE}/${1}${ext}" -o "${DOWNLOAD_PATH}" -s && {
-                print "Download successful!" $CYAN
+                print "Download successful!" "$CYAN"
                 OPENOCD_VER="$nom"
                 return
             }
         done
 
-        print "Unable to grab ${1}; falling back to latest version..." $RED
+        print "Unable to grab ${1}; falling back to latest version..." "$RED"
     fi
 
     # Try to grab the latest version:
@@ -99,26 +99,26 @@ function getOpenOCD
         for url in "${versions[@]}"; do
             nom=$(basename "${url}" | td -d '\n' | rev | cut -d'.' -f2- | rev)
 
-            print "Trying to download $nom from $url..." $PURPLE
+            print "Trying to download $nom from $url..." "$PURPLE"
             curl "${url}" -o "${DOWNLOAD_PATH}" -s && {
-                print "Download successful!" $CYAN
+                print "Download successful!" "$CYAN"
                 OPENOCD_VER="$nom"
                 return
             }
 
-            print "Download unsuccessful; trying again.." $PURPLE
+            print "Download unsuccessful; trying again.." "$PURPLE"
         done
     fi
 
     # Failing that, fall back to last known good:
-    print "Falling back on ${OPENOCD_VER} (last known good version):" $PURPLE
+    print "Falling back on ${OPENOCD_VER} (last known good version):" "$PURPLE"
     curl "${OPENOCD_URL}" -o "${DOWNLOAD_PATH}" -s && {
-        print "Download successful!" $CYAN
+        print "Download successful!" "$CYAN"
         return
     }
 
     # Couldn't download; let callee handle the error:
-    print "Unable to download OpenOCD." $RED
+    print "Unable to download OpenOCD." "$RED"
     return 1
 }
 
@@ -140,7 +140,7 @@ function installOpenOCD
         chmod +x "${install_path}/bin/openocd.exe"
         rm -f ${DOWNLOAD_PATH}
     else
-        print "openocd.exe not found in '${install_path}/bin/'!" $RED
+        print "openocd.exe not found in '${install_path}/bin/'!" "$RED"
         return 1
     fi
 
@@ -236,14 +236,14 @@ function installOpenOCD
 	"\${OPENOCD_BIN}" "\${args[@]}"
 FIN
 
-    chmod +x "~/.bin/openocd"
+    chmod +x "${HOME}/.bin/openocd"
 }
 
 function err
 {
-    >&2 print "Errors! Check above and please try again." $RED
+    >&2 print "Errors! Check above and please try again." "$RED"
     >&2 print \
-"If this problem persists, file an issue at bit.ly/2nziQhj or contact us." $RED
+"If this problem persists, file an issue at bit.ly/2nziQhj or contact us." "$RED"
     exit $1
 }
 
@@ -256,15 +256,15 @@ trap 'print Interrupted. $RED && exit 2' SIGINT SIGQUIT
 
 # And finally, do the things:
 {
-    checkDependencies
+    checkDependencies ""
 
-    print "Grabbing OpenOCD:" $BOLD
+    print "Grabbing OpenOCD:" "$BOLD"
     getOpenOCD "${1}"
 
-    print "Installing:" $BOLD
+    print "Installing:" "$BOLD"
     installOpenOCD "${0}"
 
-    print "Success!" $CYAN
+    print "Success!" "$CYAN"
 }
 
 ##########################
