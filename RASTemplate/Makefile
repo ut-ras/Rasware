@@ -109,7 +109,7 @@ clean:
 	$(OBJCOPY) -O binary $< $@
 
 $(RASLIB)/output/libras.a:
-	$(MAKE) -C $(RASLIB) 
+	$(MAKE) -C $(RASLIB)
 
 %.out: $(OBJ) $(RASLIB)/output/libras.a
 	$(LD) -T $(LDS) -o $@ $(OBJ) $(LDFLAGS)

@@ -190,7 +190,7 @@ Compile RASLib by using the [make](<https://en.wikipedia.org/wiki/Make_(software
   ```bash
     make flash
   ```
-  You may get an "Error 1" the first time you run this. This is (for whatever reason) fairly usual. In this case, simply make flash again. If this doesn't help, next make sure your USB device is connected, powered on, and forwarded to your VM if necessary. If you see "shutdown command invoked," press the reset button. This will start the program on your launchpad. If you keep getting Error 1's, make sure you've forwarded your LaunchPad's USB connection to the VM: In the VM, select `Player -> Removable Devices -> Luminary Micro ICDI` and select `Connect`.
+  You may get an "Error 1" the first time you run this. In this case, simply make flash again. If this doesn't help, next make sure your USB device is connected, powered on, and forwarded to your VM if necessary. If you see "shutdown command invoked," press the reset button. This will start the program on your launchpad. If you keep getting Error 1's, make sure you've forwarded your LaunchPad's USB connection to the VM: In the VM, select `Player -> Removable Devices -> Luminary Micro ICDI` and select `Connect`.
   
   Else, if at this point an error message is printed that includes "Error erasing flash with vFlashErase packet", run the following command twice and press the board's reset button:
   ```bash
@@ -212,7 +212,9 @@ Compile RASLib by using the [make](<https://en.wikipedia.org/wiki/Make_(software
     make run
   ```
   
- However, please note openeing the console may give an error if the command was already run before and was detached. If this happens, try running `screen -r` in console.
+  However, please note opening the console may give an error if the command was already run before and was detached. If this happens, try running `screen -r` in console.
+
+  There's also `make start` which will flash your board _and_ reset it.
 
 ### Committing code back to your repo ###
 1. Before you start, you should configure git with both your username and email.
