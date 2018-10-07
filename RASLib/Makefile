@@ -79,7 +79,9 @@ size: $(TARGET)
 
 flash: $(TARGET)
 	$(OPENOCD) -c "init"                              \
+	           -c "reset"                             \
 	           -c "halt"                              \
+	           -c "flash probe 0"                     \
 	           -c "flash write_image erase $(TARGET)" \
 	           -c "verify_image $(TARGET)"            \
 	           -c "halt"                              \
@@ -92,19 +94,13 @@ uart:
 	$(SCREEN) $(shell $(DETECT_SCRIPT)) 115200
 
 start: flash
-	$(OPENOCD) -c "init"                              \
-	           -c "reset run"                         \
-	           -c "shutdown"
+	$(OPENOCD) -c "init; reset run; shutdown"
 
 run: start
 	$(SCREEN) $(shell $(DETECT_SCRIPT)) 115200
 
 clean:
-	-rm $(TARGET)
-	-rm $(TARGET:.axf=.out)
-	-rm $(ASM)
-	-rm $(OBJ:.o=.d)
-
+	@rm $(OBJ:.o=.d) $(ASM) $(TARGET:.axf=.out) $(TARGET) 2>/dev/null || true
 
 %.a: $(OBJ)
 	$(AR) rcs $@ $^
