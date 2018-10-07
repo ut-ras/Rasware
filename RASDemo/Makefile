@@ -79,7 +79,9 @@ size: $(TARGET)
 
 flash: $(TARGET)
 	$(OPENOCD) -c "init"                              \
+	           -c "reset"                             \
 	           -c "halt"                              \
+	           -c "flash probe 0"                     \
 	           -c "flash write_image erase $(TARGET)" \
 	           -c "verify_image $(TARGET)"            \
 	           -c "halt"                              \
