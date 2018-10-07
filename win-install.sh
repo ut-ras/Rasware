@@ -1,0 +1,195 @@
+#!/usr/bin/env bash
+
+# ./win-install.sh [OpenOCD Version]
+#
+# Requires node and curl.
+# (Also awk, grep, rev, rm, and probably a modern version of bash)
+
+if ! grep -q Microsoft /proc/version; then
+    echo "This script is meant for Bash on Windows!" && exit 1
+fi
+
+DEPENDENCIES=("curl 7z grep wslpath echo printf cut cat")
+
+OPENOCD_URL_BASE="https://sysprogs.com/files/gnutoolchains/arm-eabi/openocd"
+OPENOCD_VER="OpenOCD-20180728"
+OPENOCD_URL="${OPENOCD_URL_BASE}/${OPENOCD_VER}.7z"
+
+DOWNLOAD_PATH="/tmp/oocd" # Omitting the file ext is intentional
+
+INSTALL_LOC="%userprofile%\\Appdata\\Roaming"
+
+readonly BOLD='\033[0;1m' #(OR USE 31)
+readonly CYAN='\033[0;36m'
+readonly PURPLE='\033[1;35m'
+readonly GREEN='\033[0;32m'
+readonly BROWN='\033[0;33m'
+readonly RED='\033[1;31m'
+readonly NC='\033[0m' # No Color
+
+function print
+{
+    N=0
+    n="-e"
+
+    if [[ "$*" == *"-n" ]]; then
+        N=1
+        n="-ne"
+    fi
+
+    if [ "$#" -eq $((1 + N)) ]; then
+        >&2 echo $n "$1"
+    elif [ "$#" -eq $((2 + N)) ]; then
+        >&2 printf "%s" "${2}" && >&2 echo $n "$1" && >&2 printf "%s" "${NC}"
+    else
+        >&2 printf "%s" "${RED}" && >&2 echo "Received: $* ($# args w/N=$N)" \
+            && >&2 printf "%s" "${NC}"; return 1
+    fi
+}
+
+function checkDependencies
+{
+    dependencies=$DEPENDENCIES
+    dependencies+=("$*")
+
+    exitC=0
+
+    for d in ${dependencies[@]}; do
+        if ! hash ${d} 2>/dev/null; then
+            print "Error: ${d} is not installed." $RED
+            exitC=1
+        fi
+    done
+
+    return ${exitC}
+}
+
+function getOpenOCD
+{
+    # If we got an OpenOCD Version, let's try that:
+    if [ -n ${1} ]; then
+        print "Using provided OpenOCD Version (${1})" $PURPLE
+
+        exts=(".7z .zip")
+        for ext in ${exts[@]}; do
+            print "Trying '${1}${ext}'" $PURPLE
+
+            curl "${OPENOCD_URL_BASE}/${1}${ext}" -o "${DOWNLOAD_PATH}" -s && {
+                print "Download successful!" $CYAN
+                OPENOCD_VER="$nom"
+                return
+            }
+        done
+
+        print "Unable to grab ${1}; falling back to latest version..." $RED
+    fi
+
+    # Try to grab the latest version:
+    readarray versions < \
+        <(curl -s "http://gnutoolchains.com/arm-eabi/openocd/" \
+            | grep "neat_table" -A 50 \
+            | grep "<tr>" -A 4 \
+            | grep "href" \
+            | cut -d= -f2 \
+            | cut -d\> -f1 \
+            | cut -d\" -f2)
+
+    # If we got versions, try to use them!
+    if ${#versions[@]}; then
+        for url in "${versions[@]}"; do
+            nom=$(basename "${url}" | td -d '\n' | rev | cut -d'.' -f2- | rev)
+
+            print "Trying to download $nom from $url..." $PURPLE
+            curl "${url}" -o "${DOWNLOAD_PATH}" -s && {
+                print "Download successful!" $CYAN
+                OPENOCD_VER="$nom"
+                return
+            }
+
+            print "Download unsuccessful; trying again.." $PURPLE
+        done
+    fi
+
+    # Failing that, fall back to last known good:
+    print "Falling back on ${OPENOCD_VER} (last known good version):" $PURPLE
+    curl "${OPENOCD_URL}" -o "${DOWNLOAD_PATH}" -s && {
+        print "Download successful!" $CYAN
+        return
+    }
+
+    # Couldn't download; let callee handle the error:
+    print "Unable to download OpenOCD." $RED
+    return 1
+}
+
+function installOpenOCD
+{
+    # Find the place:
+    install_path="$(wslpath "$(cmd.exe /C echo ${INSTALL_LOC})" \
+        | tr -d '\r' )/OpenOCD"
+
+    # Unarchive to the place:
+    7z x "${DOWNLOAD_PATH}" \
+        -o "$install_path" \
+        -y
+
+    # Verify:
+    install_path="${install_path}/${nom}"
+    if [ -d "${install_path}" ] && \
+            [ -f "${install_path}/bin/openocd.exe" ]; then
+        chmod +x "${install_path}/bin/openocd.exe"
+        rm -f ${DOWNLOAD_PATH}
+    else
+        print "openocd.exe not found in '${install_path}/bin/'!" $RED
+        return 1
+    fi
+
+    # Install the shim:
+    cat <<-FIN
+#!/usr/bin/env bash
+
+# Generated OpenOCD Shim for WSL.
+# More information here: github.com/ut-ras/RASWare.git
+# Generated on $(date '+%B%e, %Y at %I:%M:%S %p') by version $(cat "${1}" | tail -2 | head -1 | cut -d: -f2 | cut -d' ' -f2).
+
+OPENOCD_LOC="${install_path}"
+OPENOCD_BIN="\${OPENOCD_LOC}/bin/openocd.exe"
+
+function wslTo
+
+FIN
+}
+
+function err
+{
+    >&2 print "Errors! Check above and please try again." $RED
+    >&2 print \
+"If this problem persists, file an issue at bit.ly/2nziQhj or contact us." $RED
+    exit $1
+}
+
+# Register error handling:
+set -e
+
+trap 'err $?' ERR
+trap 'print Interrupted. $RED && exit 2' SIGINT SIGQUIT
+
+
+# And finally, do the things:
+{
+    checkDependencies
+
+    print "Grabbing OpenOCD:" $BOLD
+    getOpenOCD "${1}"
+
+    print "Installing:" $BOLD
+    installOpenOCD "${0}"
+
+    print "Success!" $CYAN
+}
+
+##########################
+# AUTHOR:  Rahul Butani  #
+# DATE:    Oct. 06, 2018 #
+# VERSION: 0.0.0         #
+##########################
