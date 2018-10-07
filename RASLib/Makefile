@@ -91,7 +91,12 @@ debug: $(TARGET)
 uart:
 	$(SCREEN) $(shell $(DETECT_SCRIPT)) 115200
 
-run: flash
+start: flash
+	$(OPENOCD) -c "init"                              \
+	           -c "reset run"                         \
+	           -c "shutdown"
+
+run: start
 	$(SCREEN) $(shell $(DETECT_SCRIPT)) 115200
 
 clean:
