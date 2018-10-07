@@ -110,8 +110,8 @@ These instructions are written for use in a terminal (xterm, gterm, kterm, tty1,
 
 ### Install Dependencies ###
 1. First install the basic dependencies
-* Archlinux : `sudo pacman -S git base-devel openocd screen arm-none-eabi-gcc arm-none-eabi-gdb arm-none-eabi-newlib`
-* Ubuntu/Debian : `sudo apt-get install git build-essential openocd screen gcc-arm-none-eabi gdb-arm-none-eabi libnewlib-arm-none-eabi`
+* Archlinux : `sudo pacman -S git base-devel openocd screen arm-none-eabi-gcc gdb arm-none-eabi-newlib`
+* Ubuntu/Debian : `sudo apt-get install git build-essential openocd screen gcc-arm-none-eabi gdb libnewlib-arm-none-eabi`
 
 ### Setup a Directory ###
 1. Create a directory to work in. This is where we will place everything.
