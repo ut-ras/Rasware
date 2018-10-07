@@ -214,7 +214,7 @@ Compile RASLib by using the [make](<https://en.wikipedia.org/wiki/Make_(software
   
   However, please note opening the console may give an error if the command was already run before and was detached. If this happens, try running `screen -r` in console.
 
-  There's also `make start` which will flash your board _and_ reset it.
+  There's also `make start` which will flash your board and start your program _without_ opening the console.
 
 ### Committing code back to your repo ###
 1. Before you start, you should configure git with both your username and email.
