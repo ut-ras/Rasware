@@ -2,8 +2,8 @@
 
 # ./win-install.sh [OpenOCD Version]
 #
-# Requires node and curl.
-# (Also awk, grep, rev, rm, and probably a modern version of bash)
+# Installs OpenOCD for Windows and a matching shim.
+# This has been tested on WSL Ubuntu 18.04 and Windows 10 Build 17134.
 
 if ! grep -q Microsoft /proc/version; then
     echo "This script is meant for Bash on Windows!" && exit 1
