@@ -107,7 +107,10 @@ clean:
 %.axf: %.out
 	$(OBJCOPY) -O binary $< $@
 
-%.out: $(OBJ)
+$(RASLIB)/output/libras.a:
+	$(MAKE) -C $(RASLIB) 
+
+%.out: $(OBJ) $(RASLIB)/output/libras.a
 	$(LD) -T $(LDS) -o $@ $(OBJ) $(LDFLAGS)
 
 %.o: %.c
