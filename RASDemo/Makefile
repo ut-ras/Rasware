@@ -79,7 +79,9 @@ size: $(TARGET)
 
 flash: $(TARGET)
 	$(OPENOCD) -c "init"                              \
+	           -c "reset"                             \
 	           -c "halt"                              \
+	           -c "flash probe 0"                     \
 	           -c "flash write_image erase $(TARGET)" \
 	           -c "verify_image $(TARGET)"            \
 	           -c "halt"                              \
@@ -91,15 +93,14 @@ debug: $(TARGET)
 uart:
 	$(SCREEN) $(shell $(DETECT_SCRIPT)) 115200
 
-run: flash
+start: flash
+	$(OPENOCD) -c "init; reset run; shutdown"
+
+run: start
 	$(SCREEN) $(shell $(DETECT_SCRIPT)) 115200
 
 clean:
-	-rm $(TARGET)
-	-rm $(TARGET:.axf=.out)
-	-rm $(ASM)
-	-rm $(OBJ:.o=.d)
-
+	@rm $(OBJ:.o=.d) $(ASM) $(TARGET:.axf=.out) $(TARGET) 2>/dev/null || true
 
 %.a: $(OBJ)
 	$(AR) rcs $@ $^
@@ -107,7 +108,10 @@ clean:
 %.axf: %.out
 	$(OBJCOPY) -O binary $< $@
 
-%.out: $(OBJ)
+$(RASLIB)/output/libras.a:
+	$(MAKE) -C $(RASLIB)
+
+%.out: $(OBJ) $(RASLIB)/output/libras.a
 	$(LD) -T $(LDS) -o $@ $(OBJ) $(LDFLAGS)
 
 %.o: %.c
