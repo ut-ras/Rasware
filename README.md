@@ -162,14 +162,11 @@ This makes a copy of Rasware on your computer.
 
 3. Plug in a Stellaris Launchpad. you should now see the file `/dev/lm4f`.
 
-### Compile Rasware, RASTemplate, RASDemo ###
+### Compile RASTemplate, RASDemo ###
 Compile RASLib by using the [make](<https://en.wikipedia.org/wiki/Make_(software)>) program.
 
   ```bash
-    cd Rasware/RASLib
-    make
-    cd ..
-    cd RASTemplate
+    cd Rasware/RASTemplate
     make
     cd ..
     cd RASDemo
