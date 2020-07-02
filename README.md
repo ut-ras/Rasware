@@ -25,9 +25,20 @@ We have revived RASBox, which is a virtual image already setup and tailored for 
 4. Download the RASBox VM from [UTBox](https://utexas.box.com/s/eff624musuitrum9jbpcsucslbmsw40b).
 4. Open VirtualBox and go to File > Preferences > Extensions. Add and install the Extension Pack.
 5. Import the VM by going to Import and select the .ova file.
+6. Click Next and Import. This might take a couple minutes to complete.
+> **NOTE** You may need to enable hardware virtualization from your BIOS. See [here](https://bce.berkeley.edu/enabling-virtualization-in-your-pc-bios.html) for help.
+7. Go into Settings after the VM has been imported and check to see if any warnings appear. This may be because too many virtual processors or RAM has been allocated to the machine. Adjust as necessary.
+8. Start the VM.
+
 ### Forward USB Ports
-1. Plug in a Launchpad to your computer. If you don't have a Launchpad available this step can be done later.
-2. In the VM, select `Player -> Removable Devices -> Luminary Micro ICDI` and select `Connect`.
+1. Plug in a Launchpad to your computer. If you don't have a Launchpad available, this step can be done later.
+2. When the VM is powered off, go to Settings > USB and check to see if the USB with the + icon when clicked upon shows a device for Texas Instruments In-Circuit Debug Interface.
+3. If it does not, and you are running Linux/Mac, add yourself to the vboxusers group `sudo usermod -aG vboxusers <USERNAME>`, replacing `<USERNAME>` with your username. You can check who you are with the command `whoami`.
+4. Check to see if you're in the group using `groups <USERNAME>`, if vboxusers shows up you're good and should retry step 2.
+5. If step 2 continues to fail, restart your computer to enable changes and try again.
+6. If you continue to have issues, try consulting [this thread](https://forums.virtualbox.org/viewtopic.php?f=2&t=79254).
+7. You can see if your USB device is recognized after starting the VM, running the VM setup script, and checking `/dev/` for a device called `lm4f`.
+
 ### Setting up your machine
 Once you've followed these steps to a T, start up and log in to the virtual machine (It's preconfigured to log in without the password by default.) Click on the README.txt on the desktop for next instructions (we have a setup script for you)! You can also manually follow the instructions at [Setup Rasware](#Setup-Rasware).
 
