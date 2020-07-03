@@ -21,8 +21,7 @@ We have revived RASBox, which is a virtual image already setup and tailored for 
 1. Download and install [VirtualBox](https://www.virtualbox.org/wiki/Downloads) for your specific OS.
 2. Download the VirtualBox Extension Pack, also on the same page as the VirtualBox dl.
 > **NOTE** If the link above doesn't work, try from Oracle's [site](https://www.oracle.com/virtualization/technologies/vm/downloads/virtualbox-downloads.html).
-3. Download the latest Ubuntu LTS distribution [image](https://releases.ubuntu.com/20.04/). 
-4. Download the RASBox VM from [UTBox](https://utexas.box.com/s/eff624musuitrum9jbpcsucslbmsw40b).
+3. Download the RASBox VM from [UTBox](https://utexas.box.com/s/eff624musuitrum9jbpcsucslbmsw40b).
 4. Open VirtualBox and go to File > Preferences > Extensions. Add and install the Extension Pack.
 5. Import the VM by going to Import and select the .ova file.
 6. Click Next and Import. This might take a couple minutes to complete.
