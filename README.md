@@ -21,12 +21,13 @@ We have revived RASBox, which is a virtual image already setup and tailored for 
 1. Download and install [VirtualBox](https://www.virtualbox.org/wiki/Downloads) for your specific OS.
 2. Download the VirtualBox Extension Pack, also on the same page as the VirtualBox dl.
 > **NOTE** If the link above doesn't work, try from Oracle's [site](https://www.oracle.com/virtualization/technologies/vm/downloads/virtualbox-downloads.html).
-3. Download the RASBox VM from [UTBox](https://utexas.box.com/v/robotathon2020-rasbox).
+3. Download the RASBox VM from [Google Drive](https://drive.google.com/file/d/1w93RLiauBfxyeFN1s5DmGF2VfKqs-5xN/view?usp=sharing) (2.1GB).
 4. Open VirtualBox and go to File > Preferences > Extensions. Add and install the Extension Pack.
 5. Import the VM by going to Import and select the .ova file.
 6. Click Next and Import. This might take a couple minutes to complete.
 > **NOTE** You may need to enable hardware virtualization from your BIOS. See [here](https://bce.berkeley.edu/enabling-virtualization-in-your-pc-bios.html) for help.
 7. Go into Settings after the VM has been imported and check to see if any warnings appear. This may be because too many virtual processors or RAM has been allocated to the machine. Adjust as necessary.
+    * By default, only 4GB of RAM and 1 processor is in use. The VM will use up to 20 GB of storage, based on your utilization.
 8. Start the VM.
 
 ### Forward USB Ports
@@ -39,8 +40,21 @@ We have revived RASBox, which is a virtual image already setup and tailored for 
 7. You can see if your USB device is recognized after starting the VM, running the VM setup script, and checking `/dev/` for a device called `lm4f`.
 
 ### Setting up your machine
-Once you've followed these steps to a T, start up and log in to the virtual machine (It's preconfigured to log in without the password by default.) Click on the README.txt on the desktop for next instructions (we have a setup script for you)! You can also manually follow the instructions at [Setup Rasware](#Setup-Rasware).
+Once you've followed these steps to a T, start up and log in to the virtual machine (It's preconfigured to log in without the password by default.) The terminal application should start up and ask you to run the post-install script. Once this is completed successfully, you need to setup RASWare. You need to clone your forked repository of Rasware, and then run that setup script. When complete, you should be able to flash RASDemo to your TM4C!
+```sh
+# post-install script
+cd ~/RASBox
+sh setup_vm.sh
 
+# rasware setup script
+git clone <URL> # <URL> being the git url of your forked Rasware repo
+cd ~/RASBox
+sh setup_rasware.sh
+
+# Further development instructions can be found at:
+code ~/RASBox/RASbox_User_Guide.md
+code ~/RASBox/Rasware/RASwareCrashCourse.md
+```
 ---
 ## I want to make my own VM!
 We suggest that if you do want to create your own VM from another distrobution, allocate about 15-20 GB of storage and 4GB of RAM.
